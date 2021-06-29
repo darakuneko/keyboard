@@ -6,7 +6,7 @@
 
 * Keyboard Maintainer: [daraku-neko](https://github.com/yourusername)
 * Hardware Supported: *The PCBs, controllers supported*
-* Hardware Availability: *Links to where you can find this hardware*
+* Hardware Availability: *https://github.com/darakuneko/keyboard/edit/main/qmk/gpk60_46a*
 
 Make example for this keyboard (after setting up your build environment):
 
