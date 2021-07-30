@@ -1,6 +1,6 @@
-# gpk60_45c
+# gpk60_51o
 
-![gpk60_45c](imgur.com image replace me!)
+![gpk60_51o](imgur.com image replace me!)
 
 *A short description of the keyboard/project*
 
@@ -10,10 +10,10 @@
 
 Make example for this keyboard (after setting up your build environment):
 
-    make gpk60_45c:default
+    make gpk60_51o:default
 
 Flashing example for this keyboard:
 
-    make gpk60_45c:default:flash
+    make gpk60_51o:default:flash
 
 See the [build environment setup](https://docs.qmk.fm/#/getting_started_build_tools) and the [make instructions](https://docs.qmk.fm/#/getting_started_make_guide) for more information. Brand new to QMK? Start with our [Complete Newbs Guide](https://docs.qmk.fm/#/newbs).
