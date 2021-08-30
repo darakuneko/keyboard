@@ -33,9 +33,9 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
   [_LOWER] = LAYOUT(
     S(KC_GRV), S(KC_1), S(KC_2), S(KC_3), S(KC_4), S(KC_5),                              S(KC_6), S(KC_7), S(KC_8), S(KC_9), S(KC_0), KC_TRNS, \
-    KC_LGUI,   KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,                              KC_LEFT, KC_DOWN, KC_UP,   KC_RGHT, KC_TRNS, KC_TRNS, \
+    KC_LGUI,   KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,                              KC_LEFT, KC_DOWN, KC_UP,   KC_RGHT, KC_MINS, KC_EQL, \
     KC_F1,     KC_F2,   KC_F3,   KC_F4,   KC_F5,   KC_F6,    S(KC_MINS),      S(KC_EQL), KC_F7,   KC_F8,   KC_F9,   KC_F10,  KC_F11,  KC_F12,  \
-                                 KC_MHEN, KC_LALT, MO(3),    KC_MINS,         KC_EQL,    KC_DEL,  MO(3),   KC_TRNS                     \
+                                 KC_MHEN, KC_LALT, MO(3),    KC_TRNS,         KC_TRNS,    KC_DEL,  MO(3),   KC_TRNS                     \
   ),
   
   [_RAISE] = LAYOUT(
