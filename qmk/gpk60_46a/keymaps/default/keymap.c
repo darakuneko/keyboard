@@ -40,7 +40,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     KC_ESC,              KC_Q,    KC_W,    KC_E,    KC_R,    KC_T,         KC_Y,    KC_U,    KC_I,    KC_O,    KC_P,    KC_LBRC, KC_RBRC, \
     MT(MOD_LCTL,KC_TAB), KC_A,    KC_S,    KC_D,    KC_F,    KC_G,         KC_H,    KC_J,    KC_K,    KC_L,    KC_SCLN, KC_QUOT, KC_BSLS, \
     KC_LSFT,             KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,         KC_N,    KC_M,    KC_COMM, KC_DOT,  KC_SLSH,      KC_RSFT, \
-    KC_LALT,                             MO(2),   MO(1),   KC_SPC,         KC_ENT,  KC_BSPC, MO(1),                          MO(2) \
+    KC_LALT,                             MO(2) ,   MO(1),   KC_SPC,        KC_ENT,  LT(1,KC_BSPC), MO(2) ,                C(KC_SPC)         \
   ),
      
   /* Lower
@@ -58,7 +58,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     S(KC_GRV), S(KC_1), S(KC_2), S(KC_3), S(KC_4), S(KC_5),     S(KC_6), S(KC_7), S(KC_8), S(KC_9), S(KC_0), S(KC_MINS), S(KC_EQL),
     KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,       KC_LEFT, KC_DOWN, KC_UP, KC_RGHT, KC_TRNS, KC_TRNS, KC_TRNS, \
     KC_F1,     KC_F2,   KC_F3,   KC_F4,   KC_F5,   KC_F6,       KC_F7,   KC_F8,   KC_F9,   KC_F10,   KC_F11, KC_F12, \
-    KC_LGUI,               KC_HENK,    KC_TRNS,    KC_TRNS,      KC_TRNS,    KC_TRNS,    KC_TRNS,                      KC_LGUI \
+    KC_LGUI,               MO(3),    KC_TRNS,    KC_TRNS,      KC_TRNS,    KC_TRNS,    MO(3),                      KC_LGUI \
   ),
   
   /* Raise
@@ -87,14 +87,31 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
    * |------+------+------+------+------+------+      +------+------+------+------+------+------|------|
    * |      |      |      |      |      |      |      |      |      |      |      |      |             |
    * |------+------+------+------+------+------+      +------+------+------+------+------+-------------|
-   * |      |             |      |      |      |      |      |      |      |             |             |
+   * |      |             |      |      |      |      |      |      |      |             |           q  |
    * |------+----+------+------+---------------/      \--------------------+------+------+-------------|
    */
   [_ADJUST] = LAYOUT(
-    _______,  _______,    _______,    _______,    _______,    _______,         _______,    _______,    _______,    _______,    _______,    _______, _______, \
-    _______,  _______,    _______,    _______,    _______,    _______,         _______,    _______,    _______,    _______,    _______,    _______, _______, \
+    RGB_VAI,  RGB_SAI,    RGB_HUI,    RGB_MOD,    _______,    RGB_TOG,         _______,    _______,    _______,    _______,    _______,    _______, _______, \
+    RGB_VAD,  RGB_SAD,    RGB_HUD,    RGB_RMOD,   _______,    _______,         _______,    _______,    _______,    _______,    _______,    _______, _______, \
     _______,  _______,    _______,    _______,    _______,    _______,         _______,    _______,    _______,    _______,    _______,    _______, \
     _______,                          _______,    _______,    _______,         _______,    _______,    _______,                            _______ \
   )
 };
 
+bool led_update_user(led_t led_state) {
+switch(get_highest_layer(layer_state|default_layer_state)) {
+  case _LOWER:
+    rgblight_setrgb(RGB_CYAN);
+    break;
+  case _RAISE:
+    rgblight_setrgb(RGB_GREEN);
+    break;
+  case _ADJUST:
+    rgblight_setrgb(RGB_ORANGE);
+    break;  
+  default:
+    rgblight_setrgb(RGB_MAGENTA);
+    break;
+  }
+  return true;
+};
