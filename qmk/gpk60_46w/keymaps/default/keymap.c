@@ -54,3 +54,20 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  )
 };
 
+bool led_update_user(led_t led_state) {
+switch(get_highest_layer(layer_state|default_layer_state)) {
+  case _LOWER:
+    rgblight_setrgb(RGB_CYAN);
+    break;
+  case _RAISE:
+    rgblight_setrgb(RGB_GREEN);
+    break;
+  case _ADJUST:
+    rgblight_setrgb(RGB_ORANGE);
+    break;  
+  default:
+    rgblight_setrgb(RGB_MAGENTA);
+    break;
+  }
+  return true;
+};
