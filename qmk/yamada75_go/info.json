@@ -1,0 +1,7 @@
+{
+  "name": "GPK60-65O",
+  "vendorId": "0xFEED",
+  "productId": "0x1515",
+  "lighting": "none",
+  "matrix": { "rows": 8 , "cols":  10 }
+}
