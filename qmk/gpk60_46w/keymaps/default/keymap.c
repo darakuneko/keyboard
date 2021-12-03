@@ -63,17 +63,19 @@ void eeconfig_init_user(void) {
 layer_state_t layer_state_set_user(layer_state_t state) {
     switch (get_highest_layer(state)) {
       case _RAISE:
-         rgblight_sethsv_noeeprom_cyan();
-         rgblight_mode_noeeprom(1);
-         break;
+          //cyan
+          rgblight_sethsv_noeeprom(128, 255, rgblight_get_val());
+          rgblight_mode_noeeprom(1);
+          break;
       case _LOWER:
-         rgblight_sethsv_noeeprom_green();
+          //green
+          rgblight_sethsv_noeeprom(85, 255, rgblight_get_val());
           rgblight_mode_noeeprom(1);
           break;
       case _ADJUST:
       default:
          rgblight_reload_from_eeprom();
           break;
-    }
+    } 
   return state;
 }
