@@ -1,7 +1,0 @@
-{
-  "name": "GPK60-47GR1RE",
-  "vendorId": "0xFEED",
-  "productId": "0x1424",
-  "lighting": "none",
-  "matrix": { "rows": 8, "cols": 6 },
-}
