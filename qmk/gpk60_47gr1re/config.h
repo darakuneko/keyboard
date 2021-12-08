@@ -81,7 +81,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define RGB_MATRIX_SPD_STEP 8
 #define RGB_MATRIX_KEYPRESSES
 #define RGB_MATRIX_FRAMEBUFFER_EFFECTS
-#define RGBLIGHT_ANIMATIONSq
+#define RGBLIGHT_ANIMATIONS
 #define DISABLE_RGB_MATRIX_ALPHAS_MODS
 #define DISABLE_RGB_MATRIX_GRADIENT_UP_DOWN
 #define DISABLE_RGB_MATRIX_GRADIENT_LEFT_RIGHT
@@ -123,7 +123,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define DISABLE_RGB_MATRIX_SOLID_MULTISPLASH
 #define OLED_BRIGHTNESS 60
 #define OLED_TIMEOUT 50000
-#define DYNAMIC_KEYMAP_LAYER_COUNT 4
+#define DYNAMIC_KEYMAP_LAYER_COUNT 7
 
 /* Mechanical locking support. Use KC_LCAP, KC_LNUM or KC_LSCR instead in keymap */
 #define LOCKING_SUPPORT_ENABLE
