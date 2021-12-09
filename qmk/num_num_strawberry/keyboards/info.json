@@ -1,7 +1,7 @@
 {
-  "name": "Yamda75 GO",
+  "name": "Num-Num Strawberry!!",
   "vendorId": "0xFEED",
   "productId": "0x1514",
   "lighting": "qmk_rgblight",
-  "matrix": { "rows": 8, "cols":  10 }
+  "matrix": { "rows": 5, "cols":  4 }
 }

@@ -24,7 +24,7 @@ AUDIO_ENABLE = no           # Audio output
 VIA_ENABLE = yes
 ENCODER_ENABLE = yes
 RGB_MATRIX_ENABLE = yes
-OLED_DRIVER_ENABLE = yes
+OLED_ENABLE = yes
 
 SRC += matrix.c
 CUSTOM_MATRIX = yes

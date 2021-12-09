@@ -72,7 +72,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define DRIVER_LED_TOTAL 23
 #define RGB_MATRIX_MAXIMUM_BRIGHTNESS 120
 #define RGB_DISABLE_TIMEOUT 120000
-#define RGB_MATRIX_STARTUP_MODE RGB_MATRIX_BREATHING
 #define RGB_DISABLE_WHEN_USB_SUSPENDED true
 #define RGB_MATRIX_HUE_STEP 8
 #define RGB_MATRIX_SAT_STEP 8

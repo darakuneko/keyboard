@@ -170,6 +170,12 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
   }
 };
 
+void eeconfig_init_user(void) {
+  rgb_matrix_enable();
+  rgb_matrix_sethsv(213, 255, 255);
+  rgb_matrix_mode(1);
+}
+
 led_config_t g_led_config = { {
   // Key Matrix to LED Index
   {  0, 1, 2, 3 },
@@ -191,59 +197,51 @@ led_config_t g_led_config = { {
   } 
 };
 
-void rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {    
+void rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) { 
+    int is_layer = get_highest_layer(layer_state|default_layer_state);  
+    HSV hsv = {0, 255, rgblight_get_val()};
+    if (is_layer == 1) {
+      hsv.h = 128; //CYAN
+    } else if (is_layer == 2)  {
+      hsv.h = 85; //GREEN
+    } else if (is_layer == 3)  {
+      hsv.h = 191; //PURPLE
+    } else if (is_layer == 4)  {
+      hsv.h = 170; //BLUE
+    } else if (is_layer == 5)  {
+      hsv.h = 64; //CHARTREUSE
+    } else if (is_layer == 6)  {
+      hsv.h = 11; //CORAL
+      hsv.s = 176;
+    } else if (is_layer == 7)  {
+      hsv.h = 36; //GOLD
+    } else if (is_layer == 8)  {
+      hsv.h = 234; //PINK
+      hsv.s = 128; //PINK
+    } else if (is_layer == 9)  {
+      hsv.h = 106; //SPRINGGREEN
+    } else if (is_layer == 10)  {
+      hsv.h = 85; //TEAL  
+    } else if (is_layer == 11)  {
+      hsv.h = 25; //ORANGE
+    } else if (is_layer == 12)  {
+      hsv.h = 0; //WHITE
+      hsv.s = 0;
+    } else if (is_layer == 13)  {
+      hsv.h = 0; //RED
+    } else if (is_layer == 14)  {
+      hsv.h = 85; //AZURE
+      hsv.s = 102; 
+    } else if (is_layer == 15)  {
+      hsv.h = 43; //yellow
+    } else {
+      hsv.h = 213; //MAGENTA
+    }
+    RGB rgb = hsv_to_rgb(hsv);
+ 
     for (uint8_t i = led_min; i <= led_max; i++) {
         if (HAS_FLAGS(g_led_config.flags[i], 0x02)) {
-        switch(get_highest_layer(layer_state|default_layer_state)) {
-            case 0:
-                rgb_matrix_set_color(i, RGB_MAGENTA);
-                break;
-            case 1:
-                rgb_matrix_set_color(i, RGB_CYAN);
-                break;
-            case 2:
-                rgb_matrix_set_color(i, RGB_GREEN);
-                break;
-            case 3:
-                rgb_matrix_set_color(i, RGB_AZURE);
-                break;
-            case 4:
-                rgb_matrix_set_color(i, RGB_BLUE);
-                break;
-            case 5:
-                rgb_matrix_set_color(i, RGB_CHARTREUSE);
-                break;
-            case 6:
-                rgb_matrix_set_color(i, RGB_CORAL);
-                break;
-            case 7:
-                rgb_matrix_set_color(i, RGB_GOLD);
-                break;
-            case 8:
-                rgb_matrix_set_color(i, RGB_PINK);
-                break;
-            case 9:
-                rgb_matrix_set_color(i, RGB_GOLDENROD);
-                break;
-            case 10:
-                rgb_matrix_set_color(i, RGB_SPRINGGREEN);
-                break;
-            case 11:
-                rgb_matrix_set_color(i, RGB_TEAL);
-                break;
-            case 12:
-                rgb_matrix_set_color(i, RGB_TURQUOISE);
-                break;
-            case 13:
-                rgb_matrix_set_color(i, RGB_WHITE);
-                break;
-            case 14:
-                rgb_matrix_set_color(i, RGB_RED);
-                break;
-            default:
-                rgb_matrix_set_color(i, RGB_YELLOW);
-                break;
+          rgb_matrix_set_color(i, rgb.r, rgb.g, rgb.b);
         }
-      }
     }
 };
