@@ -395,7 +395,7 @@ void raw_hid_receive(uint8_t *data, uint8_t length) {
         case id_qmk_rc_sned_string: {
             qmk_rc_receive(qmk_rc_buffer, QMK_RC_BUFFER_MAX, data, length);
         }
-        #if defined(OLED_DRIVER_ENABLE)
+        #if defined(OLED_ENABLE)
         case id_qmk_is_olde_on: {
             char* oled_on = (is_oled_on() ? "is_oled_on                      " : "is_oled_off                     ");
             raw_hid_send((uint8_t*)oled_on, 32);
