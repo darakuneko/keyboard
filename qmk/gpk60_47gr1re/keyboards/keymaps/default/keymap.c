@@ -157,13 +157,15 @@ void rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
     } else if (is_layer == 2)  {
       hsv.h = 85; //GREEN
     } else if (is_layer == 3)  {
-      hsv.h = 191; //PURPLE
+      hsv.h = 43; //YELLOW
     } else if (is_layer == 4)  {
-      hsv.h = 170; //BLUE
+      hsv.h = 11; //CORAL
     } else if (is_layer == 5)  {
+      hsv.h = 0; //RED
+    } else if (is_layer == 6)  {
       hsv.h = 64; //CHARTREUSE
     } else {
-      hsv.h = 213; //MAGENTA
+      hsv.h = 191; //PURPLE
     }
     RGB rgb = hsv_to_rgb(hsv);
  
