@@ -70,7 +70,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
 void eeconfig_init_user(void) {
   rgblight_enable();
-  rgblight_sethsv_magenta();
+  rgblight_sethsv_purple();
   rgblight_mode(1);
 }
 
@@ -84,16 +84,16 @@ layer_state_t layer_state_set_user(layer_state_t state) {
           rgblight_sethsv_noeeprom(85, 255, rgblight_get_val());
           rgblight_mode_noeeprom(1);
           break;
-      case 3: //PURPLE
-          rgblight_sethsv_noeeprom(191, 255, rgblight_get_val());
+      case 3: //YELLOW
+          rgblight_sethsv_noeeprom(43, 255, rgblight_get_val());
           rgblight_mode_noeeprom(1);
           break;
-      case 4: //BLUE
-          rgblight_sethsv_noeeprom(170, 255, rgblight_get_val());
+      case 4: //CORAL
+          rgblight_sethsv_noeeprom(11, 255, rgblight_get_val());
           rgblight_mode_noeeprom(1);
           break;
-      case 5: //CHARTREUSE
-          rgblight_sethsv_noeeprom(64, 255, rgblight_get_val());
+      case 5: //RED
+          rgblight_sethsv_noeeprom(0, 255, rgblight_get_val());
           rgblight_mode_noeeprom(1);
           break;       
       case 6: 

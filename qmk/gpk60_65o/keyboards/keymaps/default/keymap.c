@@ -58,3 +58,39 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   _______,  _______,  _______,  _______,  _______,  RESET,  _______,  _______,  _______,  _______,  _______,  _______, _______
   ),
 };
+
+void eeconfig_init_user(void) {
+  rgblight_enable();
+  rgblight_sethsv_purple();
+  rgblight_mode(1);
+}
+
+layer_state_t layer_state_set_user(layer_state_t state) {
+    switch (get_highest_layer(state)) {
+      case 1: //CYAN
+          rgblight_sethsv_noeeprom(128, 255, rgblight_get_val());
+          rgblight_mode_noeeprom(1);
+          break;
+      case 2: //GREEN
+          rgblight_sethsv_noeeprom(85, 255, rgblight_get_val());
+          rgblight_mode_noeeprom(1);
+          break;
+      case 3: //YELLOW
+          rgblight_sethsv_noeeprom(43, 255, rgblight_get_val());
+          rgblight_mode_noeeprom(1);
+          break;
+      case 4: //CORAL
+          rgblight_sethsv_noeeprom(11, 255, rgblight_get_val());
+          rgblight_mode_noeeprom(1);
+          break;
+      case 5: //RED
+          rgblight_sethsv_noeeprom(0, 255, rgblight_get_val());
+          rgblight_mode_noeeprom(1);
+          break;       
+      case 6: 
+      default:
+         rgblight_reload_from_eeprom();
+          break;
+    } 
+  return state;
+}
