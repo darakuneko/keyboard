@@ -1,0 +1,7 @@
+{
+  "name": "Num-Num Strawberry!!",
+  "vendorId": "0xFEED",
+  "productId": "0x1514",
+  "lighting": "qmk_rgblight",
+  "matrix": { "rows": 5, "cols":  4 }
+}
