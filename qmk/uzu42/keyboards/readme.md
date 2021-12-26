@@ -1,4 +1,4 @@
-# uzu42
+# uzu42　custom firmware
 
 [![uzu42](https://i.imgur.com/CQTfebZ.jpg)](https://imgur.com/gallery/aKOKBgq)
 
@@ -13,3 +13,5 @@ Make example for this keyboard (after setting up your build environment):
     make uzu42:default
 
 See the [build environment setup](https://docs.qmk.fm/#/getting_started_build_tools) and the [make instructions](https://docs.qmk.fm/#/getting_started_make_guide) for more information. Brand new to QMK? Start with our [Complete Newbs Guide](https://docs.qmk.fm/#/newbs).
+
+custum by daraku-neko
