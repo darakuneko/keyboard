@@ -14,7 +14,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include QMK_KEYBOARD_H
-#include "encoder_action.c"
 
 // Defines names for use in layer keycodes and the keymap
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
@@ -115,6 +114,16 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   )
 };
 
+keyevent_t encoder1_ccw = {
+    .key = (keypos_t){.row = 4, .col = 0},
+    .pressed = false
+};
+
+keyevent_t encoder1_cw = {
+    .key = (keypos_t){.row = 4, .col = 1},
+    .pressed = false
+}; 
+
 
 void matrix_scan_user(void) {
     if (IS_PRESSED(encoder1_ccw)) {
@@ -131,6 +140,34 @@ void matrix_scan_user(void) {
 }
 
 bool is_hold = false;
+
+void encoder_layer_up(void) { 
+  if (get_highest_layer(layer_state|default_layer_state) == 15 ) {
+    layer_clear();
+  } else {
+    layer_move(get_highest_layer(layer_state)+1); 
+  }
+} 
+
+void encoder_layer_down(void) { 
+    if (get_highest_layer(layer_state|default_layer_state) == 0 ) {
+      layer_move(15);
+    } else {
+      layer_move(get_highest_layer(layer_state)-1); 
+    }
+}  
+
+void encoder_ccw(void) {
+  encoder1_ccw.pressed = true;
+  encoder1_ccw.time = (timer_read() | 1);
+  is_hold ? encoder_layer_down() : action_exec(encoder1_ccw);
+}
+
+void encoder_cw(void) {
+  encoder1_cw.pressed = true;
+  encoder1_cw.time = (timer_read() | 1);
+  is_hold ? encoder_layer_up() : action_exec(encoder1_cw);
+}
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
   static uint16_t pressed_time = 0;
