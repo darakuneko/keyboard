@@ -121,8 +121,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define DISABLE_RGB_MATRIX_SOLID_SPLASH
 #define DISABLE_RGB_MATRIX_SOLID_MULTISPLASH
 
-#define DYNAMIC_KEYMAP_LAYER_COUNT 16
-
 /* Mechanical locking support. Use KC_LCAP, KC_LNUM or KC_LSCR instead in keymap */
 #define LOCKING_SUPPORT_ENABLE
 /* Locking resynchronize hack */
