@@ -1,0 +1,7 @@
+{
+  "name": "Yamada Alice",
+  "vendorId": "0xFEED",
+  "productId": "0x1516",
+  "lighting": "none",
+  "matrix": { "rows": 8, "cols": 12 }
+}
