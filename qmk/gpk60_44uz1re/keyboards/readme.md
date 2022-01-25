@@ -1,6 +1,6 @@
-# yamada_alice
+# gpk60_44uz1re
 
-![yamada_alice](imgur.com image replace me!)
+![gpk60_44uz1re](imgur.com image replace me!)
 
 *A short description of the keyboard/project*
 
@@ -10,10 +10,10 @@
 
 Make example for this keyboard (after setting up your build environment):
 
-    make yamada_alice:default
+    make gpk60_44uz1re:default
 
 Flashing example for this keyboard:
 
-    make yamada_alice:default:flash
+    make gpk60_44uz1re:default:flash
 
 See the [build environment setup](https://docs.qmk.fm/#/getting_started_build_tools) and the [make instructions](https://docs.qmk.fm/#/getting_started_make_guide) for more information. Brand new to QMK? Start with our [Complete Newbs Guide](https://docs.qmk.fm/#/newbs).
