@@ -68,8 +68,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //#define BACKLIGHT_BREATHING
 
 #define RGB_DI_PIN D3
-#define RGBLED_NUM 60
-#define DRIVER_LED_TOTAL 60
+#define RGBLED_NUM 61
+#define DRIVER_LED_TOTAL 61
 #define RGB_MATRIX_MAXIMUM_BRIGHTNESS 150
 #define RGB_MATRIX_CENTER { 112, 32 }
 #define RGB_DISABLE_TIMEOUT 120000
