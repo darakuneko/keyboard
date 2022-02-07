@@ -22,7 +22,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     KC_Q,        KC_W,    KC_E,    KC_R,    KC_T,                                   KC_Y,    KC_U,    KC_I,    KC_O,    KC_P,
     KC_A,        KC_S,    KC_D,    KC_F,    KC_G,                                   KC_H,    KC_J,    KC_K,    KC_L,    KC_SCLN,
     SFT_T(KC_Z), KC_X,    KC_C,    KC_V,    KC_B,    KC_LBRC,        KC_RBRC,       KC_N,    KC_M,    KC_COMM, KC_DOT,  SFT_T(KC_SLSH),
-    KC_TAB,      KC_LGUI, KC_LALT, KC_LCTL, KC_ESC,  LT(1, KC_SPC),  LT(1, KC_ENT), KC_BSPC, KC_LCTL, KC_QUOT, KC_MINS, KC_EQL,
+    KC_ESC,      KC_TAB,  KC_LGUI, KC_LALT, KC_LCTL, LT(1, KC_SPC),  LT(1, KC_ENT), KC_BSPC, KC_LCTL, KC_QUOT, KC_MINS, KC_EQL,
     KC_F24,      C(KC_Z), C(KC_Y) 
   ),
 
@@ -46,7 +46,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     KC_Q,        KC_W,    KC_E,    KC_R,    KC_T,                                   KC_Y,    KC_U,    KC_I,    KC_O,    KC_P,
     KC_A,        KC_S,    KC_D,    KC_F,    KC_G,                                   KC_H,    KC_J,    KC_K,    KC_L,    KC_SCLN,
     SFT_T(KC_Z), KC_X,    KC_C,    KC_V,    KC_B,    KC_LBRC,        KC_RBRC,       KC_N,    KC_M,    KC_COMM, KC_DOT,  SFT_T(KC_SLSH),
-    KC_TAB,      KC_LGUI, KC_LALT, KC_LCTL, KC_ESC,  LT(4, KC_SPC),  LT(4, KC_ENT), KC_BSPC, KC_LCTL, KC_QUOT, KC_MINS, KC_EQL,
+    KC_ESC,      KC_TAB,  KC_LGUI, KC_LALT, KC_LCTL, LT(4, KC_SPC),  LT(4, KC_ENT), KC_BSPC, KC_LCTL, KC_QUOT, KC_MINS, KC_EQL,
     KC_F24,      C(KC_Z), C(KC_Y) 
   ),
 
@@ -99,39 +99,62 @@ void matrix_scan_user(void) {
     }
 }
 
-bool encoder_update_user(uint8_t index, bool clockwise) {
-    if (index == 0) { /* First encoder */
-        if (clockwise) {
-            encoder1_cw.pressed = true;
-            encoder1_cw.time = (timer_read() | 1);
-            action_exec(encoder1_cw);
-        } else {
-            encoder1_ccw.pressed = true;
-            encoder1_ccw.time = (timer_read() | 1);
-            action_exec(encoder1_ccw);
-        }
-    }
+bool is_hold = false;
 
+void encoder_layer_up(void) { 
+  if (get_highest_layer(layer_state|default_layer_state) == 6 ) {
+    layer_clear();
+  } else {
+    layer_move(get_highest_layer(layer_state)+1); 
+  }
+} 
+
+void encoder_layer_down(void) { 
+    if (get_highest_layer(layer_state|default_layer_state) == 0 ) {
+      layer_move(6);
+    } else {
+      layer_move(get_highest_layer(layer_state)-1); 
+    }
+}  
+
+void encoder_ccw(void) {
+  encoder1_ccw.pressed = true;
+  encoder1_ccw.time = (timer_read() | 1);
+  is_hold ? encoder_layer_down() : action_exec(encoder1_ccw);
+}
+
+void encoder_cw(void) {
+  encoder1_cw.pressed = true;
+  encoder1_cw.time = (timer_read() | 1);
+  is_hold ? encoder_layer_up() : action_exec(encoder1_cw);
+}
+
+bool encoder_update_user(uint8_t index, bool clockwise) {
+    if (index == 0) { clockwise ? encoder_cw() : encoder_ccw(); }
     return true;
 }
 
-
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
-  switch (keycode) {
+  static uint16_t pressed_time = 0;
+  switch (keycode) {  
     case KC_F24:
-      if (record->event.pressed) {
-        if (get_highest_layer(layer_state|default_layer_state) == 6 ) {
-          layer_clear();
-        } else {
-          layer_invert(get_highest_layer(layer_state)+1); 
+      if (record->event.pressed) {    
+        pressed_time = record->event.time;
+        if(!is_hold){
+            encoder_layer_up();
         }
-      } 
+        is_hold = false;
+      } else {
+          if((record->event.time - pressed_time) > TAPPING_TERM) {
+            is_hold = true;
+          }
+      }
       return false;
     default:
       return true;
   }
 };
- 
+
 led_config_t g_led_config = { {
   // Key Matrix to LED Index
   { 0, 4,  8, 12, 16, 20, 24, 28, 32, 36, 40, 44,},
@@ -189,29 +212,17 @@ void render_rgb_status(void) {
                 break;
             case 1:
                 oled_write_ln_P(PSTR("RGB: SOLID_COLOR"), false);
-                break;
+                break;                
             case 2:
-                oled_write_ln_P(PSTR("RGB: BREATHING"), false);
-                break;
-            case 3:
                 oled_write_ln_P(PSTR("RGB: CYCLE_ALL"), false);
                 break;
+            case 3:
+                oled_write_ln_P(PSTR("RGB: RAINBOW_MOVING"), false);
+                  break;    
             case 4:
-                oled_write_ln_P(PSTR("RGB: RAINBOW_BEACON"), false);
-                  break;                  
-            case 5:
                   oled_write_ln_P(PSTR("RGB: SLD_REACT_SMPL"), false);
                   break;
-            case 6:
-                  oled_write_ln_P(PSTR("RGB: SLD_REACT"), false);
-                  break;
-            case 7:
-                  oled_write_ln_P(PSTR("RGB: SLD_REACT_WIDE"), false);
-                  break;
-            case 8:
-                  oled_write_ln_P(PSTR("RGB: SLD_REACT_CROSS"), false);
-                  break;
-            case 9:
+            case 5:
                   oled_write_ln_P(PSTR("RGB: SPLASH"), false);
                   break;      
             default:
