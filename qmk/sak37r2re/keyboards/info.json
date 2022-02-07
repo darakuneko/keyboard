@@ -1,0 +1,7 @@
+{
+  "name": "SAK37R2RE",
+  "vendorId": "0xFEED",
+  "productId": "0x1517",
+  "lighting": "none",
+  "matrix": { "rows": 7, "cols": 5 }
+}
