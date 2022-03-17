@@ -60,7 +60,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   ),
   
   [7] = LAYOUT(
-    RGB_RMOD, RGB_VAI,    RGB_SAI,    RGB_HUI,    RGB_TOG,    _______,  
+    RGB_RMOD, RGB_VAI,    RGB_SAI,    RGB_HUI,    RGB_TOG,    RESET,  
     KC_F24,   RGB_VAD,    RGB_SAD,    RGB_HUD,    _______,   _______,
     RGB_MOD,_______,    _______,    _______,    _______,    _______
   )
@@ -94,7 +94,7 @@ void matrix_scan_user(void) {
 bool is_hold = false;
 
 void encoder_layer_up(void) { 
-  if (get_highest_layer(layer_state|default_layer_state) == 15 ) {
+  if (get_highest_layer(layer_state|default_layer_state) == 7 ) {
     layer_clear();
   } else {
     layer_move(get_highest_layer(layer_state)+1); 
@@ -103,7 +103,7 @@ void encoder_layer_up(void) {
 
 void encoder_layer_down(void) { 
     if (get_highest_layer(layer_state|default_layer_state) == 0 ) {
-      layer_move(15);
+      layer_move(7);
     } else {
       layer_move(get_highest_layer(layer_state)-1); 
     }
