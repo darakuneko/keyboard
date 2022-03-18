@@ -1,0 +1,7 @@
+{
+  "name": "Yamada Kakuko",
+  "vendorId": "0xFEED",
+  "productId": "0x1518",
+  "lighting": "none",
+  "matrix": { "rows": 11, "cols": 11 }
+}
