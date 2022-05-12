@@ -26,8 +26,9 @@ ENCODER_ENABLE = yes
 RGB_MATRIX_ENABLE = yes
 OLED_ENABLE = yes
 
-SRC += matrix.c
 CUSTOM_MATRIX = yes
+SRC += matrix.c
+
 
 SRC += qmk_rc.c
 LTO_ENABLE=yes	

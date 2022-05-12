@@ -64,7 +64,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     RGB_VAI,  RGB_SAI,    RGB_HUI,    RGB_MOD,    KC_NO,    RGB_TOG,         KC_NO,    KC_NO,    KC_NO,    KC_NO,    KC_NO,    KC_NO, KC_NO, KC_NO,\
     RGB_VAD,  RGB_SAD,    RGB_HUD,    RGB_RMOD,   KC_NO,    KC_NO,         KC_NO,    KC_NO,    KC_NO,    KC_NO,    KC_NO,    KC_NO, RESET, \
     KC_NO,  KC_NO,    KC_NO,    KC_NO,    KC_NO,    KC_NO,         KC_NO,    KC_NO,    KC_NO,    KC_NO,    KC_NO,    KC_NO, \
-    KC_NO,                          KC_NO,    KC_NO,    KC_NO,         KC_NO,    KC_NO,    KC_NO,    KC_NO,    KC_F24,     RGB_RMOD, RGB_MOD \
+    KC_NO,                          KC_NO,    KC_NO,    KC_NO,         RESET,    KC_NO,    KC_NO,    KC_NO,    KC_F24,     RGB_RMOD, RGB_MOD \
   )
 };
 
@@ -211,17 +211,32 @@ void render_rgb_status(void) {
                 break;
             case 1:
                 oled_write_ln_P(PSTR("RGB: SOLID_COLOR"), false);
-                break;                
+                break;        
             case 2:
+                oled_write_ln_P(PSTR("RGB: GRADIENT_UPDN"), false);
+                break;      
+            case 3:
+                oled_write_ln_P(PSTR("RGB: GRADIENT_LR"), false);
+                break;    
+            case 4:
                 oled_write_ln_P(PSTR("RGB: CYCLE_ALL"), false);
                 break;
-            case 3:
-                oled_write_ln_P(PSTR("RGB: RAINBOW_MOVING"), false);
+            case 5:
+                oled_write_ln_P(PSTR("RGB: CYCLE_LR"), false);
+                break;
+            case 6:
+                oled_write_ln_P(PSTR("RGB: CYCLE_UPDN"), false);
+                  break;  
+            case 7:
+                oled_write_ln_P(PSTR("RGB: PIXEL_FLOW"), false);
                   break;    
-            case 4:
+            case 8:
+                oled_write_ln_P(PSTR("RGB: TYPING_HEATMAP"), false);
+                  break;   
+            case 9:
                   oled_write_ln_P(PSTR("RGB: SLD_REACT_SMPL"), false);
                   break;
-            case 5:
+            case 10:
                   oled_write_ln_P(PSTR("RGB: SPLASH"), false);
                   break;      
             default:
@@ -230,12 +245,12 @@ void render_rgb_status(void) {
     }
 }
 
-void oled_task_user(void) {
-    char layer[12];    
-
-    snprintf(layer, sizeof(layer), "Layer: %d", get_highest_layer(layer_state));
-
+bool oled_task_user(void) {
+  
     oled_write_ln_P(PSTR("GPK60-47GR1RE"), false);
-    oled_write_ln(layer, false);
+    oled_write_P(PSTR("Layer:"), false);
+    oled_write_ln(get_u8_str(get_highest_layer(layer_state), ' '), false);
     render_rgb_status();
+
+    return false;
 }
