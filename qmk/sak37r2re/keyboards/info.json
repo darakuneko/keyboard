@@ -1,7 +1,7 @@
 {
-  "name": "SAK37R2RE",
+  "name": "Num-Num Strawberry!!",
   "vendorId": "0xFEED",
-  "productId": "0x1517",
-  "lighting": "none",
-  "matrix": { "rows": 7, "cols": 5 }
+  "productId": "0x1514",
+  "lighting": "qmk_rgblight",
+  "matrix": { "rows": 5, "cols":  4 }
 }

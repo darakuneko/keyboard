@@ -67,9 +67,9 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   ),
 
   [6] = LAYOUT(
-    RGB_VAI, RGB_SAI, RGB_HUI, RGB_MOD, RGB_TOG,                    _______, _______, _______, _______, _______,
-    RGB_VAD, RGB_SAD, RGB_HUD, RGB_RMOD, RESET,                     _______, _______, _______, _______, _______,
-    _______, _______, _______, _______, _______,  _______, _______, _______, _______, _______, _______, _______,
+    RGB_VAI, RGB_SAI, RGB_HUI, RGB_SPI, RGB_TOG,                    _______, _______, _______, _______, _______,
+    RGB_VAD, RGB_SAD, RGB_HUD, RGB_SPD, RESET,                     RESET, _______, _______, _______, _______,
+    DT_PRNT, DT_UP, DT_DOWN, _______, _______,  _______, _______, _______, _______, _______, _______, _______,
     _______, _______, _______, _______, _______,  _______, _______, _______, _______, _______, _______, _______,
     KC_F24,  RGB_RMOD, RGB_MOD    
   )
@@ -229,7 +229,7 @@ void render_rgb_status(void) {
                 oled_write_ln_P(PSTR("RGB: CYCLE_UPDN"), false);
                   break;  
             case 7:
-                oled_write_ln_P(PSTR("RGB: PIXEL_FLOW"), false);
+                oled_write_ln_P(PSTR("RGB: PIXEL_FRACTAL"), false);
                   break;    
             case 8:
                 oled_write_ln_P(PSTR("RGB: TYPING_HEATMAP"), false);

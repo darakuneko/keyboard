@@ -55,7 +55,7 @@ enum qmk_rc_commands_quantum {
 #ifndef QMK_RC_DISABLE_DEFAULT_COMMANDS
 void qmk_rc_process_command_quantum(qmk_rc_command_t* command) {
   switch (command->id) {
-#ifdef OLED_ENABLE
+#ifdef OLED_DRIVER_ENABLE
     case OLED_OFF: oled_off(); break;
     case OLED_ON: oled_on(); break;
     case OLED_WRITE:

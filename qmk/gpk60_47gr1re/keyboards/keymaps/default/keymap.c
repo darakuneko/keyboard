@@ -61,9 +61,9 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   ),
 
   [6] = LAYOUT(
-    RGB_VAI,  RGB_SAI,    RGB_HUI,    RGB_MOD,    KC_NO,    RGB_TOG,         KC_NO,    KC_NO,    KC_NO,    KC_NO,    KC_NO,    KC_NO, KC_NO, KC_NO,\
-    RGB_VAD,  RGB_SAD,    RGB_HUD,    RGB_RMOD,   KC_NO,    KC_NO,         KC_NO,    KC_NO,    KC_NO,    KC_NO,    KC_NO,    KC_NO, RESET, \
-    KC_NO,  KC_NO,    KC_NO,    KC_NO,    KC_NO,    KC_NO,         KC_NO,    KC_NO,    KC_NO,    KC_NO,    KC_NO,    KC_NO, \
+    RGB_VAI,  RGB_SAI,    RGB_HUI,    RGB_SPI,    RGB_MOD,    RGB_TOG,         KC_NO,    KC_NO,    KC_NO,    KC_NO,    KC_NO,    KC_NO, KC_NO, KC_NO,\
+    RGB_VAD,  RGB_SAD,    RGB_HUD,    RGB_SPD,   RGB_RMOD,    KC_NO,         KC_NO,    KC_NO,    KC_NO,    KC_NO,    KC_NO,    KC_NO, RESET, \
+    DT_PRNT,  DT_UP,    DT_DOWN,    KC_NO,    KC_NO,    KC_NO,         KC_NO,    KC_NO,    KC_NO,    KC_NO,    KC_NO,    KC_NO, \
     KC_NO,                          KC_NO,    KC_NO,    KC_NO,         RESET,    KC_NO,    KC_NO,    KC_NO,    KC_F24,     RGB_RMOD, RGB_MOD \
   )
 };
@@ -228,15 +228,18 @@ void render_rgb_status(void) {
                 oled_write_ln_P(PSTR("RGB: CYCLE_UPDN"), false);
                   break;  
             case 7:
-                oled_write_ln_P(PSTR("RGB: PIXEL_FLOW"), false);
-                  break;    
-            case 8:
-                oled_write_ln_P(PSTR("RGB: TYPING_HEATMAP"), false);
+                oled_write_ln_P(PSTR("RGB: CYCLE_PINWH"), false);
                   break;   
+            case 8:
+                oled_write_ln_P(PSTR("RGB: PIXEL_RAIN"), false);
+                  break;    
             case 9:
-                  oled_write_ln_P(PSTR("RGB: SLD_REACT_SMPL"), false);
+                oled_write_ln_P(PSTR("RGB: PIXEL_FRACTAL"), false);
                   break;
             case 10:
+                  oled_write_ln_P(PSTR("RGB: SLD_REACT_SMPL"), false);
+                  break;
+            case 11:
                   oled_write_ln_P(PSTR("RGB: SPLASH"), false);
                   break;      
             default:

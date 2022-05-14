@@ -244,7 +244,7 @@ void rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
     RGB rgb = hsv_to_rgb(hsv);
 
     for (uint8_t i = led_min; i <= led_max; i++) {
-        if ((HAS_FLAGS(g_led_config.flags[i], 0x01) || HAS_FLAGS(g_led_config.flags[i], 0x02)) && rgb_matrix_config.mode != 41) {
+        if ((HAS_FLAGS(g_led_config.flags[i], 0x01) || HAS_FLAGS(g_led_config.flags[i], 0x02)) && rgb_matrix_config.mode != 38) {
             rgb_matrix_set_color(i, rgb.r, rgb.g, rgb.b);
         }
     }

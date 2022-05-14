@@ -26,19 +26,14 @@
  * represents the switch matrix.
  */
 #define LAYOUT( \
-    k01, k02, k03, k04, k05, k06, k07, k08, k09, k10, k11,  \
-    k12, k13, k14, k15, k16, k17, k18, k19, k20, k21, k22,  \
-    k23, k24, k25, k26, k27, k28, k29, k30, k31, k32, k33,   \
-    k34, k35, k36, k37, k39, ELCCW2, ELCW2, k38, ELCCW1, ELCW1 \
+    ELCCW, k01, k02, k03, k04, k05,  \
+    k16, k06, k07, k08, k09, k10,  \
+    ELCW, k11, k12, k13, k14, k15  \
 ) \
 { \
-    { k01, k09, k17, k25, k33, }, \
-    { k02, k10, k18, k26, k34, }, \
-    { k03, k11, k19, k27, k35,  }, \
-    { k04, k12, k20, k28, k36,  }, \
-    { k05, k13, k21, k29, k37,  }, \
-    { k06, k14, k22, k30, k38,  }, \
-    { k07, k15, k23, k31, k39,  }, \
-    { k08, k16, k24, k32, KC_NO, } , \
-    { ELCCW1, ELCW1, ELCCW2, ELCW2, KC_NO } \
+    { k01, k02, k03, k04, }, \
+    { k05, k06, k07, k08, }, \
+    { k09, k10, k11, k12, }, \
+    { k13, k14, k15, k16, },\
+    { ELCCW, ELCW, KC_NO, KC_NO } \
 }

@@ -60,8 +60,8 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
   [5] = LAYOUT(
              KC_QUOT, S(KC_QUOT),  KC_MINS, S(KC_MINS), KC_EQL,   S(KC_EQL),  KC_LBRC, KC_RBRC, S(KC_LBRC), S(KC_RBRC),   _______, 
-    RESET,   RGB_VAI, RGB_SAI, RGB_HUI, RGB_MOD,  RGB_TOG,     _______,  _______,  _______,  _______,  _______, 
-    _______, RGB_VAD, RGB_SAD, RGB_HUD, RGB_RMOD, _______,     _______,  _______,  _______,  _______,  _______,
+    RESET,   RGB_VAI, RGB_SAI, RGB_HUI, RGB_SPI,  RGB_TOG,     DT_PRNT,  DT_UP,    DT_DOWN,  _______,  _______, 
+    _______, RGB_VAD, RGB_SAD, RGB_HUD, RGB_SPD, _______,     _______,  _______,  _______,  _______,  _______,
                                            _______,  _______,     _______,  _______,    \
     KC_F24,  C(KC_Z), C(KC_Y),     KC_F24,  RGB_MOD, RGB_RMOD    \
   ),
