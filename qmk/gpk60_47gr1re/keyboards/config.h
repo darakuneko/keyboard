@@ -82,11 +82,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define ENABLE_RGB_MATRIX_GRADIENT_UP_DOWN
 #define ENABLE_RGB_MATRIX_GRADIENT_LEFT_RIGHT
 #define ENABLE_RGB_MATRIX_CYCLE_ALL
-#define ENABLE_RGB_MATRIX_CYCLE_LEFT_RIGHT
-#define ENABLE_RGB_MATRIX_CYCLE_UP_DOWN
-#define ENABLE_RGB_MATRIX_CYCLE_PINWHEEL
-#define ENABLE_RGB_MATRIX_PIXEL_RAIN
-#define ENABLE_RGB_MATRIX_PIXEL_FRACTAL
 #define ENABLE_RGB_MATRIX_SOLID_REACTIVE_SIMPLE
 #define ENABLE_RGB_MATRIX_SPLASH
 #define RGB_MATRIX_STARTUP_MODE RGB_MATRIX_CYCLE_ALL
@@ -96,9 +91,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define DYNAMIC_KEYMAP_LAYER_COUNT 7
 
 /* Mechanical locking support. Use KC_LCAP, KC_LNUM or KC_LSCR instead in keymap */
-#define LOCKING_SUPPORT_ENABLE
+#undef LOCKING_SUPPORT_ENABLE
 /* Locking resynchronize hack */
-#define LOCKING_RESYNC_ENABLE
+#undef LOCKING_RESYNC_ENABLE
 
 #define DEBOUNCE 50
 

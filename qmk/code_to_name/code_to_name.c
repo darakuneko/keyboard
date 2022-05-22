@@ -325,7 +325,7 @@ const char code_to_name22528[] PROGMEM = {
   "TT(7)   "
 };
 
-//23552 - 23774
+//23552 - 23745
 const char code_to_name23552[] PROGMEM = {
   "RESET   "
   "DEBUG   "
@@ -521,6 +521,10 @@ const char code_to_name23552[] PROGMEM = {
   "BL_TOGG "
   "BL_STEP "
   "BL_BRTG "
+};
+
+//23746 - 23765
+const char code_to_name23746[] PROGMEM = {
   "RGB_TOG "
   "RGB_M_FR"
   "RGB_M_RE"
@@ -534,13 +538,16 @@ const char code_to_name23552[] PROGMEM = {
   "RGB_SPD "
   "RGB_M_PL"
   "RGB_M_BR"
-  "RGB_M_BR"
+  "RGB_M_RN"
+  "RGB_M_SW"
   "RGB_M_SN"
   "RGB_M_KN"
   "RGB_M_XM"
   "RGB_M_GR"
-  "RGB_M_RG"
-  "RGB_M_RT"
+  "RGB_M_T"
+};
+
+const char code_to_name23767[] PROGMEM = {
   "        "
   "LSPO    "
   "RSPC    "
@@ -577,6 +584,14 @@ const char code_to_name23849[] PROGMEM = {
   "OUT_BT  "
 };
 
+//23906 - 23908
+const char code_to_name23906[] PROGMEM = {
+  "DT_PRNT "
+  "DT_UP   "
+  "DT_DOWN "
+};
+
+
 //24336 - 24353
 const char code_to_name24336[] PROGMEM = {
   "FN_MO13"
@@ -598,3 +613,5 @@ const char code_to_name24336[] PROGMEM = {
   "MACRO14 "
   "MACRO15 "
 };
+
+

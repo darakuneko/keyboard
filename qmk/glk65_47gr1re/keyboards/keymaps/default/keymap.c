@@ -16,6 +16,7 @@
 #include QMK_KEYBOARD_H
 #include <stdio.h>
 #include <string.h>
+#include "code_to_name.c"
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   [0] = LAYOUT(
@@ -129,6 +130,9 @@ bool encoder_update_user(uint8_t index, bool clockwise) {
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
   static uint16_t pressed_time = 0;
+  if (record->event.pressed) {
+    set_code_to_name(keycode);
+  }
   switch (keycode) {  
     case KC_F24:
       if (record->event.pressed) {    
@@ -221,37 +225,13 @@ void render_rgb_status(void) {
                 break;    
             case 4:
                 oled_write_ln_P(PSTR("RGB: CYCLE_ALL"), false);
-                break;
+                break;     
             case 5:
-                oled_write_ln_P(PSTR("RGB: CYCLE_LR"), false);
-                break;
-            case 6:
-                oled_write_ln_P(PSTR("RGB: CYCLE_UPDN"), false);
-                  break;  
-            case 7:
-                oled_write_ln_P(PSTR("RGB: CYCLE_PINWH"), false);
-                  break;   
-            case 8:
-                oled_write_ln_P(PSTR("RGB: PIXEL_RAIN"), false);
-                  break;    
-            case 9:
-                oled_write_ln_P(PSTR("RGB: PIXEL_FRACTAL"), false);
-                  break;
-            case 10:
-                  oled_write_ln_P(PSTR("RGB: TYPING_HEATMAP"), false);
-                  break;
-            case 11:
                   oled_write_ln_P(PSTR("RGB: SLD_REACT_SMPL"), false);
                   break;
-            case 12:
-                  oled_write_ln_P(PSTR("RGB: SLD_REACT_NXS"), false);
-                  break;                 
-            case 13:
+            case 6:
                   oled_write_ln_P(PSTR("RGB: SPLASH"), false);
-                  break;    
-            case 14:
-                  oled_write_ln_P(PSTR("RGB: SOLID_SPLASH"), false);
-                  break;    
+                  break;
             default:
                 oled_write_ln_P(PSTR("RGB: OTHER"), false);
                 break;
@@ -259,11 +239,10 @@ void render_rgb_status(void) {
 }
 
 bool oled_task_user(void) {
-  
-    oled_write_ln_P(PSTR("GLK65-47GR1RE"), false);
+    oled_write_P(PSTR("KN: "), false);
+    oled_write_ln(name, false);
     oled_write_P(PSTR("Layer:"), false);
-    oled_write_ln(get_u8_str(get_highest_layer(layer_state), ' '), false);
+    oled_write_ln(get_u8_str(get_highest_layer(layer_state), ' '), false);     
     render_rgb_status();
-
     return false;
 }
