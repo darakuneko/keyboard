@@ -94,7 +94,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 /* Locking resynchronize hack */
 #undef LOCKING_RESYNC_ENABLE
 
-#define DEBOUNCE 50
+#define DEBOUNCE 5
 
 /* If defined, GRAVE_ESC will always act as ESC when CTRL is held.
  * This is useful for the Windows task manager shortcut (ctrl+shift+esc).
