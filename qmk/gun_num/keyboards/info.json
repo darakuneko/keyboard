@@ -1,0 +1,7 @@
+{
+    "keyboard_name": "GUN-NUM",
+    "vendorId": "0xFEED",
+    "productId": "0x1521",
+    "lighting": "qmk_rgblight",
+    "matrix": { "rows": 4, "cols":  11 }
+}
