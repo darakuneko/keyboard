@@ -13,7 +13,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     [0] = LAYOUT(
         KC_1, KC_2, KC_3, KC_4, KC_5,
         KC_6, KC_7, KC_8, KC_9, KC_0,
-        KC_DOT, KC_QUOT, KC_COMMA, KC_SPC, KC_BSPC,
+        KC_COMMA, KC_DOT, KC_QUOT,  KC_SPC, KC_BSPC,
         KC_ESC, KC_ENT, 
         KC_F24, C(KC_C), C(KC_Z), C(KC_V), C(KC_Y),
         C(KC_PMNS), C(KC_PPLS)
@@ -21,7 +21,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     [1] = LAYOUT(
         KC_1, KC_2, KC_3, KC_4, KC_5,
         KC_6, KC_7, KC_8, KC_9, KC_0,
-        KC_DOT, KC_QUOT, KC_COMMA, KC_SPC, KC_BSPC,
+        KC_COMMA, KC_DOT, KC_QUOT,  KC_SPC, KC_BSPC,
         KC_BTN2, KC_BTN1, 
         KC_F24, KC_MS_UP, KC_MS_LEFT, KC_MS_DOWN, KC_MS_RIGHT,
         RGB_RMOD, RGB_MOD
