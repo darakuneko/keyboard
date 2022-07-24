@@ -1,0 +1,7 @@
+{
+  "name": "Yamada Shozo",
+  "vendorId": "0xFEED",
+  "productId": "0x1522",
+  "lighting": "none",
+  "matrix": { "rows": 9, "cols": 8 }
+}
