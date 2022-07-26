@@ -16,7 +16,7 @@
 #include QMK_KEYBOARD_H
 #include <stdio.h>
 #include <string.h>
-#include "code_to_name.c"
+#include "code_to_name.c" 
 #include "bongo.h"
 
 
@@ -28,15 +28,15 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     LCTL_T(KC_TAB),    KC_Q,            KC_W,            KC_E,            KC_R,     KC_T,   KC_F7,   KC_F8,   KC_F9,   KC_F10,  KC_F11,  KC_F12,       KC_Y,    KC_U,    KC_I,             KC_O,         KC_P,    RCTL_T(KC_BSLS), 
     LSFT_T(KC_DEL),    KC_A,            KC_S,            KC_D,            KC_F,     KC_G,                                                              KC_H,    KC_J,    KC_K,             KC_L,         KC_SCLN, RSFT_T(KC_QUOT),
                        KC_Z,            KC_X,            KC_C,            KC_V,     KC_B,                                                              KC_N,    KC_M,    KC_COMM,          KC_DOT,       KC_SLSH, 
-                                        KC_LBRC,         LALT_T(KC_RBRC), TG(1),    LCTL(KC_V),                                                        LCTL(KC_X), KC_BSPC, RALT_T(KC_MINS),  KC_EQL,
-                                                                          KC_SPC,   LCTL(KC_C),                                                        LCTL(KC_A), KC_ENT, 
+                                        KC_LBRC,         LALT_T(KC_RBRC), MO(1),    LCTL(KC_V),                                                        RCTL(KC_X), KC_BSPC, RALT_T(KC_MINS),  KC_EQL,
+                                                                          KC_SPC,   LCTL(KC_C),                                                        RCTL(KC_A), KC_ENT, 
                                                                                                     LCTL(KC_Z), KC_F24, RCTL(KC_Y)
   ),
 
   [1] = LAYOUT(
-    XXXXXXX,   XXXXXXX,    XXXXXXX,   XXXXXXX,   XXXXXXX,    XXXXXXX,   XXXXXXX,   XXXXXXX,   XXXXXXX,   XXXXXXX,  XXXXXXX,   XXXXXXX,    XXXXXXX,    XXXXXXX,    XXXXXXX,    XXXXXXX,    XXXXXXX,    XXXXXXX,
-    XXXXXXX,   XXXXXXX,    XXXXXXX,   XXXXXXX,   XXXXXXX,    XXXXXXX,   XXXXXXX,   XXXXXXX,   XXXXXXX,   XXXXXXX,  XXXXXXX,   XXXXXXX,    XXXXXXX,    XXXXXXX,    XXXXXXX,    XXXXXXX,    XXXXXXX,    XXXXXXX, 
-    KC_TRNS,   XXXXXXX,    XXXXXXX,   XXXXXXX,   XXXXXXX,    XXXXXXX,                                                                     KC_LEFT,    KC_DOWN,    KC_UP,      KC_RGHT,    XXXXXXX,    KC_TRNS,
+    KC_TRNS,   XXXXXXX,    XXXXXXX,   XXXXXXX,   XXXXXXX,    XXXXXXX,   XXXXXXX,   XXXXXXX,   XXXXXXX,   XXXXXXX,  XXXXXXX,   XXXXXXX,    XXXXXXX,    XXXXXXX,    XXXXXXX,    XXXXXXX,    XXXXXXX,    XXXXXXX,
+    KC_TRNS,   XXXXXXX,    XXXXXXX,   XXXXXXX,   XXXXXXX,    XXXXXXX,   XXXXXXX,   XXXXXXX,   XXXXXXX,   XXXXXXX,  XXXXXXX,   XXXXXXX,    XXXXXXX,    XXXXXXX,    XXXXXXX,    XXXXXXX,    XXXXXXX,    XXXXXXX, 
+    KC_TRNS,   XXXXXXX,    XXXXXXX,   XXXXXXX,   XXXXXXX,    XXXXXXX,                                                                     KC_LEFT,    KC_DOWN,    KC_UP,      KC_RGHT,    XXXXXXX,    XXXXXXX,
                XXXXXXX,    XXXXXXX,   XXXXXXX,   XXXXXXX,    XXXXXXX,                                                                     XXXXXXX,    XXXXXXX,    XXXXXXX,    XXXXXXX,    XXXXXXX, 
                            XXXXXXX,   XXXXXXX,   KC_TRNS,    KC_TRNS,                                                                     KC_TRNS,    KC_TRNS,    XXXXXXX,    XXXXXXX,
                                                  KC_TRNS,    KC_TRNS,                                                                     KC_TRNS,    KC_TRNS, 
@@ -58,15 +58,15 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     LCTL_T(KC_TAB),    KC_Q,            KC_W,            KC_E,            KC_R,     KC_T,   KC_F7,   KC_F8,   KC_F9,   KC_F10,  KC_F11,  KC_F12,       KC_Y,    KC_U,    KC_I,             KC_O,         KC_P,    RCTL_T(KC_BSLS), 
     LSFT_T(KC_DEL),    KC_A,            KC_S,            KC_D,            KC_F,     KC_G,                                                              KC_H,    KC_J,    KC_K,             KC_L,         KC_SCLN, RSFT_T(KC_QUOT),
                        KC_Z,            KC_X,            KC_C,            KC_V,     KC_B,                                                              KC_N,    KC_M,    KC_COMM,          KC_DOT,       KC_SLSH, 
-                                        KC_LBRC,         LALT_T(KC_RBRC), TG(4),    LCTL(KC_V),                                                        LCTL(KC_X), KC_BSPC, RALT_T(KC_MINS),  KC_EQL,
-                                                                          KC_SPC,   LCTL(KC_C),                                                        LCTL(KC_Q), KC_ENT, 
+                                        KC_LBRC,         LALT_T(KC_RBRC), MO(4),    LCTL(KC_V),                                                        RCTL(KC_X), KC_BSPC, RALT_T(KC_MINS),  KC_EQL,
+                                                                          KC_SPC,   LCTL(KC_C),                                                        RCTL(KC_Q), KC_ENT, 
                                                                                                     LCTL(KC_Z), KC_F24, RCTL(KC_Y)
   ),
 
   [4] = LAYOUT(
-    XXXXXXX,   XXXXXXX,    XXXXXXX,   XXXXXXX,   XXXXXXX,    XXXXXXX,   XXXXXXX,   XXXXXXX,   XXXXXXX,   XXXXXXX,  XXXXXXX,   XXXXXXX,    XXXXXXX,    XXXXXXX,    XXXXXXX,    XXXXXXX,    XXXXXXX,    XXXXXXX,
-    XXXXXXX,   XXXXXXX,    XXXXXXX,   XXXXXXX,   XXXXXXX,    XXXXXXX,   XXXXXXX,   XXXXXXX,   XXXXXXX,   XXXXXXX,  XXXXXXX,   XXXXXXX,    XXXXXXX,    XXXXXXX,    XXXXXXX,    XXXXXXX,    XXXXXXX,    XXXXXXX, 
-    KC_TRNS,   XXXXXXX,    XXXXXXX,   XXXXXXX,   XXXXXXX,    XXXXXXX,                                                                     KC_LEFT,    KC_DOWN,    KC_UP,      KC_RGHT,    XXXXXXX,    KC_TRNS,
+    KC_TRNS,   XXXXXXX,    XXXXXXX,   XXXXXXX,   XXXXXXX,    XXXXXXX,   XXXXXXX,   XXXXXXX,   XXXXXXX,   XXXXXXX,  XXXXXXX,   XXXXXXX,    XXXXXXX,    XXXXXXX,    XXXXXXX,    XXXXXXX,    XXXXXXX,    XXXXXXX,
+    KC_TRNS,   XXXXXXX,    XXXXXXX,   XXXXXXX,   XXXXXXX,    XXXXXXX,   XXXXXXX,   XXXXXXX,   XXXXXXX,   XXXXXXX,  XXXXXXX,   XXXXXXX,    XXXXXXX,    XXXXXXX,    XXXXXXX,    XXXXXXX,    XXXXXXX,    XXXXXXX, 
+    KC_TRNS,   XXXXXXX,    XXXXXXX,   XXXXXXX,   XXXXXXX,    XXXXXXX,                                                                     KC_LEFT,    KC_DOWN,    KC_UP,      KC_RGHT,    XXXXXXX,    XXXXXXX,
                XXXXXXX,    XXXXXXX,   XXXXXXX,   XXXXXXX,    XXXXXXX,                                                                     XXXXXXX,    XXXXXXX,    XXXXXXX,    XXXXXXX,    XXXXXXX, 
                            XXXXXXX,   XXXXXXX,   KC_TRNS,    KC_TRNS,                                                                     KC_TRNS,    KC_TRNS,    XXXXXXX,    XXXXXXX,
                                                  KC_TRNS,    KC_TRNS,                                                                     KC_TRNS,    KC_TRNS, 
