@@ -25,23 +25,23 @@ uint8_t kp = 0;
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   [0] = LAYOUT(
     LGUI_T(KC_ESC),    KC_1,            KC_2,            KC_3,            KC_4,     KC_5,   KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,   KC_F6,        KC_6,    KC_7,    KC_8,             KC_9,         KC_0,    RGUI_T(KC_GRV),
-    LALT_T(KC_TAB),    KC_Q,            KC_W,            KC_E,            KC_R,     KC_T,   KC_F7,   KC_F8,   KC_F9,   KC_F10,  KC_F11,  KC_F12,       KC_Y,    KC_U,    KC_I,             KC_O,         KC_P,    RALT_T(KC_BSLS), 
-    LSFT_T(KC_DEL),    RCTL_T(KC_A),            KC_S,            KC_D,            KC_F,     KC_G,                                                              KC_H,    KC_J,    KC_K,             KC_L,         KC_SCLN, RSFT_T(KC_QUOT),
+    LCTL_T(KC_TAB),    KC_Q,            KC_W,            KC_E,            KC_R,     KC_T,   KC_F7,   KC_F8,   KC_F9,   KC_F10,  KC_F11,  KC_F12,       KC_Y,    KC_U,    KC_I,             KC_O,         KC_P,    RCTL_T(KC_BSLS), 
+    LSFT_T(KC_DEL),    KC_A,            KC_S,            KC_D,            KC_F,     KC_G,                                                              KC_H,    KC_J,    KC_K,             KC_L,         KC_SCLN, RSFT_T(KC_QUOT),
                        KC_Z,            KC_X,            KC_C,            KC_V,     KC_B,                                                              KC_N,    KC_M,    KC_COMM,          KC_DOT,       KC_SLSH, 
-                                        KC_LBRC,         LCTL_T(KC_RBRC), MO(1),    LCTL(KC_V),                                                        LCTL(KC_A), KC_BSPC, RCTL_T(KC_MINS),  KC_EQL,
-                                                                          KC_SPC,   LCTL(KC_C),                                                        LCTL(KC_X), KC_ENT, 
+                                        KC_LBRC,         LALT_T(KC_RBRC), TG(1),    LCTL(KC_V),                                                        LCTL(KC_X), KC_BSPC, RALT_T(KC_MINS),  KC_EQL,
+                                                                          KC_SPC,   LCTL(KC_C),                                                        LCTL(KC_A), KC_ENT, 
                                                                                                     LCTL(KC_Z), KC_F24, RCTL(KC_Y)
   ),
 
   [1] = LAYOUT(
-    RGB_VAI,   RGB_SAI,    RGB_HUI,   RGB_SPI,   RGB_MOD,    RGB_TOG,   QK_BOOT,   XXXXXXX,   XXXXXXX,   XXXXXXX,   XXXXXXX,  XXXXXXX,    XXXXXXX,    XXXXXXX,    XXXXXXX,    XXXXXXX,    XXXXXXX,    XXXXXXX,
-    RGB_VAD,   RGB_SAD,    RGB_HUD,   RGB_SPD,   RGB_RMOD,   XXXXXXX,   XXXXXXX,   XXXXXXX,   XXXXXXX,   XXXXXXX,   XXXXXXX,  XXXXXXX,    XXXXXXX,    XXXXXXX,    XXXXXXX,    XXXXXXX,    XXXXXXX,    XXXXXXX,
-    XXXXXXX,   DT_PRNT,    DT_UP,     DT_DOWN,   XXXXXXX,    XXXXXXX,                                                                     KC_LEFT,    KC_DOWN,    KC_UP,      KC_RGHT,    XXXXXXX,    XXXXXXX,
+    XXXXXXX,   XXXXXXX,    XXXXXXX,   XXXXXXX,   XXXXXXX,    XXXXXXX,   XXXXXXX,   XXXXXXX,   XXXXXXX,   XXXXXXX,  XXXXXXX,   XXXXXXX,    XXXXXXX,    XXXXXXX,    XXXXXXX,    XXXXXXX,    XXXXXXX,    XXXXXXX,
+    XXXXXXX,   XXXXXXX,    XXXXXXX,   XXXXXXX,   XXXXXXX,    XXXXXXX,   XXXXXXX,   XXXXXXX,   XXXXXXX,   XXXXXXX,  XXXXXXX,   XXXXXXX,    XXXXXXX,    XXXXXXX,    XXXXXXX,    XXXXXXX,    XXXXXXX,    XXXXXXX, 
+    KC_TRNS,   XXXXXXX,    XXXXXXX,   XXXXXXX,   XXXXXXX,    XXXXXXX,                                                                     KC_LEFT,    KC_DOWN,    KC_UP,      KC_RGHT,    XXXXXXX,    KC_TRNS,
                XXXXXXX,    XXXXXXX,   XXXXXXX,   XXXXXXX,    XXXXXXX,                                                                     XXXXXXX,    XXXXXXX,    XXXXXXX,    XXXXXXX,    XXXXXXX, 
-                           XXXXXXX,   XXXXXXX,   XXXXXXX,    XXXXXXX,                                                                     XXXXXXX,    XXXXXXX,    XXXXXXX,    XXXXXXX,
-                                                 XXXXXXX,    XXXXXXX,                                                                     XXXXXXX,    XXXXXXX, 
-                                                                                      RGB_RMOD, KC_F24, RGB_MOD
-  ),
+                           XXXXXXX,   XXXXXXX,   KC_TRNS,    KC_TRNS,                                                                     KC_TRNS,    KC_TRNS,    XXXXXXX,    XXXXXXX,
+                                                 KC_TRNS,    KC_TRNS,                                                                     KC_TRNS,    KC_TRNS, 
+                                                                                      LCTL(KC_Z), KC_F24, RCTL(KC_Y)
+ ),
 
   [2] = LAYOUT(
     XXXXXXX,   XXXXXXX,    XXXXXXX,   XXXXXXX,   XXXXXXX,    XXXXXXX,   XXXXXXX,   XXXXXXX,   XXXXXXX,   XXXXXXX,  XXXXXXX,   XXXXXXX,    XXXXXXX,    XXXXXXX,    XXXXXXX,    XXXXXXX,    XXXXXXX,    XXXXXXX,
@@ -55,28 +55,38 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
   [3] = LAYOUT(
     LGUI_T(KC_ESC),    KC_1,            KC_2,            KC_3,            KC_4,     KC_5,   KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,   KC_F6,        KC_6,    KC_7,    KC_8,             KC_9,         KC_0,    RGUI_T(KC_GRV),
-    LALT_T(KC_TAB),    KC_Q,            KC_W,            KC_E,            KC_R,     KC_T,   KC_F7,   KC_F8,   KC_F9,   KC_F10,  KC_F11,  KC_F12,       KC_Y,    KC_U,    KC_I,             KC_O,         KC_P,    RALT_T(KC_BSLS), 
+    LCTL_T(KC_TAB),    KC_Q,            KC_W,            KC_E,            KC_R,     KC_T,   KC_F7,   KC_F8,   KC_F9,   KC_F10,  KC_F11,  KC_F12,       KC_Y,    KC_U,    KC_I,             KC_O,         KC_P,    RCTL_T(KC_BSLS), 
     LSFT_T(KC_DEL),    KC_A,            KC_S,            KC_D,            KC_F,     KC_G,                                                              KC_H,    KC_J,    KC_K,             KC_L,         KC_SCLN, RSFT_T(KC_QUOT),
                        KC_Z,            KC_X,            KC_C,            KC_V,     KC_B,                                                              KC_N,    KC_M,    KC_COMM,          KC_DOT,       KC_SLSH, 
-                                        KC_LBRC,         LCTL_T(KC_RBRC), MO(4),    LCTL(KC_V),                                                        LCTL(KC_A), KC_BSPC, RCTL_T(KC_MINS),  KC_EQL,
-                                                                          KC_SPC,   LCTL(KC_C),                                                        LCTL(KC_X), KC_ENT, 
+                                        KC_LBRC,         LALT_T(KC_RBRC), TG(4),    LCTL(KC_V),                                                        LCTL(KC_X), KC_BSPC, RALT_T(KC_MINS),  KC_EQL,
+                                                                          KC_SPC,   LCTL(KC_C),                                                        LCTL(KC_Q), KC_ENT, 
                                                                                                     LCTL(KC_Z), KC_F24, RCTL(KC_Y)
   ),
 
   [4] = LAYOUT(
-    RGB_VAI,   RGB_SAI,    RGB_HUI,   RGB_SPI,   RGB_MOD,    RGB_TOG,   QK_BOOT,   XXXXXXX,   XXXXXXX,   XXXXXXX,   XXXXXXX,  XXXXXXX,    XXXXXXX,    XXXXXXX,    XXXXXXX,    XXXXXXX,    XXXXXXX,    XXXXXXX,
-    RGB_VAD,   RGB_SAD,    RGB_HUD,   RGB_SPD,   RGB_RMOD,   XXXXXXX,   XXXXXXX,   XXXXXXX,   XXXXXXX,   XXXXXXX,   XXXXXXX,  XXXXXXX,    XXXXXXX,    XXXXXXX,    XXXXXXX,    XXXXXXX,    XXXXXXX,    XXXXXXX,
-    XXXXXXX,   DT_PRNT,    DT_UP,     DT_DOWN,   XXXXXXX,    XXXXXXX,                                                                     KC_LEFT,    KC_DOWN,    KC_UP,      KC_RGHT,    XXXXXXX,    XXXXXXX,
+    XXXXXXX,   XXXXXXX,    XXXXXXX,   XXXXXXX,   XXXXXXX,    XXXXXXX,   XXXXXXX,   XXXXXXX,   XXXXXXX,   XXXXXXX,  XXXXXXX,   XXXXXXX,    XXXXXXX,    XXXXXXX,    XXXXXXX,    XXXXXXX,    XXXXXXX,    XXXXXXX,
+    XXXXXXX,   XXXXXXX,    XXXXXXX,   XXXXXXX,   XXXXXXX,    XXXXXXX,   XXXXXXX,   XXXXXXX,   XXXXXXX,   XXXXXXX,  XXXXXXX,   XXXXXXX,    XXXXXXX,    XXXXXXX,    XXXXXXX,    XXXXXXX,    XXXXXXX,    XXXXXXX, 
+    KC_TRNS,   XXXXXXX,    XXXXXXX,   XXXXXXX,   XXXXXXX,    XXXXXXX,                                                                     KC_LEFT,    KC_DOWN,    KC_UP,      KC_RGHT,    XXXXXXX,    KC_TRNS,
                XXXXXXX,    XXXXXXX,   XXXXXXX,   XXXXXXX,    XXXXXXX,                                                                     XXXXXXX,    XXXXXXX,    XXXXXXX,    XXXXXXX,    XXXXXXX, 
-                           XXXXXXX,   XXXXXXX,   XXXXXXX,    XXXXXXX,                                                                     XXXXXXX,    XXXXXXX,    XXXXXXX,    XXXXXXX,
-                                                 XXXXXXX,    XXXXXXX,                                                                     XXXXXXX,    XXXXXXX, 
-                                                                                      RGB_RMOD, KC_F24, RGB_MOD
+                           XXXXXXX,   XXXXXXX,   KC_TRNS,    KC_TRNS,                                                                     KC_TRNS,    KC_TRNS,    XXXXXXX,    XXXXXXX,
+                                                 KC_TRNS,    KC_TRNS,                                                                     KC_TRNS,    KC_TRNS, 
+                                                                                      LCTL(KC_Z), KC_F24, RCTL(KC_Y)
   ),
 
   [5] = LAYOUT(
     XXXXXXX,   XXXXXXX,    XXXXXXX,   XXXXXXX,   XXXXXXX,    XXXXXXX,   XXXXXXX,   XXXXXXX,   XXXXXXX,   XXXXXXX,  XXXXXXX,   XXXXXXX,    XXXXXXX,    XXXXXXX,    XXXXXXX,    XXXXXXX,    XXXXXXX,    XXXXXXX,
     XXXXXXX,   XXXXXXX,    XXXXXXX,   XXXXXXX,   XXXXXXX,    XXXXXXX,   XXXXXXX,   XXXXXXX,   XXXXXXX,   XXXXXXX,  XXXXXXX,   XXXXXXX,    XXXXXXX,    XXXXXXX,    XXXXXXX,    XXXXXXX,    XXXXXXX,    XXXXXXX, 
     XXXXXXX,   XXXXXXX,    XXXXXXX,   XXXXXXX,   XXXXXXX,    XXXXXXX,                                                                     XXXXXXX,    XXXXXXX,    XXXXXXX,    XXXXXXX,    XXXXXXX,    XXXXXXX,
+               XXXXXXX,    XXXXXXX,   XXXXXXX,   XXXXXXX,    XXXXXXX,                                                                     XXXXXXX,    XXXXXXX,    XXXXXXX,    XXXXXXX,    XXXXXXX, 
+                           XXXXXXX,   XXXXXXX,   XXXXXXX,    XXXXXXX,                                                                     XXXXXXX,    XXXXXXX,    XXXXXXX,    XXXXXXX,
+                                                 XXXXXXX,    XXXXXXX,                                                                     XXXXXXX,    XXXXXXX, 
+                                                                                        XXXXXXX, KC_F24, XXXXXXX
+  ),
+
+  [6] = LAYOUT(
+    RGB_VAI,   RGB_SAI,    RGB_HUI,   RGB_SPI,   RGB_MOD,    RGB_TOG,   QK_BOOT,   XXXXXXX,   XXXXXXX,   XXXXXXX,   XXXXXXX,  XXXXXXX,    XXXXXXX,    XXXXXXX,    XXXXXXX,    XXXXXXX,    XXXXXXX,    XXXXXXX,
+    RGB_VAD,   RGB_SAD,    RGB_HUD,   RGB_SPD,   RGB_RMOD,   XXXXXXX,   XXXXXXX,   XXXXXXX,   XXXXXXX,   XXXXXXX,   XXXXXXX,  XXXXXXX,    XXXXXXX,    XXXXXXX,    XXXXXXX,    XXXXXXX,    XXXXXXX,    XXXXXXX,
+    XXXXXXX,   DT_PRNT,    DT_UP,     DT_DOWN,   XXXXXXX,    XXXXXXX,                                                                     XXXXXXX,    XXXXXXX,    XXXXXXX,    XXXXXXX,    XXXXXXX,    XXXXXXX,
                XXXXXXX,    XXXXXXX,   XXXXXXX,   XXXXXXX,    XXXXXXX,                                                                     XXXXXXX,    XXXXXXX,    XXXXXXX,    XXXXXXX,    XXXXXXX, 
                            XXXXXXX,   XXXXXXX,   XXXXXXX,    XXXXXXX,                                                                     XXXXXXX,    XXXXXXX,    XXXXXXX,    XXXXXXX,
                                                  XXXXXXX,    XXXXXXX,                                                                     XXXXXXX,    XXXXXXX, 
@@ -112,7 +122,7 @@ void matrix_scan_user(void) {
 bool is_hold = false;
 
 void encoder_layer_up(void) { 
-  if (get_highest_layer(layer_state|default_layer_state) == 5 ) {
+  if (get_highest_layer(layer_state|default_layer_state) == 6 ) {
     layer_clear();
   } else {
     layer_move(get_highest_layer(layer_state)+1); 
@@ -121,7 +131,7 @@ void encoder_layer_up(void) {
 
 void encoder_layer_down(void) { 
     if (get_highest_layer(layer_state|default_layer_state) == 0 ) {
-      layer_move(5);
+      layer_move(6);
     } else {
       layer_move(get_highest_layer(layer_state)-1); 
     }
