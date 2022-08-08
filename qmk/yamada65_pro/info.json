@@ -6,7 +6,7 @@
   "features": {
       "audio": false,
       "backlight": false,
-      "bootmagic": true,
+      "bootmagic": false,
       "command": false,
       "console": false,
       "encoder": false,
