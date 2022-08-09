@@ -26,7 +26,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define MANUFACTURER Daraku-Neko
 #define PRODUCT      Yamada65 Pro
 
-#define DEBOUNCE 10
+#define MATRIX_IO_DELAY 500
+#define QMK_KEYS_PER_SCAN 10
+#define DEBOUNCE 25
 #define LOCKING_SUPPORT_ENABLE
 #define LOCKING_RESYNC_ENABLE
 #define DYNAMIC_KEYMAP_LAYER_COUNT 6
