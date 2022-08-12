@@ -25,4 +25,3 @@ VIA_ENABLE = yes
 SRC += qmk_rc.c
 DYNAMIC_TAPPING_TERM_ENABLE = yes
 WPM_ENABLE = yes
-DEBOUNCE_TYPE = sym_eager_pk
