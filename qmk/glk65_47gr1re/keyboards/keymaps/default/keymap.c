@@ -18,54 +18,64 @@
 #include <string.h>
 #include "code_to_name.c"
 
+
+typedef union {
+  uint32_t raw;
+  struct {
+    bool     underglow :1;
+  };
+} user_config_t;
+
+user_config_t user_config;
+
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   [0] = LAYOUT(
-    KC_ESC,              KC_Q,    KC_W,    KC_E,    KC_R,    KC_T,           KC_Y,    KC_U,    KC_I,    KC_O,    KC_P,    KC_LBRC, KC_RBRC, KC_BSLS, \
-    MT(MOD_LCTL,KC_TAB), KC_A,    KC_S,    KC_D,    KC_F,    KC_G,           KC_H,    KC_J,    KC_K,    KC_L,    KC_SCLN, KC_QUOT, KC_ENT, \
-    KC_LSFT,             KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,           KC_N,    KC_M,    KC_COMM, KC_DOT,  KC_SLSH, KC_RSFT, \
-    KC_LGUI,                      KC_LALT, MO(2),   MO(1),         KC_SPC,   LT(1,KC_BSPC), LT(2, KC_MINS),  KC_EQL,   KC_F24,  C(KC_Z), C(KC_Y) \
+    KC_ESC,              KC_Q,    KC_W,    KC_E,    KC_R,    KC_T,           KC_Y,    KC_U,    KC_I,    KC_O,    KC_P,    KC_LBRC, KC_RBRC, KC_BSLS, 
+    MT(MOD_LCTL,KC_TAB), KC_A,    KC_S,    KC_D,    KC_F,    KC_G,           KC_H,    KC_J,    KC_K,    KC_L,    KC_SCLN, KC_QUOT, KC_ENT, 
+    KC_LSFT,             KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,           KC_N,    KC_M,    KC_COMM, KC_DOT,  KC_SLSH, KC_RSFT, 
+    KC_LGUI,                      KC_LALT, MO(2),   MO(1),         KC_SPC,   LT(1,KC_BSPC), LT(2, KC_MINS),  KC_EQL,   KC_F24,  C(KC_Z), C(KC_Y) 
   ),
 
   [1] = LAYOUT(
     S(KC_GRV), S(KC_1), S(KC_2), S(KC_3), S(KC_4), S(KC_5),         S(KC_6), S(KC_7), S(KC_8), S(KC_9), S(KC_0), S(KC_LBRC), S(KC_RBRC), S(KC_BSLS),
-    KC_GRV,    KC_1,    KC_2,    KC_3,    KC_4,    KC_5,            KC_LEFT, KC_DOWN, KC_UP,   KC_RGHT, S(KC_SCLN), S(KC_QUOT), KC_NO,  \
-    KC_NO,     KC_6,    KC_7,    KC_8,    KC_9,    KC_0,            KC_NO,   KC_NO, KC_NO,   KC_NO,  S(KC_SLSH),  S(KC_RSFT), \
-    KC_NO,                   KC_NO, KC_NO, KC_NO,        KC_NO,     KC_DEL, S(KC_MINS), S(KC_EQL), KC_F24, C(KC_PMNS), C(KC_PPLS) \
+    KC_GRV,    KC_1,    KC_2,    KC_3,    KC_4,    KC_5,            KC_LEFT, KC_DOWN, KC_UP,   KC_RGHT, S(KC_SCLN), S(KC_QUOT), KC_NO,  
+    KC_NO,     KC_6,    KC_7,    KC_8,    KC_9,    KC_0,            KC_NO,   KC_NO, KC_NO,   KC_NO,  S(KC_SLSH),  S(KC_RSFT), 
+    KC_NO,                   KC_NO, KC_NO, KC_NO,        KC_NO,     KC_DEL, S(KC_MINS), S(KC_EQL), KC_F24, C(KC_PMNS), C(KC_PPLS) 
   ),
   
   [2] = LAYOUT(
-    KC_NO,    KC_F1,  KC_F2,   KC_F3,   KC_F4,   KC_F5,   KC_F6,       KC_F7,   KC_F8,   KC_F9,   KC_F10,  KC_F11,  KC_F12,  KC_NO,  \
-    KC_NO,  KC_NO,    KC_NO,    KC_NO,    KC_NO,    KC_NO,         KC_NO,    KC_NO,    KC_NO,    KC_NO,    KC_NO,    KC_NO, KC_NO,  \
-    KC_NO,  KC_NO,    KC_NO,    KC_NO,    KC_NO,    KC_NO,         KC_NO,    KC_NO,    KC_NO,    KC_NO,    KC_NO,    KC_NO, \
-    KC_NO,                          KC_NO,    KC_NO,    KC_NO,         KC_NO,    KC_NO,    KC_NO,    KC_NO,    KC_F24,     KC_NO, KC_NO   \
+    KC_NO,    KC_F1,  KC_F2,   KC_F3,   KC_F4,   KC_F5,   KC_F6,       KC_F7,   KC_F8,   KC_F9,   KC_F10,  KC_F11,  KC_F12,  KC_NO,  
+    KC_NO,  KC_NO,    KC_NO,    KC_NO,    KC_NO,    KC_NO,         KC_NO,    KC_NO,    KC_NO,    KC_NO,    KC_NO,    KC_NO, KC_NO,  
+    KC_NO,  KC_NO,    KC_NO,    KC_NO,    KC_NO,    KC_NO,         KC_NO,    KC_NO,    KC_NO,    KC_NO,    KC_NO,    KC_NO, 
+    KC_NO,                          KC_NO,    KC_NO,    KC_NO,         KC_NO,    KC_NO,    KC_NO,    KC_NO,    KC_F24,     KC_NO, KC_NO   
   ),
 
   [3] = LAYOUT(
-    KC_ESC,              KC_Q,    KC_W,    KC_E,    KC_R,    KC_T,           KC_Y,    KC_U,    KC_I,    KC_O,    KC_P,    KC_LBRC, KC_RBRC, KC_BSLS, \
-    MT(MOD_LCTL,KC_TAB), KC_A,    KC_S,    KC_D,    KC_F,    KC_G,           KC_H,    KC_J,    KC_K,    KC_L,    KC_SCLN, KC_QUOT, KC_ENT, \
-    KC_LSFT,             KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,           KC_N,    KC_M,    KC_COMM, KC_DOT,  KC_SLSH, KC_RSFT, \
-    KC_LGUI,                      KC_LALT, MO(5),   MO(4),         KC_SPC,   LT(4,KC_BSPC), LT(5, KC_MINS),  KC_EQL,   KC_F24,  C(KC_Z), C(KC_Y) \
+    KC_ESC,              KC_Q,    KC_W,    KC_E,    KC_R,    KC_T,           KC_Y,    KC_U,    KC_I,    KC_O,    KC_P,    KC_LBRC, KC_RBRC, KC_BSLS, 
+    MT(MOD_LCTL,KC_TAB), KC_A,    KC_S,    KC_D,    KC_F,    KC_G,           KC_H,    KC_J,    KC_K,    KC_L,    KC_SCLN, KC_QUOT, KC_ENT, 
+    KC_LSFT,             KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,           KC_N,    KC_M,    KC_COMM, KC_DOT,  KC_SLSH, KC_RSFT, 
+    KC_LGUI,                      KC_LALT, MO(5),   MO(4),         KC_SPC,   LT(4,KC_BSPC), LT(5, KC_MINS),  KC_EQL,   KC_F24,  C(KC_Z), C(KC_Y) 
   ),
 
   [4] = LAYOUT(
     S(KC_GRV), S(KC_1), S(KC_2), S(KC_3), S(KC_4), S(KC_5),         S(KC_6), S(KC_7), S(KC_8), S(KC_9), S(KC_0), S(KC_LBRC), S(KC_RBRC), S(KC_BSLS),
-    KC_GRV,    KC_1,    KC_2,    KC_3,    KC_4,    KC_5,            KC_LEFT, KC_DOWN, KC_UP,   KC_RGHT, S(KC_SCLN), S(KC_QUOT), KC_NO,  \
-    KC_NO,     KC_6,    KC_7,    KC_8,    KC_9,    KC_0,            KC_NO,   KC_NO, KC_NO,   KC_NO,  S(KC_SLSH),  S(KC_RSFT), \
-    KC_NO,                   KC_NO, KC_NO, KC_NO,        KC_NO,     KC_DEL, S(KC_MINS), S(KC_EQL), KC_F24, C(KC_PMNS), C(KC_PPLS) \
+    KC_GRV,    KC_1,    KC_2,    KC_3,    KC_4,    KC_5,            KC_LEFT, KC_DOWN, KC_UP,   KC_RGHT, S(KC_SCLN), S(KC_QUOT), KC_NO,  
+    KC_NO,     KC_6,    KC_7,    KC_8,    KC_9,    KC_0,            KC_NO,   KC_NO, KC_NO,   KC_NO,  S(KC_SLSH),  S(KC_RSFT), 
+    KC_NO,                   KC_NO, KC_NO, KC_NO,        KC_NO,     KC_DEL, S(KC_MINS), S(KC_EQL), KC_F24, C(KC_PMNS), C(KC_PPLS) 
   ),
   
   [5] = LAYOUT(
-    KC_NO,    KC_F1,  KC_F2,   KC_F3,   KC_F4,   KC_F5,   KC_F6,       KC_F7,   KC_F8,   KC_F9,   KC_F10,  KC_F11,  KC_F12,  KC_NO,  \
-    KC_NO,  KC_NO,    KC_NO,    KC_NO,    KC_NO,    KC_NO,         KC_NO,    KC_NO,    KC_NO,    KC_NO,    KC_NO,    KC_NO, KC_NO,  \
-    KC_NO,  KC_NO,    KC_NO,    KC_NO,    KC_NO,    KC_NO,         KC_NO,    KC_NO,    KC_NO,    KC_NO,    KC_NO,    KC_NO, \
-    KC_NO,                          KC_NO,    KC_NO,    KC_NO,         KC_NO,    KC_NO,    KC_NO,    KC_NO,    KC_F24,     KC_NO, KC_NO   \
+    KC_NO,    KC_F1,  KC_F2,   KC_F3,   KC_F4,   KC_F5,   KC_F6,       KC_F7,   KC_F8,   KC_F9,   KC_F10,  KC_F11,  KC_F12,  KC_NO,  
+    KC_NO,  KC_NO,    KC_NO,    KC_NO,    KC_NO,    KC_NO,         KC_NO,    KC_NO,    KC_NO,    KC_NO,    KC_NO,    KC_NO, KC_NO,  
+    KC_NO,  KC_NO,    KC_NO,    KC_NO,    KC_NO,    KC_NO,         KC_NO,    KC_NO,    KC_NO,    KC_NO,    KC_NO,    KC_NO, 
+    KC_NO,                          KC_NO,    KC_NO,    KC_NO,         KC_NO,    KC_NO,    KC_NO,    KC_NO,    KC_F24,     KC_NO, KC_NO   
   ),
 
   [6] = LAYOUT(
-    RGB_VAI,  RGB_SAI,    RGB_HUI,    RGB_SPI,    RGB_MOD,    RGB_TOG,         KC_NO,    KC_NO,    KC_NO,    KC_NO,    KC_NO,    KC_NO, KC_NO, KC_NO,\
-    RGB_VAD,  RGB_SAD,    RGB_HUD,    RGB_SPD,   RGB_RMOD,    KC_NO,         KC_NO,    KC_NO,    KC_NO,    KC_NO,    KC_NO,    KC_NO, RESET, \
-    DT_PRNT,  DT_UP,    DT_DOWN,    KC_NO,    KC_NO,    KC_NO,         KC_NO,    KC_NO,    KC_NO,    KC_NO,    KC_NO,    KC_NO, \
-    KC_NO,                          KC_NO,    KC_NO,    KC_NO,         RESET,    KC_NO,    KC_NO,    KC_NO,    KC_F24,     RGB_RMOD, RGB_MOD \
+    RGB_VAI,  RGB_SAI,    RGB_HUI,    RGB_SPI,    RGB_MOD,    RGB_TOG,         KC_NO,    KC_NO,    KC_NO,    KC_NO,    KC_NO,    KC_NO, KC_NO, KC_F23,
+    RGB_VAD,  RGB_SAD,    RGB_HUD,    RGB_SPD,   RGB_RMOD,    KC_NO,         KC_NO,    KC_NO,    KC_NO,    KC_NO,    KC_NO,    KC_NO, QK_BOOT, 
+    DT_PRNT,  DT_UP,    DT_DOWN,    KC_NO,    KC_NO,    KC_NO,         KC_NO,    KC_NO,    KC_NO,    KC_NO,    KC_NO,    KC_NO, 
+    KC_NO,                          KC_NO,    KC_NO,    KC_NO,         KC_NO,    KC_NO,    KC_NO,    KC_NO,    KC_F24,     RGB_RMOD, RGB_MOD 
   )
 };
 
@@ -128,6 +138,10 @@ bool encoder_update_user(uint8_t index, bool clockwise) {
     return true;
 }
 
+void keyboard_post_init_user(void) {
+  user_config.raw = eeconfig_read_user();
+}
+
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
   static uint16_t pressed_time = 0;
   if (record->event.pressed) {
@@ -146,6 +160,12 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             is_hold = true;
           }
       }
+      return false;
+    case KC_F23:
+      if (record->event.pressed) {    
+        user_config.underglow = !user_config.underglow;  
+        eeconfig_update_user(user_config.raw); 
+      } 
       return false;
     default:
       return true;
@@ -169,8 +189,8 @@ led_config_t g_led_config = { {
   4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4,
   4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4,
   4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4,
-  4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 2,
-  2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
+  4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 1,
+  1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2,
   2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
   2, 2
   } 
@@ -198,9 +218,17 @@ void rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
     RGB rgb = hsv_to_rgb(hsv);
  
     for (uint8_t i = led_min; i <= led_max; i++) {
-        if (HAS_FLAGS(g_led_config.flags[i], 0x02)) {
+      if (HAS_FLAGS(g_led_config.flags[i], 0x01)) {
+        rgb_matrix_set_color(i, rgb.r, rgb.g, rgb.b);
+      }
+      
+      if (HAS_FLAGS(g_led_config.flags[i], 0x02)) {
+        if(user_config.underglow) {
           rgb_matrix_set_color(i, rgb.r, rgb.g, rgb.b);
+        } else {
+          rgb_matrix_set_color(i, 0, 0, 0);             
         }
+      }
     }
 };
 
@@ -219,17 +247,14 @@ void render_rgb_status(void) {
                 break;        
             case 2:
                 oled_write_ln_P(PSTR("RGB: GRADIENT_UPDN"), false);
-                break;      
+                break;        
             case 3:
-                oled_write_ln_P(PSTR("RGB: GRADIENT_LR"), false);
-                break;    
-            case 4:
                 oled_write_ln_P(PSTR("RGB: CYCLE_ALL"), false);
                 break;     
-            case 5:
+            case 4:
                   oled_write_ln_P(PSTR("RGB: SLD_REACT_SMPL"), false);
                   break;
-            case 6:
+            case 5:
                   oled_write_ln_P(PSTR("RGB: SPLASH"), false);
                   break;
             default:

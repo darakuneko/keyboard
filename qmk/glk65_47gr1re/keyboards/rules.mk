@@ -30,8 +30,6 @@ RGB_MATRIX_ENABLE = yes
 OLED_ENABLE = yes
 
 CUSTOM_MATRIX = yes
-SRC += matrix.c
-
-SRC += qmk_rc.c
+SRC += matrix.c qmk_rc.c
 LTO_ENABLE=yes	
 DYNAMIC_TAPPING_TERM_ENABLE = yes
