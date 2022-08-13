@@ -2,6 +2,7 @@
   "keyboard_name": "Yamada65 Pro",
   "maintainer": "Daraku-Neko",
   "bootloader": "rp2040",
+  "processor": "RP2040",
   "diode_direction": "COL2ROW",
   "features": {
       "audio": false,
@@ -28,6 +29,5 @@
   "mouse_key": {
       "enabled": true
   },
-  "processor": "RP2040",
   "url": ""
 }
