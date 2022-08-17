@@ -1,0 +1,33 @@
+{
+  "keyboard_name": "GPK60-47VC1RE",
+  "maintainer": "Daraku-Neko",
+  "processor": "RP2040",
+  "bootloader": "rp2040",
+  "diode_direction": "COL2ROW",
+  "features": {
+      "audio": false,
+      "backlight": false,
+      "bootmagic": false,
+      "command": false,
+      "console": false,
+      "encoder": true,
+      "extrakey": true,
+      "mousekey": true,
+      "nkro": false,
+      "oled": true,
+      "via": true,
+      "wpm": false
+  },
+  "matrix_pins": {
+      "cols": ["GP27", "GP26", "GP25", "GP24", "GP23", "GP22", "GP21"],
+      "rows": ["GP1", "GP2", "GP3", "GP4", "GP5", "GP6", "GP7", "GP10"]
+  },
+  "matrix_size": {
+      "cols": 7,
+      "rows": 8
+  },
+  "mouse_key": {
+      "enabled": true
+  },
+  "url": ""
+}
