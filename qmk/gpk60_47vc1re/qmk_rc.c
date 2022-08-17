@@ -19,12 +19,12 @@ enum qmk_rc_commands_quantum {
   RGB_MATRIX_ON            = 0x6d,
   RGB_MATRIX_SETRGB_RANGE  = 0x6e,
   LAYER_ON                 = 0x6f,
-  LAYER_OFF                = 0x60,
-  LAYER_CLEAR              = 0x61,
-  LAYER_MOVE               = 0x62,
-  SEND_STRING              = 0x63,
-  IS_OLED_ON               = 0x64,
-  GPK_RC_VERSION           = 0x65,
+  LAYER_OFF                = 0x70,
+  LAYER_CLEAR              = 0x71,
+  LAYER_MOVE               = 0x72,
+  SEND_STRING              = 0x73,
+  IS_OLED_ON               = 0x74,
+  GPK_RC_VERSION           = 0x75,
 #endif
 };
 
