@@ -585,7 +585,7 @@ const char code_to_name23849[] PROGMEM = {
   "OUT_BT  "
 };
 
-//23907 - 23909
+//23906 - 23906
 const char code_to_name23907[] PROGMEM = {
   "DT_PRNT "
   "DT_UP   "
