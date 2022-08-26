@@ -585,7 +585,7 @@ const char code_to_name23849[] PROGMEM = {
   "OUT_BT  "
 };
 
-//23907 - 23909
+//23906 - 23906
 const char code_to_name23907[] PROGMEM = {
   "DT_PRNT "
   "DT_UP   "
@@ -775,8 +775,8 @@ void set_code_to_name(uint16_t keycode) {
       _set_code_to_name(code_to_name23795, keycode - 23795, 0);
     } else if(keycode >= 23849 && keycode <= 23849){
       _set_code_to_name(code_to_name23849, keycode - 23849, 0);
-    } else if(keycode >= 23907 && keycode <= 23909){
-      _set_code_to_name(code_to_name23907, keycode - 23907, 0);
+    } else if(keycode >= 23906 && keycode <= 23908){
+      _set_code_to_name(code_to_name23907, keycode - 23906, 0);
     } else if(keycode >= 24336 && keycode <= 24353){
       _set_code_to_name(code_to_name23907, keycode - 24336, 0);
     } 
