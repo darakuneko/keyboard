@@ -90,7 +90,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
                XXXXXXX,    XXXXXXX,   XXXXXXX,   XXXXXXX,    XXXXXXX,                                                                     XXXXXXX,    XXXXXXX,    XXXXXXX,    XXXXXXX,    XXXXXXX, 
                            XXXXXXX,   XXXXXXX,   XXXXXXX,    XXXXXXX,                                                                     XXXXXXX,    XXXXXXX,    XXXXXXX,    XXXXXXX,
                                                  XXXXXXX,    XXXXXXX,                                                                     XXXXXXX,    XXXXXXX, 
-                                                                                        XXXXXXX, KC_F24, XXXXXXX
+                                                                                        RGB_RMOD, KC_F24, RGB_MOD
   )
 
 };
@@ -259,7 +259,7 @@ void render_rgb_status(void) {
                 oled_write_ln(PSTR("RGB: SOLID_COLOR"), false);
                 break;        
             case 2:
-                oled_write_ln(PSTR("ALPHAS_MODS"), false);
+                oled_write_ln(PSTR("RGB: ALPHAS_MODS"), false);
                 break;
             case 3:
                 oled_write_ln(PSTR("RGB: GRADIENT_UPDN"), false);
