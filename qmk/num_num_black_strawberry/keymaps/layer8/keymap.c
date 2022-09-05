@@ -69,12 +69,11 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   
   [7] = LAYOUT(
     RGB_RMOD, RGB_VAI,    RGB_SAI,    RGB_HUI,    RGB_SPI,    RGB_TOG,  
-    KC_F24,   RGB_VAD,    RGB_SAD,    RGB_HUD,    RGB_SPD,    QK_BOOT,
-    RGB_MOD,  DT_PRNT,    DT_UP,      DT_DOWN,    _______,    _______,
+    KC_F24,   RGB_VAD,    RGB_SAD,    RGB_HUD,    RGB_SPD,    _______,
+    RGB_MOD,  DT_PRNT,    DT_UP,      DT_DOWN,    _______,    QK_BOOT,
     KC_MS_BTN1, KC_MS_BTN2 
   )
 };
-
 
 keyevent_t encoder1_ccw = {
     .key = (keypos_t){.row = 4, .col = 2},
