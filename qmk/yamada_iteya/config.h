@@ -3,8 +3,8 @@
 #include "config_common.h"
 
 /* USB Device descriptor parameter */
-#define VENDOR_ID    0x3AAA
-#define PRODUCT_ID   0x1524
+#define VENDOR_ID    0xFEED
+#define PRODUCT_ID   0x1525
 #define DEVICE_VER   0x0001
 #define MANUFACTURER Daraku-Neko
 #define PRODUCT      Yamada Iteya
