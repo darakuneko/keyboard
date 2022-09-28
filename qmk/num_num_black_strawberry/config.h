@@ -33,6 +33,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define RGB_DI_PIN D3
 #define RGBLED_NUM 17
 #define DRIVER_LED_TOTAL 17
+#define RGB_MATRIX_MAXIMUM_BRIGHTNESS 160
 #define RGB_DISABLE_TIMEOUT 120000
 #define RGB_DISABLE_WHEN_USB_SUSPENDED true
 #define RGB_MATRIX_HUE_STEP 8
