@@ -8,6 +8,8 @@ MCU = STM32F401
 BOOTLOADER = stm32-dfu
 
 BOOTMAGIC_ENABLE = no      # Enable Bootmagic Lite
+EXTRAKEY_ENABLE = yes
+MOUSEKEY_ENABLE = yes
 CONSOLE_ENABLE = no         # Console for debug
 COMMAND_ENABLE = no         # Commands for debug and configuration
 NKRO_ENABLE = no           # Enable N-Key Rollover
