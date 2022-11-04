@@ -1,10 +1,10 @@
 # yamada65_pro
 
-![yamada65U](imgur.com image replace me!)
+![yamada65pro](imgur.com image replace me!)
 
 *A short description of the keyboard/project*
 
-* Keyboard Maintainer: [daraku-neko](https://github.com/yourusername)
+* Keyboard Maintainer: [daraku-neko](https://github.com/darakuneko)
 * Hardware Supported: *The PCBs, controllers supported*
 * Hardware Availability: *Links to where you can find this hardware*
 

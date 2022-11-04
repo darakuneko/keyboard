@@ -9,13 +9,14 @@
       "backlight": false,
       "bootmagic": false,
       "command": false,
-      "console": false,
+      "console": true,
       "encoder": false,
       "extrakey": true,
       "mousekey": true,
       "nkro": false,
       "oled": false,
       "rgblight": false,
+      "via": true,
       "wpm": false
   },
   "matrix_pins": {
@@ -26,8 +27,13 @@
       "cols": 15,
       "rows": 5
   },
-  "mouse_key": {
-      "enabled": true
+  "caps_word": {
+    "enabled": true,
+    "double_tap_shift_turns_on": true
   },
+  "dynamic_keymap": {
+    "layer_count": 5
+  },    
+  "debounce": 5,
   "url": ""
 }

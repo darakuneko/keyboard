@@ -1,61 +1,37 @@
 #include <stdlib.h>
+#include <string.h>
 #include "qmk_rc.h"
-
-#ifndef QMK_RC_DISABLE_DEFAULT_COMMANDS
-#  include <string.h>
-#  include "quantum.h"
-#  ifdef OLED_DRIVER_ENABLE
-#    include "oled_driver.h"
-#  endif
-#  ifdef RGBLIGHT_ENABLE
-#    include "rgblight.h"
-#  endif
-#  ifdef RGB_MATRIX_ENABLE
-#    include "rgb_matrix.h"
-#  endif
-#endif
+#include "quantum.h"
 
 __attribute__((weak)) void qmk_rc_process_command_user(qmk_rc_command_t* command) { }
-
 
 enum qmk_rc_commands_quantum {
   RESERVED = 0,
 #ifndef QMK_RC_DISABLE_DEFAULT_COMMANDS
-  //0x01 - 0x13 via
-  OLED_OFF                 = 0x15,
-  OLED_ON                  = 0x16,
-  // OLED_WRITE accepts a string to write to the OLED display.
-  OLED_WRITE               = 0x17,
-  OLED_CLEAR               = 0x18,
-
-  RGBLIGHT_OFF             = 0x19,
-  RGBLIGHT_ON              = 0x1a,
-  // RGBLIGHT_SETRGB_RANGE and RGB_MATRIX_SETRGB_RANGE accept 5 data bytes:
-  // R - G - B - I0 - I1
-  // * RGB - the color
-  // * I0 - the LED index start
-  // * I1 - the LED index end
-  RGBLIGHT_SETRGB_RANGE    = 0x1b,
-
-  RGB_MATRIX_OFF           = 0x1c,
-  RGB_MATRIX_ON            = 0x1d,
-  RGB_MATRIX_SETRGB_RANGE  = 0x1e,
-
-  LAYER_ON                 = 0x1f,
-  LAYER_OFF                = 0x20,
-  LAYER_CLEAR              = 0x21,
-  LAYER_MOVE               = 0x22,
-
-  SEND_STRING              = 0x23,
-  IS_OLED_ON               = 0x24,
-
+  OLED_OFF                 = 0x65,
+  OLED_ON                  = 0x66,
+  OLED_WRITE               = 0x67,
+  OLED_CLEAR               = 0x68,
+  RGBLIGHT_OFF             = 0x69,
+  RGBLIGHT_ON              = 0x6a,
+  RGBLIGHT_SETRGB_RANGE    = 0x6b,
+  RGB_MATRIX_OFF           = 0x6c,
+  RGB_MATRIX_ON            = 0x6d,
+  RGB_MATRIX_SETRGB_RANGE  = 0x6e,
+  LAYER_ON                 = 0x6f,
+  LAYER_OFF                = 0x60,
+  LAYER_CLEAR              = 0x61,
+  LAYER_MOVE               = 0x62,
+  SEND_STRING              = 0x63,
+  IS_OLED_ON               = 0x64,
+  GPK_RC_VERSION           = 0x65,
 #endif
 };
 
 #ifndef QMK_RC_DISABLE_DEFAULT_COMMANDS
 void qmk_rc_process_command_quantum(qmk_rc_command_t* command) {
   switch (command->id) {
-#ifdef OLED_DRIVER_ENABLE
+#ifdef OLED_ENABLE
     case OLED_OFF: oled_off(); break;
     case OLED_ON: oled_on(); break;
     case OLED_WRITE:

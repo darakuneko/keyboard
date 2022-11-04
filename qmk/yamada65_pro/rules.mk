@@ -1,2 +1,2 @@
-VIA_ENABLE = yes
-#SRC += qmk_rc.c
+SRC += qmk_rc.c
+DYNAMIC_TAPPING_TERM_ENABLE = yes
