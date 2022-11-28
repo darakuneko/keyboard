@@ -1,0 +1,44 @@
+{
+  "keyboard_name": "Yamada Emiko",
+  "manufacturer": "Daraku-Neko",
+  "usb": {
+    "vid": "0xFEED",
+    "pid": "0x1529",
+    "device_version": "0.0.1"
+  },
+  "bootloader": "rp2040",
+  "processor": "RP2040",
+  "diode_direction": "COL2ROW",
+  "features": {
+    "audio": false,
+    "backlight": false,
+    "bootmagic": false,
+    "command": false,
+    "console": false,
+    "encoder": false,
+    "extrakey": true,
+    "mousekey": true,
+    "nkro": false,
+    "oled": false,
+    "rgb_matrix": true,
+    "via": true,
+    "wpm": false
+  },
+  "matrix_pins": {
+    "cols": ["GP7", "GP8", "GP9", "GP10", "GP11", "GP12", "GP13", "GP14", "GP15", "GP16","GP17","GP18","GP19","GP20","GP21","GP22","GP23","GP24"],
+    "rows": ["GP1", "GP2", "GP3", "GP4", "GP5", "GP6"]
+  },
+  "matrix_size": {
+    "cols": 18,
+    "rows": 6
+ },
+  "caps_word": {
+    "enabled": true,
+    "double_tap_shift_turns_on": true
+  },
+  "dynamic_keymap": {
+    "layer_count": 5
+  },    
+  "debounce": 5,
+  "url": ""
+}
