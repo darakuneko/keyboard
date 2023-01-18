@@ -1,0 +1,50 @@
+{
+  "keyboard_name": "GPK60-38R1RE",
+  "manufacturer": "Daraku-Neko",
+  "usb": {
+    "vid": "0xFEED",
+    "pid": "0x1429",
+    "device_version": "0.0.1"
+  },
+  "bootloader": "rp2040",
+  "processor": "RP2040",
+  "diode_direction": "COL2ROW",
+  "features": {
+    "audio": false,
+    "backlight": false,
+    "bootmagic": false,
+    "command": false,
+    "console": false,
+    "encoder": true,
+    "extrakey": true,
+    "mousekey": true,
+    "nkro": false,
+    "oled": false,
+    "rgb_matrix": true,
+    "via": true,
+    "wpm": true
+  },
+  "matrix_pins": {
+    "cols": ["GP5", "GP6", "GP7", "GP8", "GP9", "GP21", "GP22", "GP23", "GP24", "GP25", "GP26", "GP27"],
+    "rows": ["GP1", "GP2", "GP3", "GP4"]
+  },
+  "matrix_size": {
+    "cols": 12,
+    "rows": 4
+  },
+  "encoder": {
+    "enabled": true,
+    "rotary": [
+      { "pin_a": "GP28", "pin_b": "GP29", "resolution": 2 }
+    ]
+  },
+  "caps_word": {
+    "enabled": true,
+    "double_tap_shift_turns_on": true
+  },
+  "dynamic_keymap": {
+    "layer_count": 7
+  },    
+  "debounce": 5,
+  "url": ""
+}
