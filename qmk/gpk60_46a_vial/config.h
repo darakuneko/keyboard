@@ -18,8 +18,11 @@
 //#define NO_ACTION_LAYER
 //#define NO_ACTION_TAPPING
 //#define NO_ACTION_ONESHOT
+/* SPDX-License-Identifier: GPL-2.0-or-later */
 
-#define VIAL_KEYBOARD_UID {0x3D, 0xDE, 0x03, 0x26, 0x96, 0x67, 0xCE, 0xD2}
+#pragma once
 
-#define VIAL_UNLOCK_COMBO_ROWS {0,0}
-#define VIAL_UNLOCK_COMBO_COLS {0,1}
+#define VIAL_KEYBOARD_UID {0x74, 0x21, 0x95, 0xCB, 0x93, 0x42, 0xCF, 0x36}
+
+#define VIAL_UNLOCK_COMBO_ROWS {0, 0}
+#define VIAL_UNLOCK_COMBO_COLS {0, 1}

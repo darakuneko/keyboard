@@ -33,3 +33,27 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 	),
 
 };
+
+void keyboard_post_init_user(void) {
+  rgblight_enable_noeeprom();
+  rgblight_sethsv_noeeprom(128, 255, rgblight_get_val());
+  rgblight_mode_noeeprom(1);
+}
+
+layer_state_t layer_state_set_user(layer_state_t state) {
+    switch (get_highest_layer(state)) {
+      case 1: //PURPLE
+          rgblight_sethsv_noeeprom(191, 255, rgblight_get_val());
+          break;
+      case 2: //GREEN
+          rgblight_sethsv_noeeprom(85, 255, rgblight_get_val());
+          break;
+      case 3: //YELLOW
+          rgblight_sethsv_noeeprom(43, 255, rgblight_get_val());
+          break;   
+      default: //CYAN
+          rgblight_sethsv_noeeprom(128, 255, rgblight_get_val());
+        break;
+    } 
+  return state;
+}
