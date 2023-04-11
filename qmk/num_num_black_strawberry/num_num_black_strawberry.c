@@ -43,12 +43,9 @@ void pointing_device_task(void) {
 
 void keyboard_pre_init_kb() {
     i2c_init();
-
-    keyboard_pre_init_user();
 }
 
 void keyboard_post_init_kb() {
-    check_iqs5xx();
     init_iqs5xx();
     pointing_device_set_button = pointing_device_set_button_iqs5xx;
     pointing_device_clear_button = pointing_device_clear_button_iqs5xx;
@@ -58,7 +55,6 @@ void keyboard_post_init_kb() {
     wait_ms(300);
 
     identify_os();
-    keyboard_post_init_user();
 }
 
 void matrix_scan_kb() {
@@ -114,6 +110,4 @@ void matrix_scan_kb() {
             pointing_device_set_report(mouse_rep);
         }
     }
-
-    matrix_scan_user();
 }

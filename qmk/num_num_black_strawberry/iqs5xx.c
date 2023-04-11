@@ -15,12 +15,10 @@
  */
 
 #include "iqs5xx.h"
-
-#include <string.h>  // memset
-
 #include "i2c_master.h"
 #include "quantum.h"
 #include "debug.h"
+#include <string.h>  // memset
 
 #define IQS5xx_COM_END_REG 0xEEEE
 #define IQS5xx_BL_STATUS 0x0006
@@ -32,15 +30,12 @@
 #define IQS5xx_REF_VALS 0x0303
 #define IQS5xx_SYSTEM_CTRL0 0x0431
 #define IQS5xx_SYSTEM_CTRL1 0x0432
+#define IQS5xx_FINGER_SPLIT 0x066B
 #define IQS5xx_DEFAULT_READ 0x0675
 
-#define I2C_TIMEOUT 1000
-#ifndef I2C_7BIT_ADDR
-#    define I2C_7BIT_ADDR(addr) (addr << 1)
-#endif
 
-#define iqs_app_writeReg_continue(regaddr, data, len) iqs_writeReg_continue(I2C_7BIT_ADDR(IQS5xx_READ_ADDR), regaddr, data, len)
-#define iqs_app_readReg_continue(regaddr, data, len) iqs_readReg_continue(I2C_7BIT_ADDR(IQS5xx_READ_ADDR), regaddr, data, len)
+#define iqs_app_writeReg_continue(regaddr, data, len) iqs_writeReg_continue(IQS5xx_READ_ADDR<<1, regaddr, data, len)
+#define iqs_app_readReg_continue(regaddr, data, len) iqs_readReg_continue(IQS5xx_READ_ADDR<<1, regaddr, data, len)
 
 static uint8_t pointing_device_button;
 static bool    send_flag = false;  // new mouse motion is detected and it should be send to host
@@ -56,52 +51,11 @@ void pointing_device_clear_button_iqs5xx(uint8_t btn) {
 }
 
 static inline uint8_t iqs_writeReg_continue(uint8_t devaddr, uint16_t regaddr, uint8_t* data, uint16_t len) {
-    i2c_status_t status = i2c_start(devaddr | 0x00, I2C_TIMEOUT);
-    if (status >= 0) {
-        status = i2c_write(regaddr >> 8, I2C_TIMEOUT);
-        status = i2c_write(regaddr & 0xFF, I2C_TIMEOUT);
-
-        for (uint16_t i = 0; i < len && status >= 0; i++) {
-            status = i2c_write(data[i], I2C_TIMEOUT);
-        }
-    }
-
-    i2c_stop();
-
-    return status;
+    return i2c_writeReg16(devaddr, regaddr, data, len, 4);
 }
 
 static inline uint8_t iqs_readReg_continue(uint8_t devaddr, uint16_t regaddr, uint8_t* data, uint16_t len) {
-    i2c_status_t status = i2c_start(devaddr, I2C_TIMEOUT);
-    if (status < 0) {
-        goto error;
-    }
-
-    status = i2c_write(regaddr >> 8, I2C_TIMEOUT);
-    status = i2c_write(regaddr & 0xFF, I2C_TIMEOUT);
-    if (status < 0) {
-        goto error;
-    }
-
-    status = i2c_start(devaddr | 0x01, I2C_TIMEOUT);
-
-    for (uint16_t i = 0; i < (len - 1) && status >= 0; i++) {
-        status = i2c_read_ack(I2C_TIMEOUT);
-        if (status >= 0) {
-            data[i] = status;
-        }
-    }
-
-    if (status >= 0) {
-        status = i2c_read_nack(I2C_TIMEOUT);
-        if (status >= 0) {
-            data[(len - 1)] = status;
-        }
-    }
-
-error:
-    i2c_stop();
-
+    i2c_status_t status = i2c_readReg16(devaddr, regaddr, data, len, 4);
     return (status < 0) ? status : I2C_STATUS_SUCCESS;
 }
 
@@ -124,56 +78,27 @@ static inline uint8_t iqs_app_readReg(uint16_t regaddr, uint8_t* data, uint16_t 
     return res;
 }
 
-uint16_t check_iqs5xx() {
-    uint8_t dat[2] = {0};
-
-    uint8_t res = iqs_app_readReg(0, dat, sizeof(dat));
-
-    if (res) {
-        // retry once to avoid LP mode
-        res = iqs_app_readReg(0, dat, sizeof(dat));
-
-        if (res) return 0;
-    }
-
-    uint16_t pid = ((uint16_t)dat[0] << 8) | dat[1];
-
-    if (pid == 40 || pid == 58 || pid == 52) {
-        return pid;
-    } else {
-        return 0;
-    }
-}
-
 int init_iqs5xx(void) {
     uint8_t data = 0x80;
-
     uint8_t res = iqs_app_writeReg(IQS5xx_SYSTEM_CTRL0, &data, 1);
 
     if (res) {
         // retry once to avoid LP mode
         res = iqs_app_writeReg(IQS5xx_SYSTEM_CTRL0, &data, 1);
-
         if (res) return 0;
     }
 
-    uint16_t default_addr = ((uint16_t)(IQS5xx_FINGER_NUM << 8) | (IQS5xx_FINGER_NUM >> 8));
+    data = 0x0F;
+    res = iqs_app_writeReg(IQS5xx_FINGER_SPLIT, &data, 1);
 
-    iqs_app_writeReg(IQS5xx_DEFAULT_READ, (uint8_t*)&default_addr, sizeof(default_addr));
-
-    return 0;
-}
-
-int read_raw_iqs5xx(uint16_t* raw_data, uint16_t cnt) {
-    iqs_app_readReg_continue(IQS5xx_COUNT_VALS, (uint8_t*)(raw_data), cnt);
-
-    for (int idx = 0; idx < cnt / 2; idx++) {
-        uint8_t* msb = (uint8_t*)&raw_data[idx];
-        uint8_t  m   = *msb;
-        *msb         = *(msb + 1);
-        *(msb + 1)   = m;
+    if (res) {
+        // retry once to avoid LP mode
+        res = iqs_app_writeReg(IQS5xx_FINGER_SPLIT, &data, 1);
+        if (res) return 0;
     }
 
+    uint16_t default_addr = IQS5xx_FINGER_NUM << 8;
+    iqs_app_writeReg(IQS5xx_DEFAULT_READ, (uint8_t*)&default_addr, sizeof(default_addr));
     return 0;
 }
 
@@ -468,41 +393,4 @@ bool process_iqs5xx(iqs5xx_data_t const* const data, iqs5xx_processed_data_t* pr
     send_flag = false;
 
     return ret_val;
-}
-
-uint16_t read_bl_staus_iqs5xx(void) {
-    uint8_t      data[2];
-    i2c_status_t res = iqs_app_readReg(IQS5xx_BL_STATUS, data, sizeof(data));
-    return res == I2C_STATUS_SUCCESS ? (data[0] | (data[1] << 8)) : 0;
-}
-
-int wake_bootloader_iqs5xx(void) {
-    uint8_t data = 1 << 1;
-    iqs_app_writeReg(IQS5xx_SYSTEM_CTRL1, &data, 1);
-    read_bootloader_version_iqs5xx();
-    return 0;
-}
-
-uint16_t read_bootloader_version_iqs5xx(void) {
-    uint8_t data[2] = {0};
-    i2c_readReg(I2C_7BIT_ADDR(IQS5xx_BOOT_ADDR), 0, data, sizeof(data), 10);
-
-    return (data[0] << 8) | data[1];
-}
-
-void read_firmware_block_iqs5xx(uint16_t addr, uint8_t* dat) {
-    i2c_start(I2C_7BIT_ADDR(IQS5xx_BOOT_ADDR), 10);
-    i2c_write(0x01, 10);
-    i2c_write(addr >> 8, 10);
-    i2c_write(addr & 0xFF, 10);
-    i2c_receive(I2C_7BIT_ADDR(IQS5xx_BOOT_ADDR), dat, FIRM_BLOCK_SIZE, 1000);
-}
-
-void write_firmware_block_iqs5xx(uint16_t addr, uint8_t const* dat) { i2c_transmit(I2C_7BIT_ADDR(IQS5xx_BOOT_ADDR), dat, FIRM_BLOCK_SIZE + 2, 100); }
-
-uint8_t crc_check_iqs5xx(void) {
-    uint8_t data[1] = {0};
-    i2c_readReg(I2C_7BIT_ADDR(IQS5xx_BOOT_ADDR), 0x03, data, sizeof(data), 100);
-
-    return data[0];
 }

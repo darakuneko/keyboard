@@ -122,22 +122,8 @@ bool one_finger_drag;
 #define IQS5xx_READ_ADDR 0x74
 #define IQS5xx_BOOT_ADDR 0x34
 
-uint16_t check_iqs5xx(void);
 int      init_iqs5xx(void);
 bool     read_iqs5xx(iqs5xx_data_t* const data);
 bool     process_iqs5xx(iqs5xx_data_t const* const data, iqs5xx_processed_data_t* processed, report_mouse_t* const rep_mouse, iqs5xx_gesture_data_t* gesture);
 void     pointing_device_set_button_iqs5xx(uint8_t btn);
 void     pointing_device_clear_button_iqs5xx(uint8_t btn);
-int      sleep_iqs5xx(void);
-void     test_iqs5xx(void);
-int      read_raw_iqs5xx(uint16_t* raw_data, uint16_t cnt);
-uint16_t read_bl_staus_iqs5xx(void);
-
-// bootloader functions
-int      wake_bootloader_iqs5xx(void);
-uint16_t read_bootloader_version_iqs5xx(void);
-uint16_t write_firmware_iqs5xx(uint8_t* const programm, uint16_t len);
-uint16_t verify_firmware_iqs5xx(uint8_t* const programm, uint16_t len);
-void     write_firmware_block_iqs5xx(uint16_t addr, uint8_t const* dat);
-void     read_firmware_block_iqs5xx(uint16_t addr, uint8_t* dat);
-uint8_t  crc_check_iqs5xx(void);
