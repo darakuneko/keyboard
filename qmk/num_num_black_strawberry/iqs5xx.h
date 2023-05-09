@@ -20,9 +20,11 @@
 
 #include "report.h"
 
-#define FINGER_MAX 2
-#define GES_TIME_MS 100
-#define TAP_TIME_MS 450
+#define FINGER_MAX 3
+#define GES_TIME_MS 200
+#define TAP_TIME_MS 350
+#define DRAG_TIME_MS 700
+
 #define MIN_MOVE_FOR_GES 1000
 #define MIN_MOVE_FOR_SWIPE_UPDATE 100
 #define MIN_MOVE_FOR_PINCH_UPDATE 1500
@@ -51,7 +53,7 @@ typedef enum {
 typedef enum {
     GESTURE_NONE,
     GESTURE_SINGLE_TAP,
-    GESTURE_TWO_FINGER_TAP,
+    GESTURE_MULTI_FINGER_TAP,
     GESTURE_PINCH_IDLE = 0x10,
     GESTURE_PINCH_IN,
     GESTURE_PINCH_OUT,
@@ -109,19 +111,22 @@ typedef struct {
     uint32_t         dist_sq_init;  // initial distance of fingres
     uint32_t         dist_sq;       // current distance of fingers
     iqs5xx_gesture_t gesture_state;
-} iqs5xx_gesture_data_two_t;
+} iqs5xx_gesture_data_multi_t;
 
 typedef struct {
-    iqs5xx_gesture_data_two_t two;
+    iqs5xx_gesture_data_multi_t multi;
 } iqs5xx_gesture_data_t;
 
 uint32_t ges_time;
-bool one_finger_drag;
+uint32_t hold_drag_time;
+bool hold_drag_mode;
+bool tap_mode;
 
 // Application and bootloader I2C address in 7bit
 #define IQS5xx_READ_ADDR 0x74
 #define IQS5xx_BOOT_ADDR 0x34
 
+uint16_t check_iqs5xx(void);
 int      init_iqs5xx(void);
 bool     read_iqs5xx(iqs5xx_data_t* const data);
 bool     process_iqs5xx(iqs5xx_data_t const* const data, iqs5xx_processed_data_t* processed, report_mouse_t* const rep_mouse, iqs5xx_gesture_data_t* gesture);

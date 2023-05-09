@@ -78,6 +78,28 @@ static inline uint8_t iqs_app_readReg(uint16_t regaddr, uint8_t* data, uint16_t 
     return res;
 }
 
+
+uint16_t check_iqs5xx() {
+    uint8_t dat[2] = {0};
+
+    uint8_t res = iqs_app_readReg(0, dat, sizeof(dat));
+
+    if (res) {
+        // retry once to avoid LP mode
+        res = iqs_app_readReg(0, dat, sizeof(dat));
+
+        if (res) return 0;
+    }
+
+    uint16_t pid = ((uint16_t)dat[0] << 8) | dat[1];
+
+    if (pid == 40 || pid == 58 || pid == 52) {
+        return pid;
+    } else {
+        return 0;
+    }
+}
+
 int init_iqs5xx(void) {
     uint8_t data = 0x80;
     uint8_t res = iqs_app_writeReg(IQS5xx_SYSTEM_CTRL0, &data, 1);
@@ -92,7 +114,6 @@ int init_iqs5xx(void) {
     res = iqs_app_writeReg(IQS5xx_FINGER_SPLIT, &data, 1);
 
     if (res) {
-        // retry once to avoid LP mode
         res = iqs_app_writeReg(IQS5xx_FINGER_SPLIT, &data, 1);
         if (res) return 0;
     }
@@ -132,10 +153,15 @@ bool read_iqs5xx(iqs5xx_data_t* const data) {
         swap(uint8_t, data->fingers[1].bytes[2], data->fingers[1].bytes[3]);
     }
 
+    if (data->finger_cnt >= 3) {
+        i2c_res |= iqs_app_readReg_continue(IQS5xx_F2_POSX, (uint8_t*)&data->fingers[2], 4);
+        swap(uint8_t, data->fingers[2].bytes[0], data->fingers[2].bytes[1]);
+        swap(uint8_t, data->fingers[2].bytes[2], data->fingers[2].bytes[3]);
+    }
+
     if (i2c_res != 0) {
         res = false;
     } else {
-        // iqs_app_readReg_continue(IQS5xx_SYSTEM_INFO0, &data->mode, 1);
         iqs_app_end_communication();
         res = true;
     }
@@ -176,70 +202,69 @@ static void recognize_gesture(iqs5xx_data_t const* const data, iqs5xx_processed_
     // vector from finger 1 to 0
     int32_t dx                = ((int32_t)processed->fingers[0].last.x - processed->fingers[1].last.x);
     int32_t dy                = ((int32_t)processed->fingers[0].last.y - processed->fingers[1].last.y);
-    gesture_data->two.dot     = processed->fingers[0].dx * processed->fingers[1].dx + processed->fingers[0].dy * processed->fingers[1].dy;
-    gesture_data->two.dot_rel = (((int32_t)processed->fingers[0].rel.x * processed->fingers[1].rel.x)) + (((int32_t)processed->fingers[0].rel.y * processed->fingers[1].rel.y));
-    gesture_data->two.dist_sq = ((dx * dx) >> 5) + ((dy * dy) >> 5);
+    gesture_data->multi.dot     = processed->fingers[0].dx * processed->fingers[1].dx + processed->fingers[0].dy * processed->fingers[1].dy;
+    gesture_data->multi.dot_rel = (((int32_t)processed->fingers[0].rel.x * processed->fingers[1].rel.x)) + (((int32_t)processed->fingers[0].rel.y * processed->fingers[1].rel.y));
+    gesture_data->multi.dist_sq = ((dx * dx) >> 5) + ((dy * dy) >> 5);
 
     // Calc initial distance of fingres
-    if (gesture_data->two.dist_sq_init == 0) {
+    if (gesture_data->multi.dist_sq_init == 0) {
         int32_t dx0                    = ((int32_t)processed->fingers[0].start.x - processed->fingers[1].start.x);
         int32_t dy0                    = ((int32_t)processed->fingers[0].start.y - processed->fingers[1].start.y);
-        gesture_data->two.dist_sq_init = ((dx0 * dx0) >> 5) + ((dy0 * dy0) >> 5);
+        gesture_data->multi.dist_sq_init = ((dx0 * dx0) >> 5) + ((dy0 * dy0) >> 5);
     }
 
     // calc distance change
-    int16_t dist_diff = (gesture_data->two.dist_sq) - (gesture_data->two.dist_sq_init);
+    int16_t dist_diff = (gesture_data->multi.dist_sq) - (gesture_data->multi.dist_sq_init);
 
-    if (gesture_data->two.gesture_state == GESTURE_NONE) {
-        if (gesture_data->two.dot_rel > MIN_MOVE_FOR_GES && dist_diff < (800)) {
-            gesture_data->two.gesture_state = GESTURE_SWIPE_IDLE;
-            dprintf("NONE->SWIPE: dot_rel(%d), dist_diff(%d)\n", gesture_data->two.dot_rel, dist_diff);
-        } else if (gesture_data->two.dot_rel < -MIN_MOVE_FOR_GES) {
+    if (gesture_data->multi.gesture_state == GESTURE_NONE) {
+        if (gesture_data->multi.dot_rel > MIN_MOVE_FOR_GES && dist_diff < (800)) {
+            gesture_data->multi.gesture_state = GESTURE_SWIPE_IDLE;
+            //dprintf("NONE->SWIPE: dot_rel(%d), dist_diff(%d)\n", gesture_data->multi.dot_rel, dist_diff);
+        } else if (gesture_data->multi.dot_rel < -MIN_MOVE_FOR_GES) {
             if (dist_diff < (-1500) || dist_diff > (1500)) {
-                gesture_data->two.gesture_state = GESTURE_PINCH_IDLE;
-                dprintf("NONE->PINCH: dot_rel(%d), dist_diff(%d)\n", gesture_data->two.dot_rel, dist_diff);
+                gesture_data->multi.gesture_state = GESTURE_PINCH_IDLE;
+                //dprintf("NONE->PINCH: dot_rel(%d), dist_diff(%d)\n", gesture_data->multi.dot_rel, dist_diff);
             } else {
-                gesture_data->two.gesture_state = GESTURE_ROT_IDLE;
-                dprintf("NONE->ROT: dot_rel(%d), dist_diff(%d)\n", gesture_data->two.dot_rel, dist_diff);
+                gesture_data->multi.gesture_state = GESTURE_ROT_IDLE;
+                //dprintf("NONE->ROT: dot_rel(%d), dist_diff(%d)\n", gesture_data->multi.dot_rel, dist_diff);
             }
         }
     }
 
-    switch (gesture_data->two.gesture_state) {
+    switch (gesture_data->multi.gesture_state) {
         case GESTURE_SWIPE_IDLE ... GESTURE_SWIPE_END:
-            if (gesture_data->two.dot > MIN_MOVE_FOR_SWIPE_UPDATE) {
+            if (gesture_data->multi.dot > MIN_MOVE_FOR_SWIPE_UPDATE) {
                 int16_t angle_s = myatan2(processed->fingers[0].dy, processed->fingers[1].dx);
    
-
                 // convert angle [-pi, pi] to [0, 2pi]
                 uint16_t angle = angle_s > 0 ? angle_s : (0xFFFF + angle_s);
 
                 // classify to 8 direction
-                gesture_data->two.gesture_state = GESTURE_SWIPE_R;
+                gesture_data->multi.gesture_state = GESTURE_SWIPE_R;
                 for (uint16_t idx = 0; idx < 7; idx++) {
                     if (angle > MY_PI / 8U * (idx * 2 + 1) && angle <= MY_PI / 8U * (idx * 2 + 3)) {
-                        gesture_data->two.gesture_state = (GESTURE_SWIPE_RU + idx);
+                        gesture_data->multi.gesture_state = (GESTURE_SWIPE_RU + idx);
                     }
                 }
             } else {
-                gesture_data->two.gesture_state = GESTURE_SWIPE_IDLE;
+                gesture_data->multi.gesture_state = GESTURE_SWIPE_IDLE;
             }
             break;
 
         case GESTURE_PINCH_IDLE ... GESTURE_PINCH_OUT:
-            if (gesture_data->two.dot < -MIN_MOVE_FOR_PINCH_UPDATE) {
+            if (gesture_data->multi.dot < -MIN_MOVE_FOR_PINCH_UPDATE) {
                 // vector indicate relative velocity
                 int16_t v_x = (processed->fingers[0].dx - processed->fingers[1].dx);
                 int16_t v_y = (processed->fingers[0].dy - processed->fingers[1].dy);
                 // pinch in/out is distinguished by dot product of vectors
                 if (dx * v_x + dy * v_y > 0) {
-                    gesture_data->two.gesture_state = GESTURE_PINCH_IN;
+                    gesture_data->multi.gesture_state = GESTURE_PINCH_IN;
                 } else {
-                    gesture_data->two.gesture_state = GESTURE_PINCH_OUT;
+                    gesture_data->multi.gesture_state = GESTURE_PINCH_OUT;
                 }
             }
             else {
-                gesture_data->two.gesture_state = GESTURE_PINCH_IDLE;
+                gesture_data->multi.gesture_state = GESTURE_PINCH_IDLE;
             }
             break;
 
@@ -252,11 +277,11 @@ static void recognize_gesture(iqs5xx_data_t const* const data, iqs5xx_processed_
             int16_t rot = (dx * v_y) - (dy * v_x);
 
             if (rot > MIN_MOVE_FOR_ROT_UPDATE) {
-                gesture_data->two.gesture_state = GESTURE_ROT_CCW;
+                gesture_data->multi.gesture_state = GESTURE_ROT_CCW;
             } else if (rot < -MIN_MOVE_FOR_ROT_UPDATE) {
-                gesture_data->two.gesture_state = GESTURE_ROT_CW;
+                gesture_data->multi.gesture_state = GESTURE_ROT_CW;
             } else {
-                gesture_data->two.gesture_state = GESTURE_ROT_IDLE;
+                gesture_data->multi.gesture_state = GESTURE_ROT_IDLE;
             }
         } break;
 
@@ -276,14 +301,29 @@ bool process_iqs5xx(iqs5xx_data_t const* const data, iqs5xx_processed_data_t* pr
                 processed->fingers[idx].state = FINGER_UP;
 
                 // detect tapping motion
-                if (
-                    timer_elapsed32(processed->fingers[idx].t_start) < TAP_TIME_MS &&
-                    abs(processed->fingers[idx].rel.x) < 10 && 
-                    abs(processed->fingers[idx].rel.y) < 10) {
-                    processed->fingers[idx].t_tapped = timer_read32();
-                    processed->fingers[idx].tapped   = true;
-                    tapped                           = true;
+                if(idx == 0){
+                    if (
+                        abs(processed->fingers[0].rel.x) < 30 && 
+                        abs(processed->fingers[0].rel.y) < 30 &&
+                        timer_elapsed32(processed->fingers[0].t_tapped) > 10 &&
+                        timer_elapsed32(processed->fingers[0].t_tapped) < TAP_TIME_MS
+                        ) {
+                            processed->fingers[idx].t_tapped = timer_read32();
+                            processed->fingers[idx].tapped   = true;
+                            tapped                           = true;
+                    }
+                } else if(idx == 1) {
+                    if ( 
+                        abs(processed->fingers[1].rel.x) < 50 && 
+                        abs(processed->fingers[1].rel.y) < 50 &&
+                        timer_elapsed32(processed->fingers[0].t_tapped) < GES_TIME_MS
+                        ) {
+                        processed->fingers[1].t_tapped = timer_read32();
+                        processed->fingers[1].tapped   = true;
+                        tapped                         = true;
+                    }
                 }
+                
             }
 
             processed->fingers[idx].dx    = 0;
@@ -294,6 +334,7 @@ bool process_iqs5xx(iqs5xx_data_t const* const data, iqs5xx_processed_data_t* pr
             processed->fingers[idx].frame_move.y = 0;
         } else {
             // finger is down
+            //uprintf("finger: %s\n", "down");
             active_finger_id = idx;
             if (processed->fingers[idx].state == FINGER_UP) {
                 processed->fingers[idx].state   = FINGER_DOWN;
@@ -326,67 +367,65 @@ bool process_iqs5xx(iqs5xx_data_t const* const data, iqs5xx_processed_data_t* pr
         }
     }
 
-    if (pointing_device_button != 0) {
+    if (tap_mode && pointing_device_button != 0) {
         rep_mouse->buttons |= pointing_device_button;
     }
-
     // if any finger taps and all fingers are released process tapping
     if (data->finger_cnt == 0) {
         iqs5xx_gesture_data_t zero = {0};
         *gesture_data              = zero;
 
-        if (tapped) {
+        if (tap_mode && tapped) {
             // check tapping
             processed->tap_cnt = 0;
             for (int idx = 0; idx < FINGER_MAX; idx++) {
-                if (processed->fingers[idx].tapped &&
-                    timer_elapsed32(ges_time) > GES_TIME_MS &&
-                    timer_elapsed32(processed->fingers[idx].t_tapped) < TAP_TIME_MS) {
+                if (processed->fingers[idx].tapped) {
                     processed->tap_cnt++;
-                    if(idx == 0){
-                        one_finger_drag = false;
-                    }
                 }
                 processed->fingers[idx].tapped = false;
             }
-        
-            //if (processed->tap_cnt > 0 ) {
-            //    rep_mouse->buttons |= (1 << (processed->tap_cnt - 1));
-            //    send_flag = true;
-            //}
-            
-        }
-                processed->fingers[0].t_tapped = timer_read32();
+            if (!hold_drag_mode) {
+                rep_mouse->buttons = (1 << (processed->tap_cnt - 1));
+                send_flag = true;
+            }
 
+            hold_drag_mode = false;
+            hold_drag_time = timer_read32();
+            pointing_device_clear_button_iqs5xx(1 << (KC_BTN1 - KC_BTN1));
+        }
+        processed->fingers[0].t_tapped = timer_read32();
+        hold_drag_mode = false;
+        hold_drag_time = timer_read32();
     } else if (data->finger_cnt == 1) {
         // Hold click to drag if another finger is tapped
-        //if (gesture_data->two.gesture_state == GESTURE_NONE) {
-        //    int8_t diff_x = processed->fingers[active_finger_id].last_gesture_point.x - processed->fingers[active_finger_id].last.x;
-        //    int8_t diff_y = processed->fingers[active_finger_id].last_gesture_point.y - processed->fingers[active_finger_id].last.y;
- 
-        //        if (
-        //        one_finger_drag || (
-        //        diff_x == 0 &&
-        //        diff_y == 0 &&
-        //        timer_elapsed32(processed->fingers[0].t_tapped) > TAP_TIME_MS)) {
-        //            //uprintf("active: %u\n", active_finger_id);
-        //            rep_mouse->buttons = 1;
-        //            one_finger_drag = true;
-        //        }
-        //}
+        int8_t diff_x = processed->fingers[active_finger_id].last_gesture_point.x - processed->fingers[active_finger_id].last.x;
+        int8_t diff_y = processed->fingers[active_finger_id].last_gesture_point.y - processed->fingers[active_finger_id].last.y;
+        if (tap_mode && hold_drag_mode) {
+            pointing_device_set_button_iqs5xx(1 << (KC_BTN1 - KC_BTN1));
+        } 
+
+        if (diff_x < 2 && diff_y  < 2) {
+            if(timer_elapsed32(hold_drag_time) > DRAG_TIME_MS) {
+                hold_drag_mode = true;
+            }
+        } else {
+            if(!hold_drag_mode) {
+                hold_drag_time = timer_read32();
+            }
+        }
         rep_mouse->x                                            = processed->fingers[active_finger_id].frame_move.x / 2;
         rep_mouse->y                                            = processed->fingers[active_finger_id].frame_move.y / 2;
         processed->fingers[active_finger_id].last_gesture_point = processed->fingers[active_finger_id].last;
         send_flag                                               = true;
-    } else if (data->finger_cnt == 2  && (timer_elapsed32(processed->fingers[1].t_tapped) > TAP_TIME_MS)) {
+    } else if ((data->finger_cnt == 2 || data->finger_cnt == 3) && (timer_elapsed32(processed->fingers[1].t_tapped) > TAP_TIME_MS)) {
         recognize_gesture(data, processed, gesture_data);
-        if ((gesture_data->two.gesture_state & 0x0F) != 0x00) {
+        if ((gesture_data->multi.gesture_state & 0x0F) != 0x00) {
             processed->fingers[0].last_gesture_point = data->fingers[0].current;
             processed->fingers[1].last_gesture_point = data->fingers[1].current;
         }
     } else {
-        gesture_data->two.gesture_state = GESTURE_NONE;
-        gesture_data->two.dist_sq_init  = 0;
+        gesture_data->multi.gesture_state = GESTURE_NONE;
+        gesture_data->multi.dist_sq_init  = 0;
     }
 
     bool ret_val = send_flag;

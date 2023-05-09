@@ -14,6 +14,15 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include QMK_KEYBOARD_H
+#include "iqs5xx.h"
+
+typedef union {
+  uint32_t raw;
+  struct {
+    bool     tap : 1;
+  };
+} user_config_t;
+user_config_t user_config;
 
 // Defines names for use in layer keycodes and the keymap
 // Defines names for use in layer keycodes and the keymap
@@ -22,56 +31,80 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     C(KC_Z),   KC_1,    KC_2,     KC_3,    KC_4,          KC_5, 
     KC_F24,    KC_6,    KC_7,     KC_8,    KC_9,          KC_0,
     C(KC_Y),   KC_BSPC, KC_QUOT,  KC_SPC,  SFT_T(KC_ENT), MO(1),
-    KC_MS_BTN1, KC_MS_BTN2                      
+    KC_MS_BTN1, KC_MS_BTN2,
+    LGUI(KC_TAB), LGUI(KC_TAB),
+    KC_WFWD,     LCTL(LGUI(KC_RIGHT)), KC_WBAK, LCTL(LGUI(KC_LEFT)),
+    LCTL(KC_PPLS), LCTL(KC_PMNS)
   ),
  
   [1] = LAYOUT(
     C(KC_Z),   KC_1,    KC_2,     KC_3,    KC_4,          KC_5, 
     KC_F24,    KC_6,    KC_7,     KC_8,    KC_9,          KC_0,
-    C(KC_Y),   KC_BSPC, KC_QUOT,  KC_SPC,  SFT_T(KC_ENT), MO(1),
-    KC_MS_BTN1, KC_MS_BTN2     
+    C(KC_Y),   KC_BSPC, KC_QUOT,  KC_SPC,  SFT_T(KC_ENT), MO(2),
+    KC_MS_BTN1, KC_MS_BTN2,     
+    KC_TRNS, KC_TRNS,
+    KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,
+    KC_TRNS, KC_TRNS
   ), 
 
   [2] = LAYOUT(
     C(KC_Z),   KC_1,    KC_2,     KC_3,    KC_4,          KC_5, 
     KC_F24,    KC_6,    KC_7,     KC_8,    KC_9,          KC_0,
-    C(KC_Y),   KC_BSPC, KC_QUOT,  KC_SPC,  SFT_T(KC_ENT), MO(1),
-    KC_MS_BTN1, KC_MS_BTN2     
+    C(KC_Y),   KC_BSPC, KC_QUOT,  KC_SPC,  SFT_T(KC_ENT), MO(3),
+    KC_MS_BTN1, KC_MS_BTN2,     
+    KC_TRNS, KC_TRNS,
+    KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,
+    KC_TRNS, KC_TRNS
   ),
 
   [3] = LAYOUT(
     C(KC_Z),   KC_1,    KC_2,     KC_3,    KC_4,          KC_5, 
     KC_F24,    KC_6,    KC_7,     KC_8,    KC_9,          KC_0,
-    C(KC_Y),   KC_BSPC, KC_QUOT,  KC_SPC,  SFT_T(KC_ENT), MO(1),
-    KC_MS_BTN1, KC_MS_BTN2      
+    C(KC_Y),   KC_BSPC, KC_QUOT,  KC_SPC,  SFT_T(KC_ENT), MO(4),
+    KC_MS_BTN1, KC_MS_BTN2,     
+    KC_TRNS, KC_TRNS,
+    KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,
+    KC_TRNS, KC_TRNS
   ),
     
   [4] = LAYOUT(
     C(KC_Z),   KC_1,    KC_2,     KC_3,    KC_4,          KC_5, 
     KC_F24,    KC_6,    KC_7,     KC_8,    KC_9,          KC_0,
-    C(KC_Y),   KC_BSPC, KC_QUOT,  KC_SPC,  SFT_T(KC_ENT), MO(1),
-    KC_MS_BTN1, KC_MS_BTN2     
+    C(KC_Y),   KC_BSPC, KC_QUOT,  KC_SPC,  SFT_T(KC_ENT), MO(5),
+    KC_MS_BTN1, KC_MS_BTN2,     
+    KC_TRNS, KC_TRNS,
+    KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,
+    KC_TRNS, KC_TRNS
   ),
   
   [5] = LAYOUT(
     C(KC_Z),   KC_1,    KC_2,     KC_3,    KC_4,          KC_5, 
     KC_F24,    KC_6,    KC_7,     KC_8,    KC_9,          KC_0,
-    C(KC_Y),   KC_BSPC, KC_QUOT,  KC_SPC,  SFT_T(KC_ENT), MO(1),
-    KC_MS_BTN1, KC_MS_BTN2     
+    C(KC_Y),   KC_BSPC, KC_QUOT,  KC_SPC,  SFT_T(KC_ENT), MO(6),
+    KC_MS_BTN1, KC_MS_BTN2,     
+    KC_TRNS, KC_TRNS,
+    KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,
+    KC_TRNS, KC_TRNS
   ),
   
   [6] = LAYOUT(
     C(KC_Z),   KC_1,    KC_2,     KC_3,    KC_4,          KC_5, 
     KC_F24,    KC_6,    KC_7,     KC_8,    KC_9,          KC_0,
-    C(KC_Y),   KC_BSPC, KC_QUOT,  KC_SPC,  SFT_T(KC_ENT), MO(1),
-    KC_MS_BTN1, KC_MS_BTN2     
+    C(KC_Y),   KC_BSPC, KC_QUOT,  KC_SPC,  SFT_T(KC_ENT), MO(7),
+    KC_MS_BTN1, KC_MS_BTN2,     
+    KC_TRNS, KC_TRNS,
+    KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,
+    KC_TRNS, KC_TRNS
   ),
   
   [7] = LAYOUT(
     RGB_RMOD, RGB_VAI,    RGB_SAI,    RGB_HUI,    RGB_SPI,    RGB_TOG,  
     KC_F24,   RGB_VAD,    RGB_SAD,    RGB_HUD,    RGB_SPD,    _______,
-    RGB_MOD,  DT_PRNT,    DT_UP,      DT_DOWN,    _______,    QK_BOOT,
-    KC_MS_BTN1, KC_MS_BTN2 
+    RGB_MOD,  DT_PRNT,    DT_UP,      DT_DOWN,    KC_F23,    QK_BOOT,
+    KC_MS_BTN1, KC_MS_BTN2,
+    LCTL(KC_DOWN),  LCTL(KC_UP), 
+    LGUI(KC_RBRC),  LCTL(KC_RGHT),   LGUI(KC_LBRC), LCTL(KC_LEFT), 
+    LGUI(KC_EQL),   LGUI(KC_MINS) 
   )
 };
 
@@ -134,6 +167,11 @@ bool encoder_update_user(uint8_t index, bool clockwise) {
     return true;
 }
 
+void keyboard_post_init_user(void) {
+  user_config.raw = eeconfig_read_user();
+  tap_mode = user_config.tap;
+}
+
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
   static uint16_t pressed_time = 0;
   switch (keycode) {  
@@ -158,6 +196,13 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
           }
       }
       return false;
+    case KC_F23:
+      if (record->event.pressed) {    
+        user_config.tap = !user_config.tap;  
+        eeconfig_update_user(user_config.raw); 
+        tap_mode = user_config.tap;
+      } 
+      return false; 
     default:
       return true;
   }

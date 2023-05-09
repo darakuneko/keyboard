@@ -15,11 +15,8 @@
  */
 
 #include "num_num_black_strawberry.h"
-#include "usb_host_os_identifier.h"
-
 #include "i2c_master.h"
 #include "pointing_device.h"
-
 #include "iqs5xx.h"
 #include "host.h"
 
@@ -28,10 +25,56 @@ void (*pointing_device_set_button)(uint8_t btn) = dummy_func;
 void (*pointing_device_clear_button)(uint8_t btn) = dummy_func;
 
 bool mouse_send_flag = false;
-bool is_osx = false;
 
-void identify_os(void) { 
-    is_osx = get_usb_host_os_type() == 2;
+keyevent_t get_u_3 = {
+    .key = (keypos_t){.row = 5, .col = 0},
+    .pressed = false
+};
+
+keyevent_t get_d_3 = {
+    .key = (keypos_t){.row = 5, .col = 1},
+    .pressed = false
+};
+
+keyevent_t get_r_2 = {
+    .key = (keypos_t){.row = 6, .col = 0},
+    .pressed = false
+};
+
+keyevent_t get_r_3 = {
+    .key = (keypos_t){.row = 6, .col = 1},
+    .pressed = false
+};
+
+keyevent_t get_l_2 = {
+    .key = (keypos_t){.row = 6, .col = 2},
+    .pressed = false
+};
+
+keyevent_t get_l_3 = {
+    .key = (keypos_t){.row = 6, .col = 3},
+    .pressed = false
+};
+
+keyevent_t get_i_2 = {
+    .key = (keypos_t){.row = 7, .col = 0},
+    .pressed = false
+};
+
+keyevent_t get_o_2 = {
+    .key = (keypos_t){.row = 7, .col = 1},
+    .pressed = false
+};
+
+void gesture_press_key(keyevent_t k) {
+    k.pressed = true;
+    k.time = (timer_read() | 1);
+    action_exec(k);   
+    k.pressed = false;
+    k.time = (timer_read() | 1);
+    action_exec(k);  
+    ges_time = timer_read32();
+    hold_drag_mode = false;
 }
 
 void pointing_device_task(void) {
@@ -43,18 +86,19 @@ void pointing_device_task(void) {
 
 void keyboard_pre_init_kb() {
     i2c_init();
+    keyboard_pre_init_user();
 }
 
 void keyboard_post_init_kb() {
+    check_iqs5xx();
     init_iqs5xx();
     pointing_device_set_button = pointing_device_set_button_iqs5xx;
     pointing_device_clear_button = pointing_device_clear_button_iqs5xx;
     ges_time = timer_read32();
-    one_finger_drag = false;
-        
-    wait_ms(300);
-
-    identify_os();
+    hold_drag_time = timer_read32();
+    hold_drag_mode = false;
+    wait_ms(300);    
+    keyboard_post_init_user();
 }
 
 void matrix_scan_kb() {
@@ -68,38 +112,50 @@ void matrix_scan_kb() {
         static iqs5xx_processed_data_t iqs5xx_processed_data;
         static iqs5xx_gesture_data_t iqs5xx_gesture_data;
         bool send_flag = process_iqs5xx(&iqs5xx_data, &iqs5xx_processed_data, &mouse_rep, &iqs5xx_gesture_data);
-
-        switch (iqs5xx_gesture_data.two.gesture_state) {
+        bool is_passed_ges_timer = timer_elapsed32(ges_time) > GES_TIME_MS;
+        switch (iqs5xx_gesture_data.multi.gesture_state) {
             case GESTURE_SWIPE_U:
-                mouse_rep.v = -2;
-                send_flag = true;
+                if(iqs5xx_data.finger_cnt == 2){
+                    mouse_rep.v = -1;
+                    send_flag = true;
+                } else if (is_passed_ges_timer && iqs5xx_data.finger_cnt == 3) {
+                    gesture_press_key(get_u_3);
+                }
                 break;
             case GESTURE_SWIPE_D:
-                mouse_rep.v = 2;
-                send_flag = true;
+                if(iqs5xx_data.finger_cnt == 2){
+                    mouse_rep.v = 1;
+                    send_flag = true;
+                } else if (is_passed_ges_timer && iqs5xx_data.finger_cnt == 3) {
+                    gesture_press_key(get_d_3);
+                }
                 break;
             case GESTURE_SWIPE_R:
-                if(timer_elapsed32(ges_time) > GES_TIME_MS){
-                    is_osx ? tap_code16(LGUI(KC_RBRC)) : tap_code16(KC_WFWD);
-                    ges_time = timer_read32();
+                if(is_passed_ges_timer){
+                    if(iqs5xx_data.finger_cnt == 2){
+                        gesture_press_key(get_r_2);
+                    } else if(iqs5xx_data.finger_cnt == 3){
+                        gesture_press_key(get_r_3);
+                    }
                 }
                 break;
             case GESTURE_SWIPE_L:
-                if(timer_elapsed32(ges_time) > GES_TIME_MS){
-                    is_osx ? tap_code16(LGUI(KC_LBRC)) : tap_code16(KC_WBAK);
-                    ges_time = timer_read32();
+                if(is_passed_ges_timer){
+                    if(iqs5xx_data.finger_cnt == 2){
+                        gesture_press_key(get_l_2);
+                    } else if(iqs5xx_data.finger_cnt == 3){
+                        gesture_press_key(get_l_3);
+                    }
                 }
                 break;
             case GESTURE_PINCH_IN:
-                if(timer_elapsed32(ges_time) > GES_TIME_MS){
-                    is_osx ? tap_code16(LGUI(KC_EQL)) : tap_code16(LCTL(KC_PPLS));
-                    ges_time = timer_read32();
+                if(is_passed_ges_timer){
+                    gesture_press_key(get_i_2);
                 }
                 break;
             case GESTURE_PINCH_OUT:
-                if(timer_elapsed32(ges_time) > GES_TIME_MS){
-                    is_osx ? tap_code16(LGUI(KC_MINS)) : tap_code16(LCTL(KC_PMNS));
-                    ges_time = timer_read32();
+                if(is_passed_ges_timer){
+                    gesture_press_key(get_o_2);
                 }
                 break;
             default:
@@ -110,4 +166,5 @@ void matrix_scan_kb() {
             pointing_device_set_report(mouse_rep);
         }
     }
+    matrix_scan_user();
 }
