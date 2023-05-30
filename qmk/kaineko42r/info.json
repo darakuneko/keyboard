@@ -446,10 +446,6 @@
       ]
     }
   },
-  "caps_word": {
-    "enabled": true,
-    "double_tap_shift_turns_on": true
-  },
   "matrix_size": {
     "rows": 4,
     "cols": 12

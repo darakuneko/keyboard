@@ -12,5 +12,5 @@
 	{k0A, k0B, k0C, k0D, k0E, k0F, k0G, k0H, k0I, k0J, k0K, k0L}, \
 	{k1A, k1B, k1C, k1D, k1E, k1F, k1G, k1H, k1I, k1J, k1K, XXX}, \
 	{k2A, k2B, k2C, k2D, k2E, k2F, k2G, k2H, k2I, k2J, k2K, XXX}, \
-	{k3A, k3B, k3C, k3D, k3G, XXX, k3G, k3H, k3I, k3J, XXX, XXX} \
+	{k3A, k3B, k3C, k3D, k3G, XXX, XXX, k3H, k3I, k3J, XXX, XXX} \
 }
