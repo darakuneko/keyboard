@@ -2,7 +2,7 @@
   "name": "Trident40",
   "vendorId": "0x7A79",
   "productId": "0x1535",
-  "lighting": "none",
+  "lighting": "vialrgb",
   "matrix": {
     "rows": 4,
     "cols": 12

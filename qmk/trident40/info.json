@@ -10,6 +10,7 @@
     "console": false,
     "extrakey": true,
     "mousekey": true,
+    "rgb_matrix": true,
     "nkro": true
   },
   "caps_word": {
