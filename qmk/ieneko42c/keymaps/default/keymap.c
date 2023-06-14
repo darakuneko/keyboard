@@ -8,8 +8,8 @@
 typedef union {
   uint32_t raw;
   struct {
+    bool  init_hf : 1;
     int  hf_mode : 10;
-    bool tap : 1;
     bool layer_hf : 1;
   };
 } user_config_t;
@@ -63,9 +63,14 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
 void keyboard_post_init_user(void) {
   user_config.raw = eeconfig_read_user();
-  hf_mode = user_config.hf_mode ? user_config.hf_mode : 60;
-  tap_mode = user_config.tap ? user_config.tap : 1;
-  is_layer_hf = user_config.layer_hf ? user_config.layer_hf : 1;
+  hf_mode = user_config.init_hf ? user_config.hf_mode : 47;
+  is_layer_hf = user_config.init_hf ? user_config.layer_hf : 1;
+  tap_mode = 1;
+  if(!user_config.init_hf) {
+    user_config.init_hf = !user_config.init_hf;  
+    eeconfig_update_user(user_config.raw); 
+  }
+  
 }
 
 void hf_DRV_pulse(bool ee2_up) {
@@ -93,7 +98,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         return false;
      case KC_F19: 
         if (record->event.pressed) {
-          user_config.layer_hf = !user_config.layer_hf;  
+          user_config.layer_hf = !is_layer_hf;  
           eeconfig_update_user(user_config.raw); 
           is_layer_hf = user_config.layer_hf;        
         }
@@ -121,14 +126,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             hf_DRV_pulse(true);
         }
         return false;
-      case KC_F23:
-        if (record->event.pressed) {    
-          user_config.tap = !user_config.tap;  
-          eeconfig_update_user(user_config.raw); 
-          tap_mode = user_config.tap;
-        } 
-        return false;  
-
     default:
       return true;
   }
@@ -193,5 +190,3 @@ void rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
   }
   //return false;
 }  
-
-
