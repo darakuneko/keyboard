@@ -10,10 +10,12 @@ typedef union {
   struct {
     int  hf_mode : 10;
     bool tap : 1;
+    bool layer_hf : 1;
   };
 } user_config_t;
 user_config_t user_config;
 
+bool is_layer_hf;
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 	
@@ -23,7 +25,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     	KC_LSFT,             KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,         KC_N,    KC_M,    KC_COMM, KC_DOT,  KC_SLSH, KC_LSFT, 
 		                           KC_LGUI, MO(2),   LT(1, KC_SPC),       LT(1, KC_ENT), LT(2,KC_BSPC), KC_RGUI,
       LGUI(KC_TAB), LGUI(KC_TAB),
-      KC_WFWD,     LCTL(LGUI(KC_RIGHT)), KC_WBAK, LCTL(LGUI(KC_LEFT)),
+      LALT(KC_RGHT),     LCTL(LGUI(KC_RIGHT)), LALT(KC_LEFT), LCTL(LGUI(KC_LEFT)),
       LCTL(KC_PPLS), LCTL(KC_PMNS)                         
   ),
 
@@ -50,7 +52,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 	[3] = LAYOUT(
 		RGB_VAI,  RGB_SAI,    RGB_HUI,    RGB_SPI,    RGB_MOD,    RGB_TOG,   DT_PRNT, DT_UP,   DT_DOWN,   KC_NO,   KC_NO,   KC_NO, 
 		RGB_VAD,  RGB_SAD,    RGB_HUD,    RGB_SPD,   RGB_RMOD,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,
-		KC_F20,   KC_F21,   KC_F22,   KC_F23,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO, 
+		KC_F19,   KC_F20,   KC_F21,   KC_F22,   KC_F23,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO, 
 		KC_NO,   KC_NO,   EE_CLR,   QK_BOOT,   KC_NO,   KC_NO,
     LCTL(KC_DOWN),  LCTL(KC_UP), 
     LGUI(KC_RBRC),  LCTL(KC_RGHT),   LGUI(KC_LBRC), LCTL(KC_LEFT), 
@@ -63,6 +65,7 @@ void keyboard_post_init_user(void) {
   user_config.raw = eeconfig_read_user();
   hf_mode = user_config.hf_mode ? user_config.hf_mode : 60;
   tap_mode = user_config.tap ? user_config.tap : 1;
+  is_layer_hf = user_config.layer_hf ? user_config.layer_hf : 1;
 }
 
 void hf_DRV_pulse(bool ee2_up) {
@@ -88,6 +91,13 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
           pointing_device_clear_button(1 << (keycode - KC_BTN1));
         }
         return false;
+     case KC_F19: 
+        if (record->event.pressed) {
+          user_config.layer_hf = !user_config.layer_hf;  
+          eeconfig_update_user(user_config.raw); 
+          is_layer_hf = user_config.layer_hf;        
+        }
+        return false;         
       case KC_F20: 
         if (record->event.pressed) {
             hf_DRV_pulse(false);
@@ -128,7 +138,7 @@ int layer = 0;
 
 void matrix_scan_user(void) {
   int current_layer = get_highest_layer(layer_state|default_layer_state); 
-  if(layer != current_layer){
+  if(is_layer_hf && layer != current_layer){
     DRV_pulse(hf_mode);
     layer = current_layer;
   }
