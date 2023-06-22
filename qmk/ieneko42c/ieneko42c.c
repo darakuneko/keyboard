@@ -123,8 +123,6 @@ void matrix_scan_kb() {
         bool is_passed_ges_timer = timer_elapsed32(ges_time) > GES_TIME_MS;
         if(iqs5xx_processed_data.tap_cnt == 3) {
             gesture_press_key(get_t_3);
-            uprintf("tap_cnt: %i\n", iqs5xx_processed_data.tap_cnt);
-            uprintf("gesture_state: %i\n", iqs5xx_gesture_data.multi.gesture_state);
         } 
         switch (iqs5xx_gesture_data.multi.gesture_state) {
             case GESTURE_SWIPE_U:
