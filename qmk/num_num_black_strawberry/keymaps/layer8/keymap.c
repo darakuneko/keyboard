@@ -33,8 +33,9 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     C(KC_Y),   KC_BSPC, KC_QUOT,  KC_SPC,  SFT_T(KC_ENT), MO(1),
     KC_MS_BTN1, KC_MS_BTN2,
     LGUI(KC_TAB), LGUI(KC_TAB),
-    KC_WFWD,     LCTL(LGUI(KC_RIGHT)), KC_WBAK, LCTL(LGUI(KC_LEFT)),
-    LCTL(KC_PPLS), LCTL(KC_PMNS)
+    LALT(KC_RGHT),     LCTL(LGUI(KC_RIGHT)), LALT(KC_LEFT), LCTL(LGUI(KC_LEFT)),
+    LCTL(KC_PPLS), LCTL(KC_PMNS),
+    KC_ESC
   ),
  
   [1] = LAYOUT(
@@ -44,7 +45,8 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     KC_MS_BTN1, KC_MS_BTN2,     
     KC_TRNS, KC_TRNS,
     KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,
-    KC_TRNS, KC_TRNS
+    KC_TRNS, KC_TRNS,
+    KC_TRNS
   ), 
 
   [2] = LAYOUT(
@@ -54,7 +56,8 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     KC_MS_BTN1, KC_MS_BTN2,     
     KC_TRNS, KC_TRNS,
     KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,
-    KC_TRNS, KC_TRNS
+    KC_TRNS, KC_TRNS,
+    KC_TRNS
   ),
 
   [3] = LAYOUT(
@@ -64,7 +67,8 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     KC_MS_BTN1, KC_MS_BTN2,     
     KC_TRNS, KC_TRNS,
     KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,
-    KC_TRNS, KC_TRNS
+    KC_TRNS, KC_TRNS,
+    KC_TRNS
   ),
     
   [4] = LAYOUT(
@@ -74,7 +78,8 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     KC_MS_BTN1, KC_MS_BTN2,     
     KC_TRNS, KC_TRNS,
     KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,
-    KC_TRNS, KC_TRNS
+    KC_TRNS, KC_TRNS,
+    KC_TRNS
   ),
   
   [5] = LAYOUT(
@@ -84,7 +89,8 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     KC_MS_BTN1, KC_MS_BTN2,     
     KC_TRNS, KC_TRNS,
     KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,
-    KC_TRNS, KC_TRNS
+    KC_TRNS, KC_TRNS,
+    KC_TRNS
   ),
   
   [6] = LAYOUT(
@@ -94,7 +100,8 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     KC_MS_BTN1, KC_MS_BTN2,     
     KC_TRNS, KC_TRNS,
     KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,
-    KC_TRNS, KC_TRNS
+    KC_TRNS, KC_TRNS,
+    KC_TRNS
   ),
   
   [7] = LAYOUT(
@@ -104,7 +111,8 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     KC_MS_BTN1, KC_MS_BTN2,
     LCTL(KC_DOWN),  LCTL(KC_UP), 
     LGUI(KC_RBRC),  LCTL(KC_RGHT),   LGUI(KC_LBRC), LCTL(KC_LEFT), 
-    LGUI(KC_EQL),   LGUI(KC_MINS) 
+    LGUI(KC_EQL),   LGUI(KC_MINS),
+    KC_TRNS
   )
 };
 

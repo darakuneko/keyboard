@@ -23,7 +23,7 @@
 #define FINGER_MAX 3
 #define GES_TIME_MS 200
 #define TAP_TIME_MS 350
-#define DRAG_TIME_MS 700
+#define DRAG_TIME_MS 600
 
 #define MIN_MOVE_FOR_GES 1000
 #define MIN_MOVE_FOR_SWIPE_UPDATE 100
@@ -121,6 +121,7 @@ uint32_t ges_time;
 uint32_t hold_drag_time;
 bool hold_drag_mode;
 bool tap_mode;
+int hf_mode;
 
 // Application and bootloader I2C address in 7bit
 #define IQS5xx_READ_ADDR 0x74

@@ -51,11 +51,11 @@ void pointing_device_clear_button_iqs5xx(uint8_t btn) {
 }
 
 static inline uint8_t iqs_writeReg_continue(uint8_t devaddr, uint16_t regaddr, uint8_t* data, uint16_t len) {
-    return i2c_writeReg16(devaddr, regaddr, data, len, 4);
+    return i2c_writeReg16(devaddr, regaddr, data, len, 100);
 }
 
 static inline uint8_t iqs_readReg_continue(uint8_t devaddr, uint16_t regaddr, uint8_t* data, uint16_t len) {
-    i2c_status_t status = i2c_readReg16(devaddr, regaddr, data, len, 4);
+    i2c_status_t status = i2c_readReg16(devaddr, regaddr, data, len, 100);
     return (status < 0) ? status : I2C_STATUS_SUCCESS;
 }
 
@@ -107,14 +107,6 @@ int init_iqs5xx(void) {
     if (res) {
         // retry once to avoid LP mode
         res = iqs_app_writeReg(IQS5xx_SYSTEM_CTRL0, &data, 1);
-        if (res) return 0;
-    }
-
-    data = 0x0F;
-    res = iqs_app_writeReg(IQS5xx_FINGER_SPLIT, &data, 1);
-
-    if (res) {
-        res = iqs_app_writeReg(IQS5xx_FINGER_SPLIT, &data, 1);
         if (res) return 0;
     }
 
@@ -301,29 +293,17 @@ bool process_iqs5xx(iqs5xx_data_t const* const data, iqs5xx_processed_data_t* pr
                 processed->fingers[idx].state = FINGER_UP;
 
                 // detect tapping motion
-                if(idx == 0){
+                if(idx == 0 || idx == 1 || idx == 2){
                     if (
-                        abs(processed->fingers[0].rel.x) < 30 && 
-                        abs(processed->fingers[0].rel.y) < 30 &&
-                        timer_elapsed32(processed->fingers[0].t_tapped) > 10 &&
+                        abs(processed->fingers[idx].rel.x) < 20 && 
+                        abs(processed->fingers[idx].rel.y) < 20 &&
                         timer_elapsed32(processed->fingers[0].t_tapped) < TAP_TIME_MS
                         ) {
                             processed->fingers[idx].t_tapped = timer_read32();
                             processed->fingers[idx].tapped   = true;
                             tapped                           = true;
                     }
-                } else if(idx == 1) {
-                    if ( 
-                        abs(processed->fingers[1].rel.x) < 50 && 
-                        abs(processed->fingers[1].rel.y) < 50 &&
-                        timer_elapsed32(processed->fingers[0].t_tapped) < GES_TIME_MS
-                        ) {
-                        processed->fingers[1].t_tapped = timer_read32();
-                        processed->fingers[1].tapped   = true;
-                        tapped                         = true;
-                    }
                 }
-                
             }
 
             processed->fingers[idx].dx    = 0;
@@ -384,7 +364,7 @@ bool process_iqs5xx(iqs5xx_data_t const* const data, iqs5xx_processed_data_t* pr
                 }
                 processed->fingers[idx].tapped = false;
             }
-            if (!hold_drag_mode) {
+            if (!hold_drag_mode && processed->tap_cnt < 3) {
                 rep_mouse->buttons = (1 << (processed->tap_cnt - 1));
                 send_flag = true;
             }
@@ -405,7 +385,7 @@ bool process_iqs5xx(iqs5xx_data_t const* const data, iqs5xx_processed_data_t* pr
         } 
 
         if (diff_x < 2 && diff_y  < 2) {
-            if(timer_elapsed32(hold_drag_time) > DRAG_TIME_MS) {
+            if(!hold_drag_mode && timer_elapsed32(hold_drag_time) > DRAG_TIME_MS) {
                 hold_drag_mode = true;
             }
         } else {
@@ -422,6 +402,7 @@ bool process_iqs5xx(iqs5xx_data_t const* const data, iqs5xx_processed_data_t* pr
         if ((gesture_data->multi.gesture_state & 0x0F) != 0x00) {
             processed->fingers[0].last_gesture_point = data->fingers[0].current;
             processed->fingers[1].last_gesture_point = data->fingers[1].current;
+            processed->fingers[2].last_gesture_point = data->fingers[2].current;
         }
     } else {
         gesture_data->multi.gesture_state = GESTURE_NONE;

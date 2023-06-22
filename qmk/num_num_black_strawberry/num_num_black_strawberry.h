@@ -12,7 +12,7 @@ extern void (*pointing_device_clear_button)(uint8_t btn);
     k16, k17, \
     f01, f02,  \
     f03, f04, f05, f06,  \
-    f07, f08  \
+    f07, f08, f09  \
      \
 ) \
 { \
@@ -23,5 +23,5 @@ extern void (*pointing_device_clear_button)(uint8_t btn);
     { k17, k18, ELCCW, ELCW }, \
     { f01, f02, KC_NO, KC_NO, }, \
     { f03, f04, f05, f06, }, \
-    { f07, f08, KC_NO, KC_NO } \
+    { f07, f08, f09, KC_NO } \
 }
