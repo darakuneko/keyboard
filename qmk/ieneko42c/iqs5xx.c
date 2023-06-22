@@ -294,26 +294,15 @@ bool process_iqs5xx(iqs5xx_data_t const* const data, iqs5xx_processed_data_t* pr
                 processed->fingers[idx].state = FINGER_UP;
 
                 // detect tapping motion
-                if(idx == 0){
+                if(idx == 0 || idx == 1 || idx == 2){
                     if (
-                        abs(processed->fingers[0].rel.x) < 20 && 
-                        abs(processed->fingers[0].rel.y) < 20 &&
-                        timer_elapsed32(processed->fingers[0].t_tapped) > 10 &&
+                        abs(processed->fingers[idx].rel.x) < 20 && 
+                        abs(processed->fingers[idx].rel.y) < 20 &&
                         timer_elapsed32(processed->fingers[0].t_tapped) < TAP_TIME_MS
                         ) {
                             processed->fingers[idx].t_tapped = timer_read32();
                             processed->fingers[idx].tapped   = true;
                             tapped                           = true;
-                    }
-                } else if(idx == 1) {
-                    if ( 
-                        abs(processed->fingers[1].rel.x) < 15 && 
-                        abs(processed->fingers[1].rel.y) < 15 &&
-                        timer_elapsed32(processed->fingers[0].t_tapped) < GES_TIME_MS
-                        ) {
-                        processed->fingers[1].t_tapped = timer_read32();
-                        processed->fingers[1].tapped   = true;
-                        tapped                         = true;
                     }
                 }
             }
@@ -376,7 +365,7 @@ bool process_iqs5xx(iqs5xx_data_t const* const data, iqs5xx_processed_data_t* pr
                 }
                 processed->fingers[idx].tapped = false;
             }
-            if (!hold_drag_mode) {
+            if (!hold_drag_mode && processed->tap_cnt < 3) {
                 rep_mouse->buttons = (1 << (processed->tap_cnt - 1));
                 send_flag = true;
             }
@@ -415,6 +404,7 @@ bool process_iqs5xx(iqs5xx_data_t const* const data, iqs5xx_processed_data_t* pr
         if ((gesture_data->multi.gesture_state & 0x0F) != 0x00) {
             processed->fingers[0].last_gesture_point = data->fingers[0].current;
             processed->fingers[1].last_gesture_point = data->fingers[1].current;
+            processed->fingers[2].last_gesture_point = data->fingers[2].current;
         }
     } else {
         gesture_data->multi.gesture_state = GESTURE_NONE;
