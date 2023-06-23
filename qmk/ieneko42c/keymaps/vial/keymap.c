@@ -67,14 +67,15 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
 void keyboard_post_init_user(void) {
   user_config.raw = eeconfig_read_user();
-  hf_mode = user_config.init_hf ? user_config.hf_mode : 47;
-  is_layer_hf = user_config.init_hf ? user_config.layer_hf : 1;
-  tap_mode = 1;
   if(!user_config.init_hf) {
-    user_config.init_hf = !user_config.init_hf;  
+    user_config.init_hf = true;  
+    user_config.layer_hf = true;
+    user_config.hf_mode = 47; 
     eeconfig_update_user(user_config.raw); 
   }
-  
+  tap_mode = 1;
+  hf_mode = user_config.hf_mode;
+  is_layer_hf = user_config.layer_hf;
 }
 
 void hf_DRV_pulse(bool ee2_up) {

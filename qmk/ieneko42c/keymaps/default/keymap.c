@@ -26,7 +26,8 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 		                           KC_LGUI, MO(2),   LT(1, KC_SPC),       LT(1, KC_ENT), LT(2,KC_BSPC), KC_RGUI,
       LGUI(KC_TAB), LGUI(KC_TAB),
       LALT(KC_RGHT),     LCTL(LGUI(KC_RIGHT)), LALT(KC_LEFT), LCTL(LGUI(KC_LEFT)),
-      LCTL(KC_PPLS), LCTL(KC_PMNS)                         
+      LCTL(KC_PPLS), LCTL(KC_PMNS),
+      KC_ESC               
   ),
 
 	[1] = LAYOUT(
@@ -36,7 +37,8 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 		KC_NO,   MO(3),   KC_LSFT,  KC_LSFT,   MO(3),   KC_NO,
     KC_TRNS, KC_TRNS,
     KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,
-    KC_TRNS, KC_TRNS   
+    KC_TRNS, KC_TRNS,  
+    KC_TRNS
 	),
 
 	[2] = LAYOUT(
@@ -46,7 +48,8 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 		KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,
     KC_TRNS, KC_TRNS,
     KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,
-    KC_TRNS, KC_TRNS 
+    KC_TRNS, KC_TRNS,
+    KC_TRNS
 	),
 
 	[3] = LAYOUT(
@@ -56,21 +59,23 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 		KC_NO,   KC_NO,   EE_CLR,   QK_BOOT,   KC_NO,   KC_NO,
     LCTL(KC_DOWN),  LCTL(KC_UP), 
     LGUI(KC_RBRC),  LCTL(KC_RGHT),   LGUI(KC_LBRC), LCTL(KC_LEFT), 
-    LGUI(KC_EQL),   LGUI(KC_MINS)
+    LGUI(KC_EQL),   LGUI(KC_MINS),
+    KC_TRNS
 	)
 
 };
 
 void keyboard_post_init_user(void) {
   user_config.raw = eeconfig_read_user();
-  hf_mode = user_config.init_hf ? user_config.hf_mode : 47;
-  is_layer_hf = user_config.init_hf ? user_config.layer_hf : 1;
-  tap_mode = 1;
   if(!user_config.init_hf) {
-    user_config.init_hf = !user_config.init_hf;  
+    user_config.init_hf = true;  
+    user_config.layer_hf = true;
+    user_config.hf_mode = 47; 
     eeconfig_update_user(user_config.raw); 
   }
-  
+  tap_mode = 1;
+  hf_mode = user_config.hf_mode;
+  is_layer_hf = user_config.layer_hf;
 }
 
 void hf_DRV_pulse(bool ee2_up) {
