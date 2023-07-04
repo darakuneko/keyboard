@@ -86,7 +86,7 @@ void hf_DRV_pulse(bool ee2_up) {
   }
   DRV_pulse(hf_mode);
   char buf[12]; 
-  snprintf(buf, sizeof(buf), "%d", hf_mode);
+  //snprintf(buf, sizeof(buf), "%d", hf_mode);
   const char *s = buf;
   send_string(s);
 }
