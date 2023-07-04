@@ -51,6 +51,31 @@ led_config_t g_led_config = { {
 	4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4,
 	4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 
 	4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 
-	4, 4, 4, 4, 4, 4
+	4, 4, 4, 4, 4, 4,
+	2, 2, 2, 2, 2, 2, 2, 2
   } 
 };
+
+
+void rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) { 
+  int current_layer = get_highest_layer(layer_state|default_layer_state);  
+  HSV hsv = {0, 255, rgblight_get_val()};
+  if (current_layer == 1) {
+    hsv.h = 191; //PURPLE
+  } else if (current_layer == 2)  {
+    hsv.h = 85; //GREEN
+  } else if (current_layer == 3)  {
+    hsv.h = 43; //YELLOW
+  } else {
+    hsv.h = 128; //CYAN
+  }
+  RGB rgb = hsv_to_rgb(hsv);
+
+  
+  for (uint8_t i = led_min; i <= led_max -1; i++) {
+      if (HAS_FLAGS(g_led_config.flags[i], 0x02)) {
+        rgb_matrix_set_color(i, rgb.r, rgb.g, rgb.b);
+      }
+  }
+  //return false;
+}  
