@@ -29,58 +29,39 @@ void (*pointing_device_clear_button)(uint8_t btn) = dummy_func;
 bool mouse_send_flag = false;
 
 
-keyevent_t get_d_3 = {
-    .key = (keypos_t){.row = 4, .col = 0},
-    .pressed = false
-};
+keypos_t get_d_3 = (keypos_t){.row = 4, .col = 0};
+keypos_t get_u_3 = (keypos_t){.row = 4, .col = 1};
+keypos_t get_r_2 = (keypos_t){.row = 4, .col = 2};
+keypos_t get_r_3 = (keypos_t){.row = 4, .col = 3};
+keypos_t get_l_2 = (keypos_t){.row = 4, .col = 4};
+keypos_t get_l_3 = (keypos_t){.row = 4, .col = 5};
+keypos_t get_i_2 = (keypos_t){.row = 4, .col = 6};
+keypos_t get_o_2 = (keypos_t){.row = 4, .col = 7};
+keypos_t get_t_3 = (keypos_t){.row = 4, .col = 8};
 
-keyevent_t get_u_3 = {
-    .key = (keypos_t){.row = 4, .col = 1},
-    .pressed = false
-};
+void gesture_press_key(keypos_t k) {
+    int current_layer = get_highest_layer(layer_state|default_layer_state); 
+    uint16_t keycode = keymap_key_to_keycode(current_layer, k);
+    keyevent_t k_event = {
+                .key = (keypos_t){.row = k.row, .col = k.col},
+                .pressed = false
+            };
+    switch (keycode) {
+        case KC_MS_BTN1 ... KC_MS_BTN5:
+            register_code(keycode);
+	        unregister_code(keycode);
+            break;
+       default:
+            k_event.pressed = true;
+            k_event.time = (timer_read() | 1);
+            action_exec(k_event);   
+            k_event.pressed = false;
+            k_event.time = (timer_read() | 1);
+            action_exec(k_event);
+        break;
+    }
+  
 
-keyevent_t get_r_2 = {
-    .key = (keypos_t){.row = 4, .col = 2},
-    .pressed = false
-};
-
-keyevent_t get_r_3 = {
-    .key = (keypos_t){.row = 4, .col = 3},
-    .pressed = false
-};
-
-keyevent_t get_l_2 = {
-    .key = (keypos_t){.row = 4, .col = 4},
-    .pressed = false
-};
-
-keyevent_t get_l_3 = {
-    .key = (keypos_t){.row = 4, .col = 5},
-    .pressed = false
-};
-
-keyevent_t get_i_2 = {
-    .key = (keypos_t){.row = 4, .col = 6},
-    .pressed = false
-};
-
-keyevent_t get_o_2 = {
-    .key = (keypos_t){.row = 4, .col = 7},
-    .pressed = false
-};
-
-keyevent_t get_t_3 = {
-    .key = (keypos_t){.row = 4, .col = 8},
-    .pressed = false
-};
-
-void gesture_press_key(keyevent_t k) {
-    k.pressed = true;
-    k.time = (timer_read() | 1);
-    action_exec(k);   
-    k.pressed = false;
-    k.time = (timer_read() | 1);
-    action_exec(k);  
     ges_time = timer_read32();
     hold_drag_mode = false;
 }
