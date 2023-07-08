@@ -40,6 +40,7 @@
 
 static uint8_t pointing_device_button;
 static bool    send_flag = false;  // new mouse motion is detected and it should be send to host
+static bool    change_auto_trackpad_layer = false;
 
 void pointing_device_set_button_iqs5xx(uint8_t btn) {
     pointing_device_button |= btn;
@@ -78,7 +79,6 @@ static inline uint8_t iqs_app_readReg(uint16_t regaddr, uint8_t* data, uint16_t 
 
     return res;
 }
-
 
 uint16_t check_iqs5xx() {
     uint8_t dat[2] = {0};
@@ -292,7 +292,10 @@ bool process_iqs5xx(iqs5xx_data_t const* const data, iqs5xx_processed_data_t* pr
             // finger is up
             if (processed->fingers[idx].state == FINGER_DOWN) {
                 processed->fingers[idx].state = FINGER_UP;
-
+                if(change_auto_trackpad_layer && is_auto_trackpad_layer){
+                    layer_move(get_highest_layer(default_layer_state));
+                    change_auto_trackpad_layer = false;
+                }
                 // detect tapping motion
                 if(idx == 0 || idx == 1 || idx == 2){
                     if (
@@ -315,7 +318,10 @@ bool process_iqs5xx(iqs5xx_data_t const* const data, iqs5xx_processed_data_t* pr
             processed->fingers[idx].frame_move.y = 0;
         } else {
             // finger is down
-            //uprintf("finger: %s\n", "down");
+            if(!change_auto_trackpad_layer && is_auto_trackpad_layer){
+                layer_move(4);
+                change_auto_trackpad_layer = true;
+            }
             active_finger_id = idx;
             if (processed->fingers[idx].state == FINGER_UP) {
                 processed->fingers[idx].state   = FINGER_DOWN;
@@ -386,7 +392,7 @@ bool process_iqs5xx(iqs5xx_data_t const* const data, iqs5xx_processed_data_t* pr
         } 
 
         if (diff_x < 2 && diff_y  < 2) {
-            if(!hold_drag_mode && timer_elapsed32(hold_drag_time) > DRAG_TIME_MS) {
+            if(is_drag_mode && !hold_drag_mode && timer_elapsed32(hold_drag_time) > drag_time) {
                 hold_drag_mode = true;
                 DRV_pulse(hf_mode);
             }

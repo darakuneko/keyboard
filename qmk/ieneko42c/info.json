@@ -19,6 +19,9 @@
     "via": false,
     "wpm": false
   },
+  "dynamic_keymap": {
+	"layer_count": 5
+  },
   "caps_word": {
     "enabled": true,
     "double_tap_shift_turns_on": true
