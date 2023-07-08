@@ -78,7 +78,6 @@ static inline uint8_t iqs_app_readReg(uint16_t regaddr, uint8_t* data, uint16_t 
     return res;
 }
 
-
 uint16_t check_iqs5xx() {
     uint8_t dat[2] = {0};
 
@@ -347,7 +346,7 @@ bool process_iqs5xx(iqs5xx_data_t const* const data, iqs5xx_processed_data_t* pr
         }
     }
 
-    if (tap_mode && pointing_device_button != 0) {
+    if (pointing_device_button != 0) {
         rep_mouse->buttons |= pointing_device_button;
     }
     // if any finger taps and all fingers are released process tapping
@@ -385,7 +384,7 @@ bool process_iqs5xx(iqs5xx_data_t const* const data, iqs5xx_processed_data_t* pr
         } 
 
         if (diff_x < 2 && diff_y  < 2) {
-            if(!hold_drag_mode && timer_elapsed32(hold_drag_time) > DRAG_TIME_MS) {
+            if(is_drag_mode && !hold_drag_mode && timer_elapsed32(hold_drag_time) > drag_time) {
                 hold_drag_mode = true;
             }
         } else {

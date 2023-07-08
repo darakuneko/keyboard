@@ -14,12 +14,17 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include QMK_KEYBOARD_H
+#include <stdio.h>
 #include "iqs5xx.h"
 
 typedef union {
   uint32_t raw;
   struct {
+    bool     init : 1;
     bool     tap : 1;
+    bool     drag_mode : 1;
+    uint32_t drag_time : 12;
+    bool     auto_trackpad_layer : 1;
   };
 } user_config_t;
 user_config_t user_config;
@@ -61,8 +66,8 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   
   [3] = LAYOUT(
     RGB_RMOD, RGB_VAI,    RGB_SAI,    RGB_HUI,    RGB_SPI,    RGB_TOG,  
-    KC_F24,   RGB_VAD,    RGB_SAD,    RGB_HUD,    RGB_SPD,    _______,
-    RGB_MOD,  DT_PRNT,    DT_UP,      DT_DOWN,    KC_F23,    QK_BOOT,
+    KC_F24,   RGB_VAD,    RGB_SAD,    RGB_HUD,    RGB_SPD,    EE_CLR,
+    RGB_MOD,  KC_F20,     KC_F21,      KC_F22,    KC_F23,    QK_BOOT,
     KC_MS_BTN1, KC_MS_BTN2,
     LCTL(KC_DOWN),  LCTL(KC_UP), 
     LGUI(KC_RBRC),  LCTL(KC_RGHT),   LGUI(KC_LBRC), LCTL(KC_LEFT), 
@@ -132,7 +137,30 @@ bool encoder_update_user(uint8_t index, bool clockwise) {
 
 void keyboard_post_init_user(void) {
   user_config.raw = eeconfig_read_user();
+  if(!user_config.init) {
+    user_config.init = true;  
+    user_config.tap = false; 
+    user_config.drag_mode = true;  
+    user_config.drag_time = 700;
+    eeconfig_update_user(user_config.raw); 
+  }
   tap_mode = user_config.tap;
+  is_drag_mode = user_config.drag_mode;  
+  drag_time = user_config.drag_time; 
+}
+
+void send_setting_string(int i){
+  char buf[12]; 
+  snprintf(buf, sizeof(buf), "%d", i);
+  const char *s = buf;
+  send_string(s);
+}
+
+void update_drag_time(uint32_t dt){
+  user_config.drag_time = dt;
+  eeconfig_update_user(user_config.raw); 
+  drag_time = user_config.drag_time;
+  send_setting_string(dt);
 }
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
@@ -146,26 +174,51 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         }
       return false;
       break;
-    case KC_F24:
-      if (record->event.pressed) {    
-        pressed_time = record->event.time;
-        if(!is_hold){
-            encoder_layer_up();
+      case KC_F20: 
+        if (record->event.pressed) {
+          user_config.drag_mode = !is_drag_mode;  
+          eeconfig_update_user(user_config.raw); 
+          is_drag_mode = user_config.drag_mode;        
         }
-        is_hold = false;
-      } else {
+        return false;             
+      case KC_F21: 
+        if (record->event.pressed) {
+          drag_time = drag_time + 10;
+          if(drag_time > 3000) {
+              drag_time = 3000;
+          }
+          update_drag_time(drag_time);
+        }
+        return false;
+      case KC_F22: 
+        if (record->event.pressed) {
+          if(drag_time != 0) {
+            drag_time = drag_time - 10;
+          }
+          update_drag_time(drag_time);
+        }
+        return false;   
+      case KC_F23:
+        if (record->event.pressed) {    
+          user_config.tap = !user_config.tap;  
+          eeconfig_update_user(user_config.raw); 
+          tap_mode = user_config.tap;
+        } 
+      return false;             
+      case KC_F24:
+        if (record->event.pressed) {    
+          pressed_time = record->event.time;
+          if(!is_hold){
+            encoder_layer_up();
+          }
+          is_hold = false;
+        } else {
           if((record->event.time - pressed_time) > TAPPING_TERM) {
             is_hold = true;
           }
-      }
+        }
       return false;
-    case KC_F23:
-      if (record->event.pressed) {    
-        user_config.tap = !user_config.tap;  
-        eeconfig_update_user(user_config.raw); 
-        tap_mode = user_config.tap;
-      } 
-      return false;  
+ 
     default:
       return true;
   }
@@ -217,4 +270,3 @@ void rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
         }
     }
 };
-

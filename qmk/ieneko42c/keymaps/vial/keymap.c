@@ -8,7 +8,7 @@
 typedef union {
   uint32_t raw;
   struct {
-    bool  init_hf : 1;
+    bool  init : 1;
     int  hf_mode : 10;
     bool layer_hf : 1;
     bool drag_mode : 1;
@@ -78,8 +78,8 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
 void keyboard_post_init_user(void) {
   user_config.raw = eeconfig_read_user();
-  if(!user_config.init_hf) {
-    user_config.init_hf = true;  
+  if(!user_config.init) {
+    user_config.init = true;  
     user_config.layer_hf = true;
     user_config.hf_mode = 47;   
     user_config.drag_mode = true;  
