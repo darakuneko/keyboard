@@ -69,7 +69,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,  
 		KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO, 
 		KC_LSFT,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_LSFT, 
-		KC_NO,   KC_BTN2,   KC_BTN1,   KC_BTN1,   KC_BTN2,   KC_NO,
+		KC_ACL1,   KC_ACL0,   KC_BTN1,   KC_BTN1,   KC_ACL0,   KC_ACL2,
     KC_TRNS, KC_TRNS,
     KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,
     KC_TRNS, KC_TRNS,
@@ -86,15 +86,16 @@ void keyboard_post_init_user(void) {
     user_config.hf_mode = 47;   
     user_config.drag_mode = true;  
     user_config.drag_time = 700;
-    user_config.auto_trackpad_layer = false;
+    user_config.auto_trackpad_layer = true;
     eeconfig_update_user(user_config.raw); 
   }
   is_tap_mode = 1;
   hf_mode = user_config.hf_mode;
   is_layer_hf = user_config.layer_hf;
   is_drag_mode = user_config.drag_mode;  
-  drag_time = user_config.drag_time;
+  drag_time = user_config.drag_time ? user_config.drag_time : 700;
   is_auto_trackpad_layer = user_config.auto_trackpad_layer;
+  accel_speed = 1;
   change_auto_trackpad_layer = false;
 }
 
@@ -123,7 +124,6 @@ void update_drag_time(uint32_t dt){
 }
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
-
   switch (keycode) {  
       case KC_BTN1 ... KC_BTN5:
         if (record->event.pressed) {
@@ -136,6 +136,27 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             layer_move(get_highest_layer(default_layer_state));
             change_auto_trackpad_layer = false;
           }
+        }
+        return false;  
+      case KC_ACL0:
+        if (record->event.pressed) {
+          accel_speed = 2;
+        } else {
+          accel_speed = 1;
+        }
+        return false;  
+      case KC_ACL1:
+        if (record->event.pressed) {
+          accel_speed = 4;
+        } else {
+          accel_speed = 1;
+        }
+        return false;  
+      case KC_ACL2:
+        if (record->event.pressed) {
+          accel_speed = 8;
+        } else {
+          accel_speed = 1;
         }
         return false;  
      case KC_F15: 

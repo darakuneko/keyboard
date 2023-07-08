@@ -400,8 +400,8 @@ bool process_iqs5xx(iqs5xx_data_t const* const data, iqs5xx_processed_data_t* pr
                 hold_drag_time = timer_read32();
             }
         }
-        rep_mouse->x                                            = processed->fingers[active_finger_id].frame_move.x / 2;
-        rep_mouse->y                                            = processed->fingers[active_finger_id].frame_move.y / 2;
+        rep_mouse->x                                            = (processed->fingers[active_finger_id].frame_move.x / 2) * accel_speed;
+        rep_mouse->y                                            = (processed->fingers[active_finger_id].frame_move.y / 2) * accel_speed;
         processed->fingers[active_finger_id].last_gesture_point = processed->fingers[active_finger_id].last;
         send_flag                                               = true;
     } else if ((data->finger_cnt == 2 || data->finger_cnt == 3) && (timer_elapsed32(processed->fingers[1].t_tapped) > TAP_TIME_MS)) {
