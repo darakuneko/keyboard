@@ -140,23 +140,20 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         return false;  
       case KC_ACL0:
         if (record->event.pressed) {
-          accel_speed = 2;
-        } else {
-          accel_speed = 1;
+          float as = accel_speed == 2 ? 1 : 2;
+          accel_speed = as;
         }
         return false;  
       case KC_ACL1:
         if (record->event.pressed) {
-          accel_speed = 4;
-        } else {
-          accel_speed = 1;
+          float as = accel_speed == 4 ? 1 : 4;
+          accel_speed = as;
         }
         return false;  
       case KC_ACL2:
         if (record->event.pressed) {
-          accel_speed = 8;
-        } else {
-          accel_speed = 1;
+          float as = accel_speed == 8 ? 1 : 8;
+          accel_speed = as;
         }
         return false;  
      case KC_F15: 
