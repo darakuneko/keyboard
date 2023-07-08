@@ -9,6 +9,7 @@ typedef union {
   uint32_t raw;
   struct {
     bool  init : 1;
+    int  tap_mode : 1;
     int  hf_mode : 10;
     bool layer_hf : 1;
     bool drag_mode : 1;
@@ -56,7 +57,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 	[3] = LAYOUT(
 		RGB_VAI,  RGB_SAI,    RGB_HUI,    RGB_SPI,   RGB_MOD,    RGB_TOG,  DT_PRNT,  DT_UP,   DT_DOWN,  KC_NO,   KC_NO,   KC_NO, 
 		RGB_VAD,  RGB_SAD,    RGB_HUD,    RGB_SPD,   RGB_RMOD,   KC_NO,    KC_NO,    KC_NO,   KC_NO,    KC_NO,   KC_NO,   KC_NO,
-		KC_F16,   KC_F17,     KC_F18,     KC_NO,     KC_NO,      KC_F19,   KC_F20,   KC_F21,  KC_F22,   KC_F23,  KC_NO,   KC_NO,
+		KC_F15,   KC_F16,     KC_F17,     KC_F18,       KC_NO,      KC_F19,   KC_F20,   KC_F21,  KC_F22,   KC_F23,  KC_NO,   KC_NO,
 		KC_NO,   KC_NO,   EE_CLR,   QK_BOOT,   KC_NO,   KC_NO,
     LCTL(KC_DOWN),  LCTL(KC_UP), 
     LGUI(KC_RBRC),  LCTL(KC_RGHT),   LGUI(KC_LBRC), LCTL(KC_LEFT), 
@@ -81,18 +82,20 @@ void keyboard_post_init_user(void) {
   if(!user_config.init) {
     user_config.init = true;  
     user_config.layer_hf = true;
+    user_config.tap_mode = true;   
     user_config.hf_mode = 47;   
     user_config.drag_mode = true;  
     user_config.drag_time = 700;
     user_config.auto_trackpad_layer = false;
     eeconfig_update_user(user_config.raw); 
   }
-  tap_mode = 1;
+  is_tap_mode = 1;
   hf_mode = user_config.hf_mode;
   is_layer_hf = user_config.layer_hf;
   is_drag_mode = user_config.drag_mode;  
   drag_time = user_config.drag_time;
   is_auto_trackpad_layer = user_config.auto_trackpad_layer;
+  change_auto_trackpad_layer = false;
 }
 
 void send_setting_string(int i){
@@ -125,10 +128,23 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
       case KC_BTN1 ... KC_BTN5:
         if (record->event.pressed) {
           pointing_device_set_button(1 << (keycode - KC_BTN1));
+          press_ms_btn = true;
         } else {
           pointing_device_clear_button(1 << (keycode - KC_BTN1));
+          press_ms_btn = false;
+          if(change_auto_trackpad_layer) {
+            layer_move(get_highest_layer(default_layer_state));
+            change_auto_trackpad_layer = false;
+          }
         }
         return false;  
+     case KC_F15: 
+        if (record->event.pressed) {
+          user_config.tap_mode = !is_tap_mode;  
+          eeconfig_update_user(user_config.raw); 
+          is_tap_mode = user_config.tap_mode;        
+        }
+        return false;   
       case KC_F16: 
         if (record->event.pressed) {
           user_config.drag_mode = !is_drag_mode;  

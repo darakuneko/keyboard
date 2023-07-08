@@ -40,7 +40,6 @@
 
 static uint8_t pointing_device_button;
 static bool    send_flag = false;  // new mouse motion is detected and it should be send to host
-static bool    change_auto_trackpad_layer = false;
 
 void pointing_device_set_button_iqs5xx(uint8_t btn) {
     pointing_device_button |= btn;
@@ -292,7 +291,7 @@ bool process_iqs5xx(iqs5xx_data_t const* const data, iqs5xx_processed_data_t* pr
             // finger is up
             if (processed->fingers[idx].state == FINGER_DOWN) {
                 processed->fingers[idx].state = FINGER_UP;
-                if(change_auto_trackpad_layer && is_auto_trackpad_layer){
+                if(!press_ms_btn && change_auto_trackpad_layer && is_auto_trackpad_layer){
                     layer_move(get_highest_layer(default_layer_state));
                     change_auto_trackpad_layer = false;
                 }
@@ -354,7 +353,7 @@ bool process_iqs5xx(iqs5xx_data_t const* const data, iqs5xx_processed_data_t* pr
         }
     }
 
-    if (tap_mode && pointing_device_button != 0) {
+    if (pointing_device_button != 0) {
         rep_mouse->buttons |= pointing_device_button;
     }
     // if any finger taps and all fingers are released process tapping
@@ -362,7 +361,7 @@ bool process_iqs5xx(iqs5xx_data_t const* const data, iqs5xx_processed_data_t* pr
         iqs5xx_gesture_data_t zero = {0};
         *gesture_data              = zero;
 
-        if (tap_mode && tapped) {
+        if (is_tap_mode && tapped) {
             // check tapping
             processed->tap_cnt = 0;
             for (int idx = 0; idx < FINGER_MAX; idx++) {
@@ -387,7 +386,7 @@ bool process_iqs5xx(iqs5xx_data_t const* const data, iqs5xx_processed_data_t* pr
         // Hold click to drag if another finger is tapped
         int8_t diff_x = processed->fingers[active_finger_id].last_gesture_point.x - processed->fingers[active_finger_id].last.x;
         int8_t diff_y = processed->fingers[active_finger_id].last_gesture_point.y - processed->fingers[active_finger_id].last.y;
-        if (tap_mode && hold_drag_mode) {
+        if (is_tap_mode && hold_drag_mode) {
             pointing_device_set_button_iqs5xx(1 << (KC_BTN1 - KC_BTN1));
         } 
 

@@ -119,13 +119,15 @@ typedef struct {
 uint32_t ges_time;
 uint32_t hold_drag_time;
 bool hold_drag_mode;
-bool tap_mode;
+bool is_tap_mode;
 int hf_mode;
 uint32_t drag_time;
 
 bool is_layer_hf;
 bool is_drag_mode;
 bool is_auto_trackpad_layer;
+bool press_ms_btn;
+bool change_auto_trackpad_layer;
 
 // Application and bootloader I2C address in 7bit
 #define IQS5xx_READ_ADDR 0x74
