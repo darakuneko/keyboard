@@ -258,7 +258,7 @@ void rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
   } else if (current_layer == 3)  {
     hsv.h = 43; //YELLOW
   } else if (current_layer == 4)  {
-    hsv.h = 255; //RED
+    hsv.h = 222; //ROSE
   } else {
     hsv.h = 128; //CYAN
   }
