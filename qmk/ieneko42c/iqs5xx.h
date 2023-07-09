@@ -128,6 +128,7 @@ bool is_drag_mode;
 bool is_auto_trackpad_layer;
 bool press_ms_btn;
 bool change_auto_trackpad_layer;
+float accel_speed;
 
 // Application and bootloader I2C address in 7bit
 #define IQS5xx_READ_ADDR 0x74

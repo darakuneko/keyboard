@@ -86,7 +86,6 @@ void keyboard_post_init_kb() {
     ges_time = timer_read32();
     hold_drag_time = timer_read32();
     hold_drag_mode = false;
-    wait_ms(300);
     keyboard_post_init_user();
 }
 
