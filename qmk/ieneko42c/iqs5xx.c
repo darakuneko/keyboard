@@ -229,7 +229,6 @@ static void recognize_gesture(iqs5xx_data_t const* const data, iqs5xx_processed_
                 // when gesture other than GESTURE_SWIPE_R is performed
                 for (uint16_t idx = 0; idx < 7; idx++) {
                     if (angle > L_PI / 8U * (idx * 2 + 1) && angle <= L_PI / 8U * (idx * 2 + 3)) {
-                        uprintf("ru: %d %d\n", GESTURE_SWIPE_RU, idx);
                         gesture_data->multi.gesture_state = (GESTURE_SWIPE_RU + idx);
                     }
                 }
