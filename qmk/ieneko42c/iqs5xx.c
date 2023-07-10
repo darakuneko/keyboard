@@ -162,32 +162,29 @@ bool read_iqs5xx(iqs5xx_data_t* const data) {
 }
 
 // return atan2 value in int16_t
-#define MY_PI (32767U)
-static int16_t myatan2(int16_t y, int16_t x) {
-    const int16_t  coeff1 = MY_PI / 4;
-    const uint16_t coeff2 = 3 * coeff1;
-    int32_t        abs_y;
-    int16_t        r, angle;
+#define L_PI (32767U)
+static uint16_t atan2_16(int32_t dy, int32_t dx) {
+    if (dy == 0) {
+        if (dx >= 0) {
+            return 0;
+        } else {
+            return L_PI;
+        }
+    }
 
-    if (y < 0) {
-        abs_y = -(y << 8);
-    } else if (y == 0) {
-        abs_y = 1;
+    int32_t abs_y = dy > 0 ? dy : -dy;
+    int16_t a;
+
+    if (dx >= 0) {
+        a = 8192 - (8192 * (dx - abs_y) / (dx + abs_y));
     } else {
-        abs_y = (y << 8);
+        a = 24576 - (8192 * (dx + abs_y) / (abs_y - dx));
     }
-    x <<= 8;
-    if (x >= 0) {
-        r     = (x - abs_y) / ((x + abs_y) >> 8);
-        angle = coeff1 - (((int32_t)coeff1 * r) >> 8);
-    } else {
-        r     = (x + abs_y) / ((abs_y - x) >> 8);
-        angle = coeff2 - (((int32_t)coeff1 * r) >> 8);
+
+    if (dy < 0) {
+        return -a; // negate if in quad III or IV
     }
-    if (y < 0)
-        return (-angle);  // negate if in quad III or IV
-    else
-        return (angle);
+    return a;
 }
 
 static void recognize_gesture(iqs5xx_data_t const* const data, iqs5xx_processed_data_t* processed, iqs5xx_gesture_data_t* gesture_data) {
@@ -211,14 +208,11 @@ static void recognize_gesture(iqs5xx_data_t const* const data, iqs5xx_processed_
     if (gesture_data->multi.gesture_state == GESTURE_NONE) {
         if (gesture_data->multi.dot_rel > MIN_MOVE_FOR_GES && dist_diff < (800)) {
             gesture_data->multi.gesture_state = GESTURE_SWIPE_IDLE;
-            //dprintf("NONE->SWIPE: dot_rel(%d), dist_diff(%d)\n", gesture_data->multi.dot_rel, dist_diff);
         } else if (gesture_data->multi.dot_rel < -MIN_MOVE_FOR_GES) {
             if (dist_diff < (-1500) || dist_diff > (1500)) {
                 gesture_data->multi.gesture_state = GESTURE_PINCH_IDLE;
-                //dprintf("NONE->PINCH: dot_rel(%d), dist_diff(%d)\n", gesture_data->multi.dot_rel, dist_diff);
             } else {
                 gesture_data->multi.gesture_state = GESTURE_ROT_IDLE;
-                //dprintf("NONE->ROT: dot_rel(%d), dist_diff(%d)\n", gesture_data->multi.dot_rel, dist_diff);
             }
         }
     }
@@ -226,15 +220,16 @@ static void recognize_gesture(iqs5xx_data_t const* const data, iqs5xx_processed_
     switch (gesture_data->multi.gesture_state) {
         case GESTURE_SWIPE_IDLE ... GESTURE_SWIPE_END:
             if (gesture_data->multi.dot > MIN_MOVE_FOR_SWIPE_UPDATE) {
-                int16_t angle_s = myatan2(processed->fingers[0].dy, processed->fingers[1].dx);
-   
+                int16_t angle_s = atan2_16(processed->fingers[0].dy, processed->fingers[1].dx);
                 // convert angle [-pi, pi] to [0, 2pi]
                 uint16_t angle = angle_s > 0 ? angle_s : (0xFFFF + angle_s);
 
-                // classify to 8 direction
                 gesture_data->multi.gesture_state = GESTURE_SWIPE_R;
+                // classify to 8 direction
+                // when gesture other than GESTURE_SWIPE_R is performed
                 for (uint16_t idx = 0; idx < 7; idx++) {
-                    if (angle > MY_PI / 8U * (idx * 2 + 1) && angle <= MY_PI / 8U * (idx * 2 + 3)) {
+                    if (angle > L_PI / 8U * (idx * 2 + 1) && angle <= L_PI / 8U * (idx * 2 + 3)) {
+                        uprintf("ru: %d %d\n", GESTURE_SWIPE_RU, idx);
                         gesture_data->multi.gesture_state = (GESTURE_SWIPE_RU + idx);
                     }
                 }
@@ -243,22 +238,24 @@ static void recognize_gesture(iqs5xx_data_t const* const data, iqs5xx_processed_
             }
             break;
 
-        case GESTURE_PINCH_IDLE ... GESTURE_PINCH_OUT:
-            if (gesture_data->multi.dot < -MIN_MOVE_FOR_PINCH_UPDATE) {
-                // vector indicate relative velocity
-                int16_t v_x = (processed->fingers[0].dx - processed->fingers[1].dx);
-                int16_t v_y = (processed->fingers[0].dy - processed->fingers[1].dy);
-                // pinch in/out is distinguished by dot product of vectors
-                if (dx * v_x + dy * v_y > 0) {
-                    gesture_data->multi.gesture_state = GESTURE_PINCH_IN;
-                } else {
-                    gesture_data->multi.gesture_state = GESTURE_PINCH_OUT;
-                }
+        case GESTURE_PINCH_IDLE ... GESTURE_PINCH_OUT: {
+            // vector indicate relative velocity
+            int16_t v_x = (processed->fingers[0].dx - processed->fingers[1].dx);
+            int16_t v_y = (processed->fingers[0].dy - processed->fingers[1].dy);
+            
+            // pinch in/out is distinguished by dot product of vectors
+            bool is_rot_range = (dx * v_x + dy * v_y) > 0;
+
+            if (gesture_data->multi.dot < MIN_MOVE_FOR_PINCH_UPDATE 
+                && gesture_data->multi.dot > MAX_MOVE_FOR_PINCH_UPDATE) {
+                gesture_data->multi.gesture_state = is_rot_range ? GESTURE_PINCH_IN : GESTURE_PINCH_OUT;
+            } else if(gesture_data->multi.dot < MIN_MOVE_FOR_PINCH_UPDATE) {
+                gesture_data->multi.gesture_state = is_rot_range ? GESTURE_SWIPE_D : GESTURE_SWIPE_U;
             }
             else {
                 gesture_data->multi.gesture_state = GESTURE_PINCH_IDLE;
             }
-            break;
+        } break;
 
         case GESTURE_ROT_IDLE ... GESTURE_ROT_CCW: {
             // vector indicate relative velocity
