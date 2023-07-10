@@ -59,9 +59,9 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 		RGB_VAD,  RGB_SAD,    RGB_HUD,    RGB_SPD,   RGB_RMOD,   KC_NO,    KC_NO,    KC_NO,   KC_NO,    KC_NO,   KC_NO,   KC_NO,
 		KC_F15,   KC_F16,     KC_F17,     KC_F18,       KC_NO,      KC_F19,   KC_F20,   KC_F21,  KC_F22,   KC_F23,  KC_NO,   KC_NO,
 		KC_NO,   KC_NO,   EE_CLR,   QK_BOOT,   KC_NO,   KC_NO,
-    LCTL(KC_DOWN),  LCTL(KC_UP), 
-    LGUI(KC_RBRC),  LCTL(KC_RGHT),   LGUI(KC_LBRC), LCTL(KC_LEFT), 
-    LGUI(KC_EQL),   LGUI(KC_MINS),
+    KC_TRNS, KC_TRNS,
+    KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,
+    KC_TRNS, KC_TRNS,
     KC_TRNS
 	),
 
@@ -148,12 +148,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
       case KC_ACL1:
         if (record->event.pressed) {
           float as = accel_speed == 4 ? 1 : 4;
-          accel_speed = as;
-        }
-        return false;  
-      case KC_ACL2:
-        if (record->event.pressed) {
-          float as = accel_speed == 8 ? 1 : 8;
           accel_speed = as;
         }
         return false;  
