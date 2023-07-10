@@ -96,6 +96,7 @@ void keyboard_post_init_user(void) {
   drag_time = user_config.drag_time ? user_config.drag_time : 700;
   is_auto_trackpad_layer = user_config.auto_trackpad_layer;
   accel_speed = 1;
+  auto_trackpad_layer = 4;
   change_auto_trackpad_layer = false;
 }
 
@@ -233,7 +234,7 @@ int layer = 0;
 
 void matrix_scan_user(void) {
   int current_layer = get_highest_layer(layer_state|default_layer_state); 
-  if(!is_auto_trackpad_layer && is_layer_hf && layer != current_layer){
+  if(current_layer != auto_trackpad_layer && is_layer_hf && layer != current_layer){
     DRV_pulse(hf_mode);
     layer = current_layer;
   }
