@@ -125,8 +125,9 @@ uint32_t drag_time;
 
 bool is_layer_hf;
 bool is_drag_mode;
-bool is_auto_trackpad_layer;
 bool press_ms_btn;
+bool is_auto_trackpad_layer;
+int auto_trackpad_layer;
 bool change_auto_trackpad_layer;
 float accel_speed;
 

@@ -318,7 +318,7 @@ bool process_iqs5xx(iqs5xx_data_t const* const data, iqs5xx_processed_data_t* pr
         } else {
             // finger is down
             if(!change_auto_trackpad_layer && is_auto_trackpad_layer){
-                layer_move(4);
+                layer_move(auto_trackpad_layer);
                 change_auto_trackpad_layer = true;
             }
             active_finger_id = idx;
