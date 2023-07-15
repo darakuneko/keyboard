@@ -21,109 +21,58 @@
 #include "report.h"
 
 #define FINGER_MAX 3
-#define GES_TIME_MS 200
-#define TAP_TIME_MS 350
+#define TAP_TIME_MS 100
+#define SWIPE_TIME_MS 80
+#define PINCH_TIME_MS 200
+#define GESTURE_TIME_MS 200
 
-#define MIN_MOVE_FOR_GES 1000
-#define MIN_MOVE_FOR_SWIPE_UPDATE 100
-#define MIN_MOVE_FOR_PINCH_UPDATE -1000
-#define MAX_MOVE_FOR_PINCH_UPDATE -3000
-#define MIN_MOVE_FOR_ROT_UPDATE 100
-
-#define IQS_X_DIR (1)  // 1 or -1
-#define IQS_Y_DIR (1)  // 1 or -1
-
-#define FIRM_BLOCK_SIZE 64
-
-typedef struct {
-    uint16_t x;
-    uint16_t y;
-} point_t;
-
-typedef struct {
-    int16_t x;
-    int16_t y;
-} point_s_t;
-
-typedef enum {
-    FINGER_UP,
-    FINGER_DOWN,
-} finger_state_t;
-
-typedef enum {
-    GESTURE_NONE,
-    GESTURE_SINGLE_TAP,
-    GESTURE_MULTI_FINGER_TAP,
-    GESTURE_PINCH_IDLE = 0x10,
-    GESTURE_PINCH_IN,
-    GESTURE_PINCH_OUT,
-    GESTURE_PINCH_END  = GESTURE_PINCH_OUT,
-    GESTURE_SWIPE_IDLE = 0x20,
-    GESTURE_SWIPE_R,
-    GESTURE_SWIPE_RU,
-    GESTURE_SWIPE_U,
-    GESTURE_SWIPE_UL,
-    GESTURE_SWIPE_L,
-    GESTURE_SWIPE_LD,
-    GESTURE_SWIPE_D,
-    GESTURE_SWIPE_DR,
-    GESTURE_SWIPE_END = GESTURE_SWIPE_DR,
-    GESTURE_ROT_IDLE  = 0x30,
-    GESTURE_ROT_CW,
-    GESTURE_ROT_CCW,
-    GESTURE_ROT_END = GESTURE_ROT_IDLE,
-} iqs5xx_gesture_t;
+#define IQS5xx_COM_END_REG 0xEEEE
+#define IQS5xx_GESTURE_EVENT0 0x000D
+#define IQS5xx_GESTURE_EVENT1 0x000E
+#define IQS5xx_FINGER_NUM 0x0011
+#define IQS5xx_RELATIVE_XY 0x0012
+#define IQS5xx_TOUCH_STRENGTH_FINGUR_THREE 0x0026
+#define IQS5xx_ZOOM 0x06CB
+#define IQS5xx_SYSTEM_CTRL0 0x0431
+#define IQS5xx_DEFAULT_READ 0x0675
+#define IQS5xx_READ_ADDR 0x74
 
 typedef struct {
     union {
         uint8_t bytes[4];
-        point_t current;
     };
-} iqs5xx_finger_t;
+} iqs5xx_xy_t;
+
+typedef enum {
+    GESTURE_SWIPE_L = 0x10,    
+    GESTURE_SWIPE_R,
+    GESTURE_SWIPE_U,
+    GESTURE_SWIPE_D,
+    GESTURE_PINCH_OUT,
+    GESTURE_PINCH_IN,
+    TAP_FINGER_THREE
+} iqs5xx_gesture_t;
 
 typedef struct {
-    iqs5xx_finger_t fingers[FINGER_MAX];
-    uint8_t         finger_cnt;
-    uint8_t         mode;
+    uint8_t          finger_cnt;
+    uint8_t          ges_evnet0;
+    uint8_t          ges_evnet1;
+    iqs5xx_xy_t      relative_xy;
+    uint8_t          touch_strenght_finger_three;
+    iqs5xx_gesture_t gesture;
 } iqs5xx_data_t;
 
-typedef struct {
-    point_t        last;
-    point_t        start;
-    point_s_t      rel;
-    point_t        last_gesture_point;
-    point_s_t      frame_move;
-    int16_t        dx, dy;
-    uint32_t       t_start;
-    uint32_t       t_tapped;
-    bool           tapped;
-    finger_state_t state;
-} iqs5xx_finger_processed_t;
-
-typedef struct {
-    iqs5xx_finger_processed_t fingers[FINGER_MAX];
-    uint8_t                   tap_cnt;
-} iqs5xx_processed_data_t;
-
-typedef struct {
-    int16_t          dot;           // dot product of velocity
-    int16_t          dot_rel;       // dot product of vector from entry point to current
-    uint32_t         dist_sq_init;  // initial distance of fingres
-    uint32_t         dist_sq;       // current distance of fingers
-    iqs5xx_gesture_t gesture_state;
-} iqs5xx_gesture_data_multi_t;
-
-typedef struct {
-    iqs5xx_gesture_data_multi_t multi;
-} iqs5xx_gesture_data_t;
-
-uint32_t ges_time;
+uint32_t tap_time;
+uint32_t swipe_time;
+uint32_t pinch_time;
+uint32_t gesture_time;
 uint32_t hold_drag_time;
+uint32_t drag_time;
+
+bool clear_buttons;
 bool hold_drag_mode;
 bool is_tap_mode;
 int hf_mode;
-uint32_t drag_time;
-
 bool is_layer_hf;
 bool is_drag_mode;
 bool press_ms_btn;
@@ -132,13 +81,6 @@ int auto_trackpad_layer;
 bool change_auto_trackpad_layer;
 float accel_speed;
 
-// Application and bootloader I2C address in 7bit
-#define IQS5xx_READ_ADDR 0x74
-#define IQS5xx_BOOT_ADDR 0x34
-
-uint16_t check_iqs5xx(void);
-int      init_iqs5xx(void);
-bool     read_iqs5xx(iqs5xx_data_t* const data);
-bool     process_iqs5xx(iqs5xx_data_t const* const data, iqs5xx_processed_data_t* processed, report_mouse_t* const rep_mouse, iqs5xx_gesture_data_t* gesture);
-void     pointing_device_set_button_iqs5xx(uint8_t btn);
-void     pointing_device_clear_button_iqs5xx(uint8_t btn);
+void init_iqs5xx(void);
+bool read_iqs5xx(iqs5xx_data_t* const data);
+void process_iqs5xx(iqs5xx_data_t* const data, report_mouse_t* const rep_mouse);

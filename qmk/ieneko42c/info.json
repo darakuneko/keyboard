@@ -13,7 +13,7 @@
     "encoder": false,
     "extrakey": true,
     "mousekey": true,
-    "nkro": false,
+    "nkro": true,
     "oled": false,
     "rgb_matrix": true,
     "via": false,

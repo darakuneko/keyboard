@@ -77,18 +77,20 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 	),
 };
 
-void keyboard_post_init_user(void) {
-  user_config.raw = eeconfig_read_user();
-  if(!user_config.init) {
-    user_config.init = true;  
-    user_config.layer_hf = true;
-    user_config.tap_mode = true;   
-    user_config.hf_mode = 47;   
-    user_config.drag_mode = true;  
-    user_config.drag_time = 700;
-    user_config.auto_trackpad_layer = true;
-    eeconfig_update_user(user_config.raw); 
-  }
+uint32_t init_opts(user_config_t* user_config) {
+  user_config->init = true;  
+  user_config->layer_hf = true;
+  user_config->tap_mode = true;   
+  user_config->hf_mode = 47;   
+  user_config->drag_mode = true;  
+  user_config->drag_time = 700;
+  user_config->auto_trackpad_layer = true;
+  eeconfig_update_user(user_config->raw); 
+  DRV_pulse(53);
+  return eeconfig_read_user();
+}
+
+void set_opts(user_config_t user_config) {
   is_tap_mode = 1;
   hf_mode = user_config.hf_mode;
   is_layer_hf = user_config.layer_hf;
@@ -98,6 +100,14 @@ void keyboard_post_init_user(void) {
   accel_speed = 1;
   auto_trackpad_layer = 4;
   change_auto_trackpad_layer = false;
+}
+
+void keyboard_post_init_user(void) {
+  user_config.raw = eeconfig_read_user();
+  if(!user_config.init) {
+    user_config.raw = init_opts(&user_config);
+  }
+  set_opts(user_config);
 }
 
 void send_setting_string(int i){
@@ -126,99 +136,104 @@ void update_drag_time(uint32_t dt){
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
   switch (keycode) {  
-      case KC_BTN1 ... KC_BTN5:
-        if (record->event.pressed) {
-          pointing_device_set_button(1 << (keycode - KC_BTN1));
-          press_ms_btn = true;
-        } else {
-          pointing_device_clear_button(1 << (keycode - KC_BTN1));
-          press_ms_btn = false;
-          if(change_auto_trackpad_layer) {
-            layer_move(get_highest_layer(default_layer_state));
-            change_auto_trackpad_layer = false;
-          }
+    case EE_CLR : 
+      if (record->event.pressed) {
+        user_config.raw = eeconfig_read_user();
+        init_opts(&user_config);
+        set_opts(user_config);
+      }
+      return false;     
+    case KC_BTN1 ... KC_BTN5:
+      if (record->event.pressed) {
+        press_ms_btn = true;
+      } else {
+        press_ms_btn = false;
+        if(change_auto_trackpad_layer) {
+          layer_move(get_highest_layer(default_layer_state));
+          change_auto_trackpad_layer = false;
         }
-        return false;  
-      case KC_ACL0:
-        if (record->event.pressed) {
-          float as = accel_speed == 2 ? 1 : 2;
-          accel_speed = as;
+      }
+      return false;   
+    case KC_ACL0:
+      if (record->event.pressed) {
+        float as = accel_speed == 2 ? 1 : 2;
+        accel_speed = as;
+      }
+      return false;  
+    case KC_ACL1:
+      if (record->event.pressed) {
+        float as = accel_speed == 4 ? 1 : 4;
+        accel_speed = as;
+      }
+      return false;  
+    case KC_F15: 
+      if (record->event.pressed) {
+        user_config.tap_mode = !is_tap_mode;  
+        eeconfig_update_user(user_config.raw); 
+        is_tap_mode = user_config.tap_mode;        
+      }
+      return false;   
+    case KC_F16: 
+      if (record->event.pressed) {
+        user_config.drag_mode = !is_drag_mode;  
+        eeconfig_update_user(user_config.raw); 
+        is_drag_mode = user_config.drag_mode;        
+      }
+      return false;             
+    case KC_F17: 
+      if (record->event.pressed) {
+        drag_time = drag_time + 10;
+        if(drag_time > 3000) {
+          drag_time = 3000;
         }
-        return false;  
-      case KC_ACL1:
-        if (record->event.pressed) {
-          float as = accel_speed == 4 ? 1 : 4;
-          accel_speed = as;
+        update_drag_time(drag_time);
+      }
+      return false;
+    case KC_F18: 
+      if (record->event.pressed) {
+        if(drag_time != 0) {
+          drag_time = drag_time - 10;
         }
-        return false;  
-     case KC_F15: 
-        if (record->event.pressed) {
-          user_config.tap_mode = !is_tap_mode;  
-          eeconfig_update_user(user_config.raw); 
-          is_tap_mode = user_config.tap_mode;        
+        update_drag_time(drag_time);
+      }
+      return false;
+    case KC_F19: 
+      if (record->event.pressed) {
+        user_config.layer_hf = !is_layer_hf;  
+        eeconfig_update_user(user_config.raw); 
+        is_layer_hf = user_config.layer_hf;        
+      }
+      return false;         
+    case KC_F20: 
+      if (record->event.pressed) {
+        hf_DRV_pulse(false);
+      }
+      return false;
+    case KC_F21: 
+      if (record->event.pressed) {
+        hf_mode++;
+        if(hf_mode == 124) {
+          hf_mode = 0;
         }
-        return false;   
-      case KC_F16: 
-        if (record->event.pressed) {
-          user_config.drag_mode = !is_drag_mode;  
-          eeconfig_update_user(user_config.raw); 
-          is_drag_mode = user_config.drag_mode;        
+        hf_DRV_pulse(true);
+      }
+      return false;  
+    case KC_F22: 
+      if (record->event.pressed) {
+        hf_mode--;
+        if(hf_mode == -1) {
+          hf_mode = 123;
         }
-        return false;             
-      case KC_F17: 
-        if (record->event.pressed) {
-          drag_time = drag_time + 10;
-          if(drag_time > 3000) {
-              drag_time = 3000;
-          }
-          update_drag_time(drag_time);
-        }
-        return false;
-      case KC_F18: 
-        if (record->event.pressed) {
-          if(drag_time != 0) {
-            drag_time = drag_time - 10;
-          }
-          update_drag_time(drag_time);
-        }
-        return false;
-     case KC_F19: 
-        if (record->event.pressed) {
-          user_config.layer_hf = !is_layer_hf;  
-          eeconfig_update_user(user_config.raw); 
-          is_layer_hf = user_config.layer_hf;        
-        }
-        return false;         
-      case KC_F20: 
-        if (record->event.pressed) {
-            hf_DRV_pulse(false);
-        }
-        return false;
-      case KC_F21: 
-        if (record->event.pressed) {
-            hf_mode++;
-            if(hf_mode == 124) {
-              hf_mode = 0;
-            }
-            hf_DRV_pulse(true);
-        }
-        return false;  
-      case KC_F22: 
-        if (record->event.pressed) {
-            hf_mode--;
-            if(hf_mode == -1) {
-              hf_mode = 123;
-            }
-            hf_DRV_pulse(true);
-        }
-        return false;
-     case KC_F23: 
-        if (record->event.pressed) {
-          user_config.auto_trackpad_layer = !is_auto_trackpad_layer;  
-          eeconfig_update_user(user_config.raw); 
-          is_auto_trackpad_layer = user_config.auto_trackpad_layer;        
-        }
-        return false;    
+        hf_DRV_pulse(true);
+      }
+      return false;
+    case KC_F23: 
+      if (record->event.pressed) {
+        user_config.auto_trackpad_layer = !is_auto_trackpad_layer;  
+        eeconfig_update_user(user_config.raw); 
+        is_auto_trackpad_layer = user_config.auto_trackpad_layer;        
+      }
+      return false;    
     default:
       return true;
   }
