@@ -100,3 +100,4 @@
 #define HAPTIC_FEEDBACK_DEFAULT 0
 #define DRV_MODE_DEFAULT 0
 #define DRV_GREETING       alert_750ms
+

@@ -46,8 +46,6 @@ typedef struct {
 typedef enum {
     GESTURE_SWIPE_L = 0x10,    
     GESTURE_SWIPE_R,
-    GESTURE_SWIPE_U,
-    GESTURE_SWIPE_D,
     GESTURE_PINCH_OUT,
     GESTURE_PINCH_IN,
     TAP_FINGER_THREE
@@ -66,6 +64,8 @@ uint32_t tap_time;
 uint32_t swipe_time;
 uint32_t pinch_time;
 uint32_t gesture_time;
+uint32_t scroll_time;
+uint32_t scroll_threshold_time;
 uint32_t hold_drag_time;
 uint32_t drag_time;
 

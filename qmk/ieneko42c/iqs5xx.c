@@ -115,9 +115,11 @@ void set_tap(iqs5xx_data_t* const data, report_mouse_t* const rep_mouse) {
 }
 
 void set_gesture(iqs5xx_data_t* const data, report_mouse_t* const rep_mouse) {
+    uint32_t dx = ((data->relative_xy.bytes[1] - data->relative_xy.bytes[0]) / 2) * accel_speed;
+    uint32_t dy = ((data->relative_xy.bytes[3] - data->relative_xy.bytes[2]) / 2) * accel_speed;
     if (data->finger_cnt == 1) {
-        rep_mouse->x = ((data->relative_xy.bytes[1] - data->relative_xy.bytes[0]) / 2) * accel_speed;
-        rep_mouse->y = ((data->relative_xy.bytes[3] - data->relative_xy.bytes[2]) / 2) * accel_speed;
+        rep_mouse->x = dx;
+        rep_mouse->y = dy;
     } else if (data->finger_cnt >= 2) {
         int wait_time = data->finger_cnt == 2 ? timer_elapsed32(swipe_time) > SWIPE_TIME_MS : timer_elapsed32(gesture_time) > GESTURE_TIME_MS;
         if(wait_time && data->ges_evnet1 == 2) {
@@ -125,17 +127,20 @@ void set_gesture(iqs5xx_data_t* const data, report_mouse_t* const rep_mouse) {
                 data->gesture = GESTURE_SWIPE_L;
             } else if(data->relative_xy.bytes[1] > 0){
                 data->gesture = GESTURE_SWIPE_R;
-            } else if(data->relative_xy.bytes[2] > 1 && data->relative_xy.bytes[3] > 1 ){
-                data->gesture = GESTURE_SWIPE_D;
-            } else if(data->relative_xy.bytes[3] > 1 ){
-                data->gesture = GESTURE_SWIPE_U;
-            } 
+            }
 
             if(data->finger_cnt == 2) {
                 swipe_time = timer_read32();
             } else {
                 gesture_time = timer_read32();
             }
+        } else if(timer_elapsed32(scroll_time) > scroll_threshold_time && data->ges_evnet1 == 2) {
+            if(data->relative_xy.bytes[2] > 1 && data->relative_xy.bytes[3] > 1 ){
+                rep_mouse->v = 1;
+            } else if(data->relative_xy.bytes[3] > 1 ){
+                rep_mouse->v = -1;
+            } 
+            scroll_time = timer_read32();
         } else if(timer_elapsed32(pinch_time) > PINCH_TIME_MS && data->ges_evnet1 == 4) {
             if(data->relative_xy.bytes[0] > 0 && data->relative_xy.bytes[1] > 0) {
                 data->gesture = GESTURE_PINCH_OUT;
@@ -147,7 +152,7 @@ void set_gesture(iqs5xx_data_t* const data, report_mouse_t* const rep_mouse) {
     }
 }
 
-void process_iqs5xx(iqs5xx_data_t* const data, report_mouse_t* const rep_mouse) {
+void set_auto_trackpad_layer(iqs5xx_data_t* const data) {
     if (data->finger_cnt == 0) {
         if(!press_ms_btn && change_auto_trackpad_layer && is_auto_trackpad_layer){
             layer_move(get_highest_layer(default_layer_state));
@@ -159,8 +164,13 @@ void process_iqs5xx(iqs5xx_data_t* const data, report_mouse_t* const rep_mouse) 
             change_auto_trackpad_layer = true;
         }
     }
+}
 
-    set_tap(data, rep_mouse);
+void process_iqs5xx(iqs5xx_data_t* const data, report_mouse_t* const rep_mouse) {
+    set_auto_trackpad_layer(data);
+    if(is_tap_mode) {
+        set_tap(data, rep_mouse);
+    }
     if(!rep_mouse->buttons || data->gesture != TAP_FINGER_THREE){
         set_gesture(data, rep_mouse);
     }

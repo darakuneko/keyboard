@@ -8,16 +8,28 @@
 typedef union {
   uint32_t raw;
   struct {
-    bool  init : 1;
+    bool init : 1;
     int  tap_mode : 1;
-    int  hf_mode : 10;
+    int  hf_mode : 8;
     bool layer_hf : 1;
     bool drag_mode : 1;
+    int  scroll_threshold_time : 8;
     uint32_t drag_time : 12;
     bool auto_trackpad_layer : 1;
   };
 } user_config_t;
 user_config_t user_config;
+
+enum {
+  SCLL_UP = SAFE_RANGE,
+  SCLL_DOWN,
+  HF_UP,
+  HF_DOWN,
+  DRG_UP,
+  DRG_DOWN
+};
+
+#define DOUBLE_TAP_TIME_MS 200
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 	
@@ -57,7 +69,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 	[3] = LAYOUT(
 		RGB_VAI,  RGB_SAI,    RGB_HUI,    RGB_SPI,   RGB_MOD,    RGB_TOG,  DT_PRNT,  DT_UP,   DT_DOWN,  KC_NO,   KC_NO,   KC_NO, 
 		RGB_VAD,  RGB_SAD,    RGB_HUD,    RGB_SPD,   RGB_RMOD,   KC_NO,    KC_NO,    KC_NO,   KC_NO,    KC_NO,   KC_NO,   KC_NO,
-		KC_F15,   KC_F16,     KC_F17,     KC_F18,       KC_NO,      KC_F19,   KC_F20,   KC_F21,  KC_F22,   KC_F23,  KC_NO,   KC_NO,
+		TD(0),    KC_F19,     KC_F20,     TD(1),     KC_F21,     TD(2),    KC_F22,   KC_F23,  KC_NO,    KC_NO,   KC_NO,   KC_NO,
 		KC_NO,   KC_NO,   EE_CLR,   QK_BOOT,   KC_NO,   KC_NO,
     KC_TRNS, KC_TRNS,
     KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,
@@ -85,6 +97,7 @@ uint32_t init_opts(user_config_t* user_config) {
   user_config->drag_mode = true;  
   user_config->drag_time = 700;
   user_config->auto_trackpad_layer = true;
+  user_config->scroll_threshold_time = 0;
   eeconfig_update_user(user_config->raw); 
   DRV_pulse(53);
   return eeconfig_read_user();
@@ -97,6 +110,7 @@ void set_opts(user_config_t user_config) {
   is_drag_mode = user_config.drag_mode;  
   drag_time = user_config.drag_time ? user_config.drag_time : 700;
   is_auto_trackpad_layer = user_config.auto_trackpad_layer;
+  scroll_threshold_time = user_config.scroll_threshold_time;
   accel_speed = 1;
   auto_trackpad_layer = 4;
   change_auto_trackpad_layer = false;
@@ -108,13 +122,36 @@ void keyboard_post_init_user(void) {
     user_config.raw = init_opts(&user_config);
   }
   set_opts(user_config);
+
+  vial_tap_dance_entry_t td0 = { SCLL_UP, KC_NO, SCLL_DOWN, KC_NO, DOUBLE_TAP_TIME_MS };
+  vial_tap_dance_entry_t td1 = { DRG_UP, KC_NO, DRG_DOWN, KC_NO, DOUBLE_TAP_TIME_MS };
+  vial_tap_dance_entry_t td2 = { HF_UP, KC_NO, HF_DOWN, KC_NO, DOUBLE_TAP_TIME_MS };
+  dynamic_keymap_set_tap_dance(0, &td0);
+  dynamic_keymap_set_tap_dance(1, &td1);
+  dynamic_keymap_set_tap_dance(2, &td2);
 }
 
-void send_setting_string(int i){
-  char buf[12]; 
-  snprintf(buf, sizeof(buf), "%d", i);
-  const char *s = buf;
-  send_string(s);
+void send_setting_string(char* t, int i) {
+  char cn[12];
+  sprintf(cn, "%d", i);
+  char end = '\n';
+
+  size_t len1 = strlen(t);
+  size_t len2 = 1;
+  size_t len3 = 1;
+  size_t buffer_size = len1 + len2 + len3 + 1;
+
+  char* c = (char*)malloc(buffer_size);
+  memset(c, 0, buffer_size);
+
+  strcat(c, t);
+  strcat(c, cn);
+  strncat(c, &end, 1);
+
+  send_string(c);
+
+  free(c);
+
 }
 
 void hf_DRV_pulse(bool ee2_up) {
@@ -124,14 +161,30 @@ void hf_DRV_pulse(bool ee2_up) {
     hf_mode = user_config.hf_mode;
   }
   DRV_pulse(hf_mode);
-  send_setting_string(hf_mode);
+  send_setting_string("haptic: ", hf_mode);
 }
 
 void update_drag_time(uint32_t dt){
   user_config.drag_time = dt;
   eeconfig_update_user(user_config.raw); 
   drag_time = user_config.drag_time;
-  send_setting_string(dt);
+  send_setting_string("drag time: ", dt);
+}
+
+char* is_tap_mode_to_char(void) {
+  return is_tap_mode ? "tap mode: on\n" : "tap mode: off\n";
+}
+
+char* is_layer_hf_to_char(void) {
+  return user_config.layer_hf ? "haptic layer: on\n" : "haptic layer: off\n";
+}
+
+char* is_drag_mode_char(void) {
+  return user_config.drag_mode ? "drag&drop mode: on\n" : "drag&drop mode: off\n";
+}
+
+char* is_auto_trackpad_layer_char(void) {
+  return user_config.auto_trackpad_layer ? "auto trackpad layer mode: on\n" : "auto trackpad layer mode: off\n";
 }
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
@@ -166,21 +219,46 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         accel_speed = as;
       }
       return false;  
-    case KC_F15: 
+    case SCLL_UP: 
+      if (record->event.pressed) {
+        scroll_threshold_time = scroll_threshold_time + 5;
+        if(scroll_threshold_time > 100) {
+          scroll_threshold_time = 100;
+        }
+        user_config.scroll_threshold_time = scroll_threshold_time;  
+        eeconfig_update_user(user_config.raw); 
+        send_setting_string("scroll time: ", scroll_threshold_time);
+      }
+      return false;
+    case SCLL_DOWN: 
+      if (record->event.pressed) {
+        if(scroll_threshold_time != 0) {
+          scroll_threshold_time = scroll_threshold_time - 5;
+          user_config.scroll_threshold_time = scroll_threshold_time;  
+          eeconfig_update_user(user_config.raw); 
+        }
+        send_setting_string("scroll time: ", scroll_threshold_time);      
+      }
+      return false;
+    case KC_F19: 
       if (record->event.pressed) {
         user_config.tap_mode = !is_tap_mode;  
         eeconfig_update_user(user_config.raw); 
-        is_tap_mode = user_config.tap_mode;        
+        is_tap_mode = user_config.tap_mode;    
+        char* tm = is_tap_mode_to_char();
+        send_string(tm);
       }
       return false;   
-    case KC_F16: 
+    case KC_F20: 
       if (record->event.pressed) {
         user_config.drag_mode = !is_drag_mode;  
         eeconfig_update_user(user_config.raw); 
-        is_drag_mode = user_config.drag_mode;        
+        is_drag_mode = user_config.drag_mode;   
+        char* dm = is_drag_mode_char();
+        send_string(dm);
       }
       return false;             
-    case KC_F17: 
+    case DRG_UP: 
       if (record->event.pressed) {
         drag_time = drag_time + 10;
         if(drag_time > 3000) {
@@ -189,7 +267,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         update_drag_time(drag_time);
       }
       return false;
-    case KC_F18: 
+    case DRG_DOWN: 
       if (record->event.pressed) {
         if(drag_time != 0) {
           drag_time = drag_time - 10;
@@ -197,19 +275,16 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         update_drag_time(drag_time);
       }
       return false;
-    case KC_F19: 
+    case KC_F21: 
       if (record->event.pressed) {
         user_config.layer_hf = !is_layer_hf;  
         eeconfig_update_user(user_config.raw); 
-        is_layer_hf = user_config.layer_hf;        
+        is_layer_hf = user_config.layer_hf;  
+        char* hl = is_layer_hf_to_char();  
+        send_string(hl);
       }
       return false;         
-    case KC_F20: 
-      if (record->event.pressed) {
-        hf_DRV_pulse(false);
-      }
-      return false;
-    case KC_F21: 
+    case HF_UP:
       if (record->event.pressed) {
         hf_mode++;
         if(hf_mode == 124) {
@@ -217,8 +292,8 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         }
         hf_DRV_pulse(true);
       }
-      return false;  
-    case KC_F22: 
+      return false;
+    case HF_DOWN:
       if (record->event.pressed) {
         hf_mode--;
         if(hf_mode == -1) {
@@ -227,13 +302,61 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         hf_DRV_pulse(true);
       }
       return false;
-    case KC_F23: 
+    case KC_F22: 
       if (record->event.pressed) {
         user_config.auto_trackpad_layer = !is_auto_trackpad_layer;  
         eeconfig_update_user(user_config.raw); 
-        is_auto_trackpad_layer = user_config.auto_trackpad_layer;        
+        is_auto_trackpad_layer = user_config.auto_trackpad_layer;  
+        char* atl = is_auto_trackpad_layer_char();
+        send_string(atl);
       }
       return false;    
+    case KC_F23: 
+      if (record->event.pressed) {  
+        char st[100];
+        sprintf(st, "scroll time: %d\n", user_config.scroll_threshold_time);
+        char* tm = is_tap_mode_to_char();
+
+        char* dm = is_drag_mode_char();
+        char dt[100];
+        sprintf(dt, "drag&drop time: %d\n", user_config.drag_time);
+
+        char hm[100];
+        sprintf(hm, "haptic number: %d\n", user_config.hf_mode);
+        char* hl = is_layer_hf_to_char();
+
+        char* atl = is_auto_trackpad_layer_char();
+        char at[100];
+        sprintf(at, "accel speed: %d\n", (int)accel_speed);
+       
+        size_t len1 = strlen(st);
+        size_t len2 = strlen(tm);
+        size_t len3 = strlen(dm);
+        size_t len4 = strlen(dt);
+        size_t len5 = strlen(hm);
+        size_t len6 = strlen(hl);
+
+        size_t len7 = strlen(atl);
+        size_t len8 = strlen(at);
+
+        size_t buffer_size = len1 + len2 + len3 + len4 + len5 + len6 + len7 + len8 + 1;
+        char* c = (char*)malloc(buffer_size);
+        memset(c, 0, buffer_size);
+
+        strcat(c, st);
+        strcat(c, tm);
+        strcat(c, dm);
+        strcat(c, dt);
+        strcat(c, hm);
+        strcat(c, hl);       
+        strcat(c, atl);
+        strcat(c, at);
+       
+        send_string(c);
+
+        free(c);
+      }
+      return false; 
     default:
       return true;
   }

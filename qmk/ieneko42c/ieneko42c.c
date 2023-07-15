@@ -52,7 +52,7 @@ void gesture_press_key(keypos_t k) {
 }
 
 void send_pointing_device(report_mouse_t rep_mouse){
-    if(rep_mouse.x || rep_mouse.y  || rep_mouse.v  || rep_mouse.buttons || clear_buttons){
+    if(rep_mouse.x || rep_mouse.y  || rep_mouse.v || rep_mouse.buttons || clear_buttons){
         pointing_device_set_report(rep_mouse);
         pointing_device_send();
         if(clear_buttons) {
@@ -95,20 +95,6 @@ void matrix_scan_kb() {
                     gesture_press_key(get_r_2);
                 } else if(iqs5xx_data.finger_cnt == 3){
                     gesture_press_key(get_r_3);
-                }
-                break;
-            case GESTURE_SWIPE_D:
-                if(iqs5xx_data.finger_cnt == 2){
-                    mouse_rep.v = 1 * accel_speed;
-                } else if (iqs5xx_data.finger_cnt == 3) {
-                    gesture_press_key(get_d_3);
-                }
-                break;
-           case GESTURE_SWIPE_U:
-                if(iqs5xx_data.finger_cnt == 2){
-                    mouse_rep.v = -1 * accel_speed;
-                } else if (iqs5xx_data.finger_cnt == 3) {
-                    gesture_press_key(get_u_3);
                 }
                 break;
             case GESTURE_PINCH_OUT:
