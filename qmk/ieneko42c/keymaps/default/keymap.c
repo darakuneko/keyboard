@@ -145,19 +145,19 @@ char prefix_drag_term[] = "Drag&Drop Term: ";
 char prefix_haptic_number[] = "HF Waveform Number: ";
 
 char* can_tap_to_char(void) {
-  return can_tap ? "Use Tap: on\n" : "Use Tap: off\n";
+  return can_tap ? "Tap: on\n" : "Tap: off\n";
 }
 
 char* can_hf_for_layer_to_char(void) {
-  return user_config.can_hf_for_layer ? "Use HF for Layer: on\n" : "Use HF for Layer: off\n";
+  return user_config.can_hf_for_layer ? "HF for Layer: on\n" : "HF for Layer: off\n";
 }
 
 char* can_drag_char(void) {
-  return user_config.can_drag ? "Use Drag&Drop: on\n" : "Use Drag&Drop: off\n";
+  return user_config.can_drag ? "Drag&Drop: on\n" : "Drag&Drop: off\n";
 }
 
 char* can_trackpad_layer_char(void) {
-  return user_config.can_trackpad_layer ? "Use Trackpad Layer: on\n" : "Use Trackpad Layer: off\n";
+  return user_config.can_trackpad_layer ? "Trackpad Layer: on\n" : "Trackpad Layer: off\n";
 }
 
 void send_setting_string(char* t, int i) {
