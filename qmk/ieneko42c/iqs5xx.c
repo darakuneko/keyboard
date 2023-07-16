@@ -139,9 +139,9 @@ void set_gesture(iqs5xx_data_t* const data, report_mouse_t* const rep_mouse) {
             } else if(data->relative_xy.bytes[1] > 0){
                 data->gesture = GESTURE_SWIPE_R;
             } else if(data->relative_xy.bytes[2] > 1 && data->relative_xy.bytes[3] > 1 ){
-                data->gesture = GESTURE_SWIPE_U;
-            } else if(data->relative_xy.bytes[3] > 1 ){
                 data->gesture = GESTURE_SWIPE_D;
+            } else if(data->relative_xy.bytes[3] > 1 ){
+                data->gesture = GESTURE_SWIPE_U;
             }
 
             gesture_time = timer_read32();

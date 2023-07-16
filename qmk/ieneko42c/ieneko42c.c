@@ -92,11 +92,11 @@ void matrix_scan_kb() {
                     gesture_press_key(get_r_3);
                 }
                 break;
-            case GESTURE_SWIPE_U:
-                gesture_press_key(get_u_3);
-                break;
             case GESTURE_SWIPE_D:
                 gesture_press_key(get_d_3);
+                break;                
+            case GESTURE_SWIPE_U:
+                gesture_press_key(get_u_3);
                 break;
             case GESTURE_PINCH_OUT:
                 gesture_press_key(get_o_2);
