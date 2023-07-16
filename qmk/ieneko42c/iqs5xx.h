@@ -15,16 +15,13 @@
  */
 #pragma once
 
-#include <stdbool.h>
-#include <stdint.h>
-
 #include "report.h"
 
 #define FINGER_MAX 3
-#define TAP_TIME_MS 100
-#define SWIPE_TIME_MS 80
-#define PINCH_TIME_MS 200
-#define GESTURE_TIME_MS 200
+#define TAP_TERM 100
+#define SWIPE_TERM 80
+#define PINCH_TERM 200
+#define GESTURE_TERM 200
 
 #define IQS5xx_COM_END_REG 0xEEEE
 #define IQS5xx_GESTURE_EVENT0 0x000D
@@ -65,21 +62,21 @@ uint32_t swipe_time;
 uint32_t pinch_time;
 uint32_t gesture_time;
 uint32_t scroll_time;
-uint32_t scroll_threshold_time;
-uint32_t hold_drag_time;
+uint32_t scroll_term;
 uint32_t drag_time;
+uint32_t drag_term;
 
 bool clear_buttons;
-bool hold_drag_mode;
-bool is_tap_mode;
-int hf_mode;
-bool is_layer_hf;
-bool is_drag_mode;
-bool press_ms_btn;
-bool is_auto_trackpad_layer;
-int auto_trackpad_layer;
-bool change_auto_trackpad_layer;
-float accel_speed;
+bool can_tap;
+bool can_hf_for_layer;
+int hf_waveform_number;
+bool can_drag;
+bool use_drag;
+bool is_press_ms_btn;
+bool can_trackpad_layer;
+int trackpad_layer;
+bool use_trackpad_layer;
+int accel_speed;
 
 void init_iqs5xx(void);
 bool read_iqs5xx(iqs5xx_data_t* const data);

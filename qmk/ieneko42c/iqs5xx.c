@@ -14,16 +14,16 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "iqs5xx.h"
-#include "i2c_master.h"
 #include "quantum.h"
 #include "drivers/haptic/DRV2605L.h"
 
+uint16_t iqs_regaddr = IQS5xx_READ_ADDR<<1;
 static inline uint8_t iqs_app_writeReg_continue(uint16_t regaddr, uint8_t* data, uint16_t len) {
-    return i2c_writeReg16(IQS5xx_READ_ADDR<<1, regaddr, data, len, 100);
+    return i2c_writeReg16(iqs_regaddr, regaddr, data, len, 100);
 }
 
 static inline uint8_t iqs_app_readReg_continue(uint16_t regaddr, uint8_t* data, uint16_t len) {
-    i2c_status_t status = i2c_readReg16(IQS5xx_READ_ADDR<<1, regaddr, data, len, 100);
+    i2c_status_t status = i2c_readReg16(iqs_regaddr, regaddr, data, len, 100);
     return (status < 0) ? status : I2C_STATUS_SUCCESS;
 }
 
@@ -75,7 +75,7 @@ bool read_iqs5xx(iqs5xx_data_t* const data) {
 
 bool tapped = false; 
 void set_tap(iqs5xx_data_t* const data, report_mouse_t* const rep_mouse) {    
-    if(tapped && (data->finger_cnt == 0 || !hold_drag_mode)){
+    if(tapped && (data->finger_cnt == 0 || !use_drag)){
         rep_mouse->buttons &= ~(1 << (KC_BTN1 - KC_BTN1));
         clear_buttons = true;
         tapped = false;
@@ -83,25 +83,25 @@ void set_tap(iqs5xx_data_t* const data, report_mouse_t* const rep_mouse) {
     } 
 
     if (data->ges_evnet0 == 1) {    
-        if(hold_drag_mode){
-            hold_drag_mode = false;
+        if(use_drag){
+            use_drag = false;
         } else {
             rep_mouse->buttons |= (1 << (KC_BTN1 - KC_BTN1));
             tapped = true;
         }
-    } else if (timer_elapsed32(tap_time) > TAP_TIME_MS && !hold_drag_mode && data->ges_evnet1 == 1) {
+    } else if (timer_elapsed32(tap_time) > TAP_TERM && !use_drag && data->ges_evnet1 == 1) {
         rep_mouse->buttons |= (1 << (KC_BTN2 - KC_BTN1));
         tapped = true;
-    } else if(is_drag_mode && !hold_drag_mode && data->ges_evnet0 == 2) {
-        if(hold_drag_time == 0) {
-            hold_drag_time = timer_read32();
-        } else if(timer_elapsed32(hold_drag_time) > drag_time){
-            DRV_pulse(hf_mode); 
-            hold_drag_mode = true;
-            hold_drag_time = 0;
+    } else if(can_drag && !use_drag && data->ges_evnet0 == 2) {
+        if(drag_time == 0) {
+            drag_time = timer_read32();
+        } else if(timer_elapsed32(drag_time) > drag_term){
+            DRV_pulse(hf_waveform_number); 
+            use_drag = true;
+            drag_time = 0;
             tapped = true;
         }
-    } else if(timer_elapsed32(tap_time) > TAP_TIME_MS && data->touch_strenght_finger_three < 255 && data->ges_evnet1 == 0) {
+    } else if(timer_elapsed32(tap_time) > TAP_TERM && data->touch_strenght_finger_three < 255 && data->ges_evnet1 == 0) {
         data->gesture = TAP_FINGER_THREE;
     }
 
@@ -109,9 +109,13 @@ void set_tap(iqs5xx_data_t* const data, report_mouse_t* const rep_mouse) {
         tap_time = timer_read32();
     }
     
-    if (hold_drag_mode){
+    if (use_drag){
         rep_mouse->buttons |= (1 << (KC_BTN1 - KC_BTN1));
     }
+
+    if(data->finger_cnt == 0){
+        drag_time = 0;
+    } 
 }
 
 void set_gesture(iqs5xx_data_t* const data, report_mouse_t* const rep_mouse) {
@@ -121,7 +125,7 @@ void set_gesture(iqs5xx_data_t* const data, report_mouse_t* const rep_mouse) {
         rep_mouse->x = dx;
         rep_mouse->y = dy;
     } else if (data->finger_cnt >= 2) {
-        int wait_time = data->finger_cnt == 2 ? timer_elapsed32(swipe_time) > SWIPE_TIME_MS : timer_elapsed32(gesture_time) > GESTURE_TIME_MS;
+        int wait_time = data->finger_cnt == 2 ? timer_elapsed32(swipe_time) > SWIPE_TERM : timer_elapsed32(gesture_time) > GESTURE_TERM;
         if(wait_time && data->ges_evnet1 == 2) {
             if(data->relative_xy.bytes[0] > 0 && data->relative_xy.bytes[1] > 0){
                 data->gesture = GESTURE_SWIPE_L;
@@ -134,14 +138,14 @@ void set_gesture(iqs5xx_data_t* const data, report_mouse_t* const rep_mouse) {
             } else {
                 gesture_time = timer_read32();
             }
-        } else if(timer_elapsed32(scroll_time) > scroll_threshold_time && data->ges_evnet1 == 2) {
+        } else if(timer_elapsed32(scroll_time) > scroll_term && data->ges_evnet1 == 2) {
             if(data->relative_xy.bytes[2] > 1 && data->relative_xy.bytes[3] > 1 ){
                 rep_mouse->v = 1;
             } else if(data->relative_xy.bytes[3] > 1 ){
                 rep_mouse->v = -1;
             } 
             scroll_time = timer_read32();
-        } else if(timer_elapsed32(pinch_time) > PINCH_TIME_MS && data->ges_evnet1 == 4) {
+        } else if(timer_elapsed32(pinch_time) > PINCH_TERM && data->ges_evnet1 == 4) {
             if(data->relative_xy.bytes[0] > 0 && data->relative_xy.bytes[1] > 0) {
                 data->gesture = GESTURE_PINCH_OUT;
             } else if(data->relative_xy.bytes[1] > 0) {
@@ -152,23 +156,23 @@ void set_gesture(iqs5xx_data_t* const data, report_mouse_t* const rep_mouse) {
     }
 }
 
-void set_auto_trackpad_layer(iqs5xx_data_t* const data) {
+void set_trackpad_layer(iqs5xx_data_t* const data) {
     if (data->finger_cnt == 0) {
-        if(!press_ms_btn && change_auto_trackpad_layer && is_auto_trackpad_layer){
+        if(!is_press_ms_btn && use_trackpad_layer && can_trackpad_layer){
             layer_move(get_highest_layer(default_layer_state));
-            change_auto_trackpad_layer = false;
+            use_trackpad_layer = false;
         }
    } else {
-        if(!change_auto_trackpad_layer && is_auto_trackpad_layer){
-            layer_move(auto_trackpad_layer);
-            change_auto_trackpad_layer = true;
+        if(!use_trackpad_layer && can_trackpad_layer){
+            layer_move(trackpad_layer);
+            use_trackpad_layer = true;
         }
     }
 }
 
 void process_iqs5xx(iqs5xx_data_t* const data, report_mouse_t* const rep_mouse) {
-    set_auto_trackpad_layer(data);
-    if(is_tap_mode) {
+    set_trackpad_layer(data);
+    if(can_tap) {
         set_tap(data, rep_mouse);
     }
     if(!rep_mouse->buttons || data->gesture != TAP_FINGER_THREE){

@@ -7,6 +7,32 @@
     "rows": 5,
     "cols": 12
   },
+  "customKeycodes": [
+    {"name": "Tap\nToggle",
+     "title": "Toggle Tap",
+     "shortName": "U_TAP_TOGG"
+    },
+    {"name": "Drag\nDrop\nToggle",
+     "title": "Toggle Drag&Drop",
+     "shortName": "U_HPL_TOGG"
+    },
+    {"name": "HP\nLayer\nToggle",
+     "title": "Toggle HP Layer",
+     "shortName": "U_HPL_TOGG"
+    },
+    {"name": "Tpad\nLayer\nToggle",
+     "title": "Toggle TrackPad Layer",
+     "shortName": "U_TPL_TOGG"
+    },
+    {"name": "Send\nSetting",
+    "title": "Send String User Setting",
+    "shortName": "U_SEND_SETTING"
+    },
+    {"name": "Reset\nSetting",
+    "title": "Reset Setting",
+    "shortName": "U_RESET_SETTING"
+    }
+  ],
   "layouts": {
     "labels": [],
     "keymap": [

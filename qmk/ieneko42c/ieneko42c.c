@@ -14,12 +14,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "i2c_master.h"
-#include "pointing_device.h"
 #include "iqs5xx.h"
 #include "ieneko42c.h"
-
-bool mouse_send_flag = false;
 
 keypos_t get_d_3 = (keypos_t){.row = 4, .col = 0};
 keypos_t get_u_3 = (keypos_t){.row = 4, .col = 1};
@@ -67,8 +63,7 @@ void keyboard_post_init_kb() {
     swipe_time = timer_read32();
     pinch_time = timer_read32();
     gesture_time = timer_read32();
-    hold_drag_time = 0;
-    hold_drag_mode = false;
+    drag_term = 0;
     keyboard_post_init_user();
 }
 
