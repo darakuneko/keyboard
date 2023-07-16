@@ -20,6 +20,7 @@ typedef union {
 } user_config_t;
 user_config_t user_config;
 
+
 enum {
   U_TAP_TOGG = USER00,
   U_DD_TOGG,
@@ -75,7 +76,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 	[3] = LAYOUT(
 		RGB_VAI,  RGB_SAI,    RGB_HUI,    RGB_SPI,   RGB_MOD,    RGB_TOG,  KC_NO,   KC_NO,   KC_NO,  KC_NO,   KC_NO,   U_RESET_SETTING, 
 		RGB_VAD,  RGB_SAD,    RGB_HUD,    RGB_SPD,   RGB_RMOD,   KC_NO,    KC_NO,   KC_NO,   KC_NO,    KC_NO,   KC_NO,   KC_NO,
-		TD(0),     U_TAP_TOGG,     TD(1),     U_DD_TOGG,     TD(2),   KC_NO,  U_TPL_TOGG,   U_SEND_SETTING,  KC_NO,    KC_NO,   KC_NO,   KC_NO,
+		TD(0),    U_TAP_TOGG, U_DD_TOGG,  TD(1),     U_HPL_TOGG, TD(2),    U_TPL_TOGG,   U_SEND_SETTING,  KC_NO,    KC_NO,   KC_NO,   KC_NO,
 		KC_NO,   KC_NO,   EE_CLR,   QK_BOOT,   KC_NO,   KC_NO,
     KC_TRNS, KC_TRNS,
     KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,
