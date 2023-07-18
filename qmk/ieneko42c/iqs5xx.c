@@ -148,6 +148,9 @@ void set_gesture(iqs5xx_data_t* const data, report_mouse_t* const rep_mouse) {
                 data->gesture = GESTURE_SWIPE_U;
             }
 
+            if(data->gesture == GESTURE_SWIPE_D || data->gesture == GESTURE_SWIPE_U){
+                swipe_time = timer_read32();
+            }
             gesture_time = timer_read32();
             tapped3_cnt = 0;
         } else if(timer_elapsed32(scroll_time) > scroll_term && data->ges_evnet1 == 2) {

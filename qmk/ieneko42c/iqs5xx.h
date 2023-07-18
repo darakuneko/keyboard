@@ -19,8 +19,8 @@
 
 #define FINGER_MAX 3
 #define TAP_TERM 100
-#define FINGER_THREE_TAP_CNT 20
-#define SWIPE_TERM 80
+#define FINGER_THREE_TAP_CNT 24
+#define SWIPE_TERM 150
 #define PINCH_TERM 200
 #define GESTURE_TERM 200
 
