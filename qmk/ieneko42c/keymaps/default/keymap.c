@@ -20,9 +20,10 @@ typedef union {
 } user_config_t;
 user_config_t user_config;
 
+#define DOUBLE_KEY_TAP_TERM 200
 
 enum {
-  U_TAP_TOGG = USER00,
+  U_TAP_TOGG = QK_KB_0,
   U_DD_TOGG,
   U_HPL_TOGG,
   U_TPL_TOGG,
@@ -36,8 +37,6 @@ enum {
   HF_DOWN
 };
 
-#define DOUBLE_TAP_TIME_MS 200
-
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 	
   [0] = LAYOUT(
@@ -48,14 +47,14 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
       LGUI(KC_TAB), LGUI(KC_TAB),
       LALT(KC_RGHT),     LCTL(LGUI(KC_RIGHT)), LALT(KC_LEFT), LCTL(LGUI(KC_LEFT)),
       LCTL(KC_PPLS), LCTL(KC_PMNS),
-      KC_ESC               
+      KC_ESC            
   ),
 
 	[1] = LAYOUT(
 		KC_GRV,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,  KC_NO,   KC_NO,   KC_LBRC, KC_RBRC,   KC_MINS, KC_EQL,
 		KC_NO,   KC_1,    KC_2,    KC_3,    KC_4,    KC_5,   KC_LEFT, KC_DOWN, KC_UP,   KC_RGHT, KC_NO,   KC_NO,
 		KC_LSFT,   KC_6,    KC_7,    KC_8,    KC_9,    KC_0,   KC_NO,   KC_NO,   KC_NO,   KC_SCLN, KC_QUOT,  KC_LSFT,
-		KC_ACL0,   MO(3),   KC_LSFT,  KC_LSFT,   MO(3),   KC_ACL0,
+    MO(3),    KC_NO,   KC_LSFT,  KC_LSFT,   KC_NO,   MO(3),
     KC_TRNS, KC_TRNS,
     KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,
     KC_TRNS, KC_TRNS,  
@@ -66,7 +65,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     KC_F1,   KC_F2,   KC_F3,    KC_F4,    KC_F5,   KC_F6,    KC_F7,   KC_F8,  KC_F9,  KC_F10,   KC_F11,  KC_F12,  
 		KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO, 
 		KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO, 
-		KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,
+		KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_ACL0,   KC_ACL1,
     KC_TRNS, KC_TRNS,
     KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,
     KC_TRNS, KC_TRNS,
@@ -77,7 +76,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 		RGB_VAI,  RGB_SAI,    RGB_HUI,    RGB_SPI,   RGB_MOD,    RGB_TOG,  KC_NO,   KC_NO,   KC_NO,  KC_NO,   KC_NO,   U_RESET_SETTING, 
 		RGB_VAD,  RGB_SAD,    RGB_HUD,    RGB_SPD,   RGB_RMOD,   KC_NO,    KC_NO,   KC_NO,   KC_NO,    KC_NO,   KC_NO,   KC_NO,
 		TD(0),    U_TAP_TOGG, U_DD_TOGG,  TD(1),     U_HPL_TOGG, TD(2),    U_TPL_TOGG,   U_SEND_SETTING,  KC_NO,    KC_NO,   KC_NO,   KC_NO,
-		KC_NO,   KC_NO,   EE_CLR,   QK_BOOT,   KC_NO,   KC_NO,
+		KC_NO,   KC_NO,   QK_CLEAR_EEPROM,   QK_BOOT,   KC_NO,   KC_NO,
     KC_TRNS, KC_TRNS,
     KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,
     KC_TRNS, KC_TRNS,
@@ -132,9 +131,9 @@ void keyboard_post_init_user(void) {
   }
   set_opts(user_config);
 
-  vial_tap_dance_entry_t td0 = { SCLL_UP, KC_NO, SCLL_DOWN, KC_NO, DOUBLE_TAP_TIME_MS };
-  vial_tap_dance_entry_t td1 = { DRG_UP, KC_NO, DRG_DOWN, KC_NO, DOUBLE_TAP_TIME_MS };
-  vial_tap_dance_entry_t td2 = { HF_UP, KC_NO, HF_DOWN, KC_NO, DOUBLE_TAP_TIME_MS };
+  vial_tap_dance_entry_t td0 = { SCLL_UP, KC_NO, SCLL_DOWN, KC_NO,  DOUBLE_KEY_TAP_TERM };
+  vial_tap_dance_entry_t td1 = { DRG_UP, KC_NO, DRG_DOWN, KC_NO, DOUBLE_KEY_TAP_TERM };
+  vial_tap_dance_entry_t td2 = { HF_UP, KC_NO, HF_DOWN, KC_NO, DOUBLE_KEY_TAP_TERM };
   dynamic_keymap_set_tap_dance(0, &td0);
   dynamic_keymap_set_tap_dance(1, &td1);
   dynamic_keymap_set_tap_dance(2, &td2);
@@ -418,7 +417,7 @@ led_config_t g_led_config = { {
   } 
 };
 
-void rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) { 
+bool rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) { 
   int current_layer = get_highest_layer(layer_state|default_layer_state);  
   HSV hsv = {0, 255, rgblight_get_val()};
   if (current_layer == 1) {
@@ -439,4 +438,5 @@ void rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
         rgb_matrix_set_color(i, rgb.r, rgb.g, rgb.b);
       }
   }
+  return false;
 }  

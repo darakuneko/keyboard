@@ -19,6 +19,7 @@
 
 #define FINGER_MAX 3
 #define TAP_TERM 100
+#define FINGER_THREE_TAP_CNT 20
 #define SWIPE_TERM 80
 #define PINCH_TERM 200
 #define GESTURE_TERM 200
@@ -30,9 +31,8 @@
 #define IQS5xx_RELATIVE_XY 0x0012
 #define IQS5xx_TOUCH_STRENGTH_FINGER_THREE 0x0026
 #define IQS5xx_ZOOM 0x06CB
-#define IQS5xx_SYSTEM_CTRL0 0x0431
 #define IQS5xx_DEFAULT_READ 0x0675
-#define IQS5xx_READ_ADDR 0x74
+#define IQS5xx_DEVICE_ADDR 0x74
 
 typedef struct {
     union {

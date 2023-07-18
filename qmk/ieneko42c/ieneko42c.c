@@ -30,7 +30,7 @@ keypos_t get_t_3 = (keypos_t){.row = 4, .col = 8};
 void gesture_press_key(keypos_t k) {
     int current_layer = get_highest_layer(layer_state|default_layer_state); 
     uint16_t keycode = keymap_key_to_keycode(current_layer, k);
-    keyevent_t k_event = { .key = k };
+    keyevent_t k_event = { .key = k, .type = KEY_EVENT };
     switch (keycode) {
         case KC_MS_BTN1 ... KC_MS_BTN5:
             register_code(keycode);

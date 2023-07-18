@@ -17,42 +17,39 @@
 #include "quantum.h"
 #include "drivers/haptic/DRV2605L.h"
 
-uint16_t iqs_regaddr = IQS5xx_READ_ADDR<<1;
-static inline uint8_t iqs_app_writeReg_continue(uint16_t regaddr, uint8_t* data, uint16_t len) {
-    return i2c_writeReg16(iqs_regaddr, regaddr, data, len, 100);
-}
-
+uint16_t iqs_device_addr = IQS5xx_DEVICE_ADDR<<1;
 static inline uint8_t iqs_app_readReg_continue(uint16_t regaddr, uint8_t* data, uint16_t len) {
-    i2c_status_t status = i2c_readReg16(iqs_regaddr, regaddr, data, len, 100);
+    i2c_status_t status = i2c_readReg16(iqs_device_addr, regaddr, data, len, 100);
     return (status < 0) ? status : I2C_STATUS_SUCCESS;
 }
 
 static inline uint8_t iqs_app_end_communication(void) {
     uint8_t _ = 0xFF;
-    return iqs_app_writeReg_continue(IQS5xx_COM_END_REG, &_, 1);
+    return i2c_writeReg16(iqs_device_addr, IQS5xx_COM_END_REG, &_, 1, 100);
 }
 
 static inline uint8_t iqs_app_writeReg(uint16_t regaddr, uint8_t* data, uint16_t len) {
-    uint8_t res = iqs_app_writeReg_continue(regaddr, data, len);
+    uint8_t res = i2c_writeReg16(iqs_device_addr, regaddr, data, len, 100);
     res |= iqs_app_end_communication();
 
     return res;
 }
 
-static inline uint8_t iqs_app_readReg(uint16_t regaddr, uint8_t* data, uint16_t len) {
-    uint8_t res = iqs_app_readReg_continue(regaddr, data, len);
-    res |= iqs_app_end_communication();
-
-    return res;
+void iqs_app_writeRegL(uint16_t regaddr, uint8_t* data, uint16_t len) {
+    while (1) {
+        uint8_t res = iqs_app_writeReg(regaddr, data, len);
+        if (!res) {
+            break;
+        }
+    }
 }
-
+    
+//set absolutely
 void init_iqs5xx(void) {
-    uint8_t data = 0x80; //LP Mode
-    iqs_app_writeReg(IQS5xx_SYSTEM_CTRL0, &data, 1);
-    uint16_t default_addr = IQS5xx_FINGER_NUM << 8; //range
-    iqs_app_writeReg(IQS5xx_DEFAULT_READ, (uint8_t*)&default_addr, sizeof(default_addr));
-    uint8_t distance = 0x02; //Zoom initial distance
-    iqs_app_writeReg(IQS5xx_ZOOM, &distance, 1);    
+    uint16_t default_addr = IQS5xx_FINGER_NUM << 8;
+    iqs_app_writeRegL(IQS5xx_DEFAULT_READ, (uint8_t*)&default_addr, sizeof(default_addr));
+    uint8_t distance = 0x02;
+    iqs_app_writeRegL(IQS5xx_ZOOM, &distance, 1);
 }
 
 bool read_iqs5xx(iqs5xx_data_t* const data) {
@@ -74,13 +71,19 @@ bool read_iqs5xx(iqs5xx_data_t* const data) {
 }
 
 bool tapped = false; 
+int tapped3_cnt = 0;
+
 void set_tap(iqs5xx_data_t* const data, report_mouse_t* const rep_mouse) {    
     if(tapped && (data->finger_cnt == 0 || !use_drag)){
         rep_mouse->buttons &= ~(1 << (KC_BTN1 - KC_BTN1));
         clear_buttons = true;
         tapped = false;
         return;
-    } 
+    }
+
+    if(data->finger_cnt == 0 && tapped3_cnt > FINGER_THREE_TAP_CNT){
+        data->gesture = TAP_FINGER_THREE;
+    }  
 
     if (data->ges_evnet0 == 1) {    
         if(use_drag){
@@ -101,9 +104,9 @@ void set_tap(iqs5xx_data_t* const data, report_mouse_t* const rep_mouse) {
             drag_time = 0;
             tapped = true;
         }
-    } else if(timer_elapsed32(tap_time) > TAP_TERM && data->touch_strenght_finger_three < 255 && data->ges_evnet1 == 0) {
-        data->gesture = TAP_FINGER_THREE;
-    }
+    } else if(data->touch_strenght_finger_three < 255 && data->ges_evnet1 == 0) {
+        tapped3_cnt = tapped3_cnt + 1;
+    } 
 
     if(rep_mouse->buttons || data->gesture == TAP_FINGER_THREE){
         tap_time = timer_read32();
@@ -115,7 +118,8 @@ void set_tap(iqs5xx_data_t* const data, report_mouse_t* const rep_mouse) {
 
     if(data->finger_cnt == 0){
         drag_time = 0;
-    } 
+        tapped3_cnt = 0;
+    }   
 }
 
 void set_gesture(iqs5xx_data_t* const data, report_mouse_t* const rep_mouse) {
@@ -145,6 +149,7 @@ void set_gesture(iqs5xx_data_t* const data, report_mouse_t* const rep_mouse) {
             }
 
             gesture_time = timer_read32();
+            tapped3_cnt = 0;
         } else if(timer_elapsed32(scroll_time) > scroll_term && data->ges_evnet1 == 2) {
             if(data->relative_xy.bytes[2] > 1 && data->relative_xy.bytes[3] > 1 ){
                 rep_mouse->v = 1;
@@ -178,12 +183,14 @@ void set_trackpad_layer(iqs5xx_data_t* const data) {
 }
 
 void process_iqs5xx(iqs5xx_data_t* const data, report_mouse_t* const rep_mouse) {
+    //debug
+    //uprintf("finger: %d evnet0: %d  evnet1: %d\n", data->finger_cnt, data->ges_evnet0, data->ges_evnet1);
+
     set_trackpad_layer(data);
-    if(can_tap) {
+    set_gesture(data, rep_mouse);
+
+    if(can_tap && !data->gesture) {
         set_tap(data, rep_mouse);
-    }
-    if(!rep_mouse->buttons || data->gesture != TAP_FINGER_THREE){
-        set_gesture(data, rep_mouse);
     }
 }
 
