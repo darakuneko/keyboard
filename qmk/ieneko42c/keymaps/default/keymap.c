@@ -199,6 +199,7 @@ void update_drag_term(uint32_t dt){
   send_setting_string(prefix_drag_term, dt);
 }
 
+report_mouse_t currentReport = {0};
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
   switch (keycode) {  
     case U_RESET_SETTING : 
@@ -210,15 +211,19 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
       return false;     
     case KC_BTN1 ... KC_BTN5:
       if (record->event.pressed) {
+        currentReport.buttons |= 1 << (keycode - KC_BTN1);
         is_press_ms_btn = true;
       } else {
+        currentReport.buttons &= ~(1 << (keycode - KC_BTN1));
         is_press_ms_btn = false;
         if(use_trackpad_layer) {
           layer_move(get_highest_layer(default_layer_state));
           use_trackpad_layer = false;
         }
       }
-      return false;   
+      pointing_device_set_report(currentReport);
+      pointing_device_send();
+      return false;    
     case KC_ACL0:
       if (record->event.pressed) {
         float as = accel_speed == 2 ? 1 : 2;
@@ -387,6 +392,10 @@ void matrix_scan_user(void) {
   if(current_layer != trackpad_layer && can_hf_for_layer && layer != current_layer){
     DRV_pulse(hf_waveform_number);
     layer = current_layer;
+  }
+  if(currentReport.buttons){
+    pointing_device_set_report(currentReport);
+    pointing_device_send();
   }
 }
 
