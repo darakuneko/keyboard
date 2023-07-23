@@ -97,7 +97,6 @@ void set_tap(iqs5xx_data_t* const data, report_mouse_t* const rep_mouse) {
             DRV_pulse(hf_waveform_number); 
             use_drag = true;
             drag_time = 0;
-            tapped = false;
         }
     } else if(data->touch_strenght_finger_three < 255 && data->ges_evnet1 == 0) {
         tapped3_cnt = tapped3_cnt + 1;
