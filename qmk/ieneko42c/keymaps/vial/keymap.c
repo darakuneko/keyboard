@@ -9,7 +9,6 @@ typedef union {
   uint32_t raw;
   struct {
     bool init : 1;
-    int  can_tap : 1;
     unsigned int hf_waveform_number : 7;
     bool can_hf_for_layer : 1;
     bool can_drag : 1;
@@ -23,8 +22,7 @@ user_config_t user_config;
 #define DOUBLE_KEY_TAP_TERM 200
 
 enum {
-  U_TAP_TOGG = QK_KB_0,
-  U_DD_TOGG,
+  U_DD_TOGG = QK_KB_0,
   U_HPL_TOGG,
   U_TPL_TOGG,
   U_SEND_SETTING,
@@ -43,7 +41,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     	MT(MOD_LALT,KC_ESC), KC_Q,    KC_W,    KC_E,    KC_R,    KC_T,         KC_Y,    KC_U,    KC_I,    KC_O,    KC_P,    MT(MOD_RALT,KC_BSLS), 
     	MT(MOD_LCTL,KC_TAB), KC_A,    KC_S,    KC_D,    KC_F,    KC_G,         KC_H,    KC_J,    KC_K,    KC_L,    KC_SCLN, MT(MOD_LCTL,KC_QUOT),  
     	KC_LSFT,             KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,         KC_N,    KC_M,    KC_COMM, KC_DOT,  KC_SLSH, KC_LSFT, 
-		                           KC_LGUI, LT(2, KC_DEL),   LT(1, KC_SPC),       LT(1, KC_ENT), LT(2,KC_BSPC), KC_RGUI,
+		  	                           KC_LGUI, LT(2, KC_DEL),   LT(1, KC_SPC),       LT(1, KC_ENT), LT(2,KC_BSPC), KC_RGUI,
       LGUI(KC_TAB), LGUI(KC_TAB),
       LALT(KC_RGHT),     LCTL(LGUI(KC_RIGHT)), LALT(KC_LEFT), LCTL(LGUI(KC_LEFT)),
       LCTL(KC_PPLS), LCTL(KC_PMNS),
@@ -73,10 +71,10 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 	),
 
 	[3] = LAYOUT(
-		RGB_VAI,  RGB_SAI,    RGB_HUI,    RGB_SPI,   RGB_MOD,    RGB_TOG,  KC_NO,   KC_NO,   KC_NO,  KC_NO,   KC_NO,   U_RESET_SETTING, 
+		RGB_VAI,  RGB_SAI,    RGB_HUI,    RGB_SPI,   RGB_MOD,    RGB_TOG,  KC_NO,   KC_NO,   KC_NO,  QK_BOOT,   QK_CLEAR_EEPROM,   U_RESET_SETTING, 
 		RGB_VAD,  RGB_SAD,    RGB_HUD,    RGB_SPD,   RGB_RMOD,   KC_NO,    KC_NO,   KC_NO,   KC_NO,    KC_NO,   KC_NO,   KC_NO,
-		TD(0),    U_TAP_TOGG, U_DD_TOGG,  TD(1),     U_HPL_TOGG, TD(2),    U_TPL_TOGG,   U_SEND_SETTING,  KC_NO,    KC_NO,   KC_NO,   KC_NO,
-		KC_NO,   KC_NO,   QK_CLEAR_EEPROM,   QK_BOOT,   KC_NO,   KC_NO,
+		TD(0),    U_DD_TOGG,  TD(1),     U_HPL_TOGG, TD(2),  KC_NO,  U_TPL_TOGG,   U_SEND_SETTING,  KC_NO,    KC_NO,   KC_NO,   KC_NO,
+		KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,
     KC_TRNS, KC_TRNS,
     KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,
     KC_TRNS, KC_TRNS,
@@ -99,7 +97,6 @@ uint32_t init_opts(user_config_t* user_config) {
   eeconfig_init_user();
   user_config->init = true;  
   user_config->can_hf_for_layer = true;
-  user_config->can_tap = true;   
   user_config->hf_waveform_number = 47;   
   user_config->can_drag = true;  
   user_config->drag_term = 700;
@@ -111,7 +108,6 @@ uint32_t init_opts(user_config_t* user_config) {
 }
 
 void set_opts(user_config_t user_config) {
-  can_tap = user_config.can_tap;
   hf_waveform_number = user_config.hf_waveform_number;
   can_hf_for_layer = user_config.can_hf_for_layer;
   can_drag = user_config.can_drag;  
@@ -142,10 +138,6 @@ void keyboard_post_init_user(void) {
 char prefix_scroll_term[] = "Scroll Term: ";
 char prefix_drag_term[] = "Drag&Drop Term: ";
 char prefix_haptic_number[] = "HF Waveform Number: ";
-
-char* can_tap_to_char(void) {
-  return can_tap ? "Tap: on\n" : "Tap: off\n";
-}
 
 char* can_hf_for_layer_to_char(void) {
   return user_config.can_hf_for_layer ? "HF for Layer: on\n" : "HF for Layer: off\n";
@@ -192,14 +184,24 @@ void hf_DRV_pulse(bool ee2_up) {
   send_setting_string(prefix_haptic_number, hf_waveform_number);
 }
 
+void send_pointing_device_user(ms_key_status_t ms_key_status) {
+    report_mouse_t mouse_report = {0};
+    if(ms_key_status.is_pressed) {
+      mouse_report.buttons |= 1 << (ms_key_status.keycode - KC_BTN1);
+    } else {
+      mouse_report.buttons &= ~(1 << (ms_key_status.keycode - KC_BTN1));
+    }
+    pointing_device_set_report(mouse_report);
+    pointing_device_send();
+}
+
 void update_drag_term(uint32_t dt){
   user_config.drag_term = dt;
   eeconfig_update_user(user_config.raw); 
   drag_term = user_config.drag_term;
   send_setting_string(prefix_drag_term, dt);
 }
-
-report_mouse_t currentReport = {0};
+  
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
   switch (keycode) {  
     case U_RESET_SETTING : 
@@ -208,21 +210,19 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         init_opts(&user_config);
         set_opts(user_config);
       }
-      return false;     
+      return false;
     case KC_BTN1 ... KC_BTN5:
       if (record->event.pressed) {
-        currentReport.buttons |= 1 << (keycode - KC_BTN1);
-        is_press_ms_btn = true;
-      } else {
-        currentReport.buttons &= ~(1 << (keycode - KC_BTN1));
-        is_press_ms_btn = false;
-        if(use_trackpad_layer) {
-          layer_move(get_highest_layer(default_layer_state));
-          use_trackpad_layer = false;
+        if(!(keycode == KC_BTN1 && tapped)){
+          ms_key_status.is_pressed = true;
+          ms_key_status.keycode = keycode;
+          send_pointing_device_user(ms_key_status);
         }
+      } else {
+        ms_key_status.is_pressed = false;
+        ms_key_status.keycode = keycode;
+        send_pointing_device_user(ms_key_status);
       }
-      pointing_device_set_report(currentReport);
-      pointing_device_send();
       return false;    
     case KC_ACL0:
       if (record->event.pressed) {
@@ -256,16 +256,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         }
         send_setting_string(prefix_scroll_term, scroll_term);      
       }
-      return false;
-    case U_TAP_TOGG: 
-      if (record->event.pressed) {
-        user_config.can_tap = !can_tap;  
-        eeconfig_update_user(user_config.raw); 
-        can_tap = user_config.can_tap;    
-        char* tm = can_tap_to_char();
-        send_string(tm);
-      }
-      return false;   
+      return false;  
     case U_DD_TOGG: 
       if (record->event.pressed) {
         user_config.can_drag = !can_drag;  
@@ -334,8 +325,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         strcpy(st, prefix_scroll_term); 
         sprintf(st + strlen(st), "%d\n", user_config.scroll_term);
 
-        char* tm = can_tap_to_char();
-
         char* dm = can_drag_char();
 
         char dt[100];
@@ -354,20 +343,18 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         sprintf(at, "Accel Speed: %d\n", (int)accel_speed);
 
         size_t len1 = strlen(st);
-        size_t len2 = strlen(tm);
-        size_t len3 = strlen(dm);
-        size_t len4 = strlen(dt);
-        size_t len5 = strlen(hl);
-        size_t len6 = strlen(hm);
-        size_t len7 = strlen(atl);
-        size_t len8 = strlen(at);
+        size_t len2 = strlen(dm);
+        size_t len3 = strlen(dt);
+        size_t len4 = strlen(hl);
+        size_t len5 = strlen(hm);
+        size_t len6 = strlen(atl);
+        size_t len7 = strlen(at);
 
-        size_t buffer_size = len1 + len2 + len3 + len4 + len5 + len6 + len7 + len8 + 1;
+        size_t buffer_size = len1 + len2 + len3 + len4 + len5 + len6 + len7 + 1;
         char* c = (char*)malloc(buffer_size);
         memset(c, 0, buffer_size);
 
         strcat(c, st);
-        strcat(c, tm);
         strcat(c, dm);
         strcat(c, dt);      
         strcat(c, hl);       
@@ -392,10 +379,6 @@ void matrix_scan_user(void) {
   if(current_layer != trackpad_layer && can_hf_for_layer && layer != current_layer){
     DRV_pulse(hf_waveform_number);
     layer = current_layer;
-  }
-  if(currentReport.buttons){
-    pointing_device_set_report(currentReport);
-    pointing_device_send();
   }
 }
 

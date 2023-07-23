@@ -70,15 +70,14 @@ bool read_iqs5xx(iqs5xx_data_t* const data) {
     return res;
 }
 
-bool tapped = false; 
 int tapped3_cnt = 0;
-
 void set_tap(iqs5xx_data_t* const data, report_mouse_t* const rep_mouse) {    
-    if(tapped && (data->finger_cnt == 0 || !use_drag)){
+    if(tapped && data->finger_cnt == 0){
         rep_mouse->buttons &= ~(1 << (KC_BTN1 - KC_BTN1));
         clear_buttons = true;
         tapped = false;
-        return;
+        use_drag = false;
+        return;  
     }
 
     if(data->finger_cnt == 0 && tapped3_cnt > FINGER_THREE_TAP_CNT){
@@ -86,12 +85,8 @@ void set_tap(iqs5xx_data_t* const data, report_mouse_t* const rep_mouse) {
     }  
 
     if (data->ges_evnet0 == 1) {    
-        if(use_drag){
-            use_drag = false;
-        } else {
-            rep_mouse->buttons |= (1 << (KC_BTN1 - KC_BTN1));
-            tapped = true;
-        }
+        rep_mouse->buttons |= (1 << (KC_BTN1 - KC_BTN1));
+        tapped = true;
     } else if (timer_elapsed32(tap_time) > TAP_TERM && !use_drag && data->ges_evnet1 == 1) {
         rep_mouse->buttons |= (1 << (KC_BTN2 - KC_BTN1));
         tapped = true;
@@ -102,7 +97,7 @@ void set_tap(iqs5xx_data_t* const data, report_mouse_t* const rep_mouse) {
             DRV_pulse(hf_waveform_number); 
             use_drag = true;
             drag_time = 0;
-            tapped = true;
+            tapped = false;
         }
     } else if(data->touch_strenght_finger_three < 255 && data->ges_evnet1 == 0) {
         tapped3_cnt = tapped3_cnt + 1;
@@ -114,6 +109,8 @@ void set_tap(iqs5xx_data_t* const data, report_mouse_t* const rep_mouse) {
     
     if (use_drag){
         rep_mouse->buttons |= (1 << (KC_BTN1 - KC_BTN1));
+    } else if(ms_key_status.is_pressed){
+        rep_mouse->buttons |= (1 << (ms_key_status.keycode - KC_BTN1));
     }
 
     if(data->finger_cnt == 0){
@@ -173,12 +170,12 @@ void set_gesture(iqs5xx_data_t* const data, report_mouse_t* const rep_mouse) {
 
 void set_trackpad_layer(iqs5xx_data_t* const data) {
     if (data->finger_cnt == 0) {
-        if(!is_press_ms_btn && use_trackpad_layer && can_trackpad_layer){
+        if(!ms_key_status.is_pressed && use_trackpad_layer && can_trackpad_layer){
             layer_move(get_highest_layer(default_layer_state));
             use_trackpad_layer = false;
         }
    } else {
-        if(!use_trackpad_layer && can_trackpad_layer){
+        if(!ms_key_status.is_pressed && !use_trackpad_layer && can_trackpad_layer){
             layer_move(trackpad_layer);
             use_trackpad_layer = true;
         }
@@ -192,7 +189,7 @@ void process_iqs5xx(iqs5xx_data_t* const data, report_mouse_t* const rep_mouse) 
     set_trackpad_layer(data);
     set_gesture(data, rep_mouse);
 
-    if(can_tap && !data->gesture) {
+    if(!data->gesture) {
         set_tap(data, rep_mouse);
     }
 }

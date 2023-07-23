@@ -8,10 +8,6 @@
     "cols": 12
   },
   "customKeycodes": [
-    {"name": "Tap\nToggle",
-     "title": "Toggle Tap",
-     "shortName": "U_TAP_TOGG"
-    },
     {"name": "Drag\nDrop\nToggle",
      "title": "Toggle Drag&Drop",
      "shortName": "U_HPL_TOGG"

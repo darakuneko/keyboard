@@ -28,26 +28,16 @@ keypos_t get_o_2 = (keypos_t){.row = 4, .col = 7};
 keypos_t get_t_3 = (keypos_t){.row = 4, .col = 8};
 
 void gesture_press_key(keypos_t k) {
-    int current_layer = get_highest_layer(layer_state|default_layer_state); 
-    uint16_t keycode = keymap_key_to_keycode(current_layer, k);
     keyevent_t k_event = { .key = k, .type = KEY_EVENT };
-    switch (keycode) {
-        case KC_MS_BTN1 ... KC_MS_BTN5:
-            register_code(keycode);
-	        unregister_code(keycode);
-            break;
-       default:
-            k_event.pressed = true;
-            k_event.time = (timer_read() | 1);
-            action_exec(k_event);   
-            k_event.pressed = false;
-            k_event.time = (timer_read() | 1);
-            action_exec(k_event);
-        break;
-    }
+    k_event.pressed = true;
+    k_event.time = (timer_read() | 1);
+    action_exec(k_event);   
+    k_event.pressed = false;
+    k_event.time = (timer_read() | 1);
+    action_exec(k_event);
 }
 
-void send_pointing_device(report_mouse_t rep_mouse){
+void send_pointing_device_kb(report_mouse_t rep_mouse){
     if(rep_mouse.x || rep_mouse.y  || rep_mouse.v || rep_mouse.buttons || clear_buttons){
         pointing_device_set_report(rep_mouse);
         pointing_device_send();
@@ -109,7 +99,7 @@ void matrix_scan_kb() {
             default:
                 break;
         }
-        send_pointing_device(mouse_rep);
+        send_pointing_device_kb(mouse_rep);
     }
     matrix_scan_user();
 }

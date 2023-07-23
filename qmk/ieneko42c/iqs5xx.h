@@ -69,12 +69,18 @@ uint32_t drag_time;
 uint32_t drag_term;
 
 bool clear_buttons;
-bool can_tap;
+bool tapped;
 bool can_hf_for_layer;
 int hf_waveform_number;
 bool can_drag;
 bool use_drag;
-bool is_press_ms_btn;
+
+typedef struct {
+    bool        is_pressed;
+    uint16_t    keycode;
+} ms_key_status_t;
+ms_key_status_t ms_key_status;
+
 bool can_trackpad_layer;
 int trackpad_layer;
 bool use_trackpad_layer;
