@@ -82,8 +82,10 @@ typedef struct {
 ms_key_status_t ms_key_status;
 
 bool can_trackpad_layer;
+bool can_send_string;
 int trackpad_layer;
 bool use_trackpad_layer;
+int scroll_step;
 int accel_speed;
 
 void init_iqs5xx(void);

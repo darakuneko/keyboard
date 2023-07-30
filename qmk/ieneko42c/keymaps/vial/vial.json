@@ -8,25 +8,60 @@
     "cols": 12
   },
   "customKeycodes": [
-    {"name": "Drag\nDrop\nToggle",
-     "title": "Toggle Drag&Drop",
-     "shortName": "U_HPL_TOGG"
+    {
+      "shortName": "Drag\nDrop\nToggle",
+      "title": "Toggle Drag&Drop",
+      "name": "U_HPL_TOGG"
     },
-    {"name": "HP\nLayer\nToggle",
-     "title": "Toggle HP Layer",
-     "shortName": "U_HPL_TOGG"
+    {
+      "shortName": "HP\nLayer\nToggle",
+      "title": "Toggle HP Layer",
+      "name": "U_HPL_TOGG"
     },
-    {"name": "Tpad\nLayer\nToggle",
-     "title": "Toggle TrackPad Layer",
-     "shortName": "U_TPL_TOGG"
+    {
+      "shortName": "Tpad\nLayer\nToggle",
+      "title": "Toggle TrackPad Layer",
+      "name": "U_TPL_TOGG"
     },
-    {"name": "Send\nSetting",
-    "title": "Send String User Setting",
-    "shortName": "U_SEND_SETTING"
+    {
+      "shortName": "Send\nString\nToggle",
+      "title": "Toggle Send String",
+      "name": "U_SEND_STR_TOGG"
     },
-    {"name": "Reset\nSetting",
-    "title": "Reset Setting",
-    "shortName": "U_RESET_SETTING"
+    {
+      "shortName": "Send\nSetting",
+      "title": "Send String User Setting",
+      "name": "U_SEND_SETTING"
+    },
+    {
+      "shortName": "Reset\nSetting",
+      "title": "Reset Setting",
+      "name": "U_RESET_SETTING"
+    },
+    {
+      "shortName": "Scroll\nStep1",
+      "title": "Scroll Step1",
+      "name": "U_S_STP1"
+    },
+    {
+      "shortName": "Scroll\nStep2",
+      "title": "Scroll Step2",
+      "name": "U_S_STP2"
+    },
+    {
+      "shortName": "Scroll\nStep3",
+      "title": "Scroll Step3",
+      "name": "U_S_STP3"
+    },
+    {
+      "shortName": "Mouse\nAccel1",
+      "title": "Mouse Accel1",
+      "name": "U_M_ACL1"
+    },
+    {
+      "shortName": "Mouse\nAccel2",
+      "title": "Mouse Accel2",
+      "name": "U_M_ACL2"
     }
   ],
   "layouts": {

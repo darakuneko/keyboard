@@ -131,7 +131,6 @@ void set_gesture(iqs5xx_data_t* const data, report_mouse_t* const rep_mouse) {
             } else if(data->relative_xy.bytes[1] > 0){
                 data->gesture = GESTURE_SWIPE_R;
             } 
-
             swipe_time = timer_read32();
         } else if(timer_elapsed32(gesture_time) > GESTURE_TERM && data->ges_evnet1 == 2 && data->finger_cnt == 3) {
             if(data->relative_xy.bytes[0] > 0 && data->relative_xy.bytes[1] > 0){
@@ -151,9 +150,9 @@ void set_gesture(iqs5xx_data_t* const data, report_mouse_t* const rep_mouse) {
             tapped3_cnt = 0;
         } else if(timer_elapsed32(scroll_time) > scroll_term && data->ges_evnet1 == 2) {
             if(data->relative_xy.bytes[2] > 1 && data->relative_xy.bytes[3] > 1 ){
-                rep_mouse->v = 1;
+                rep_mouse->v = 1 * scroll_step;
             } else if(data->relative_xy.bytes[3] > 1 ){
-                rep_mouse->v = -1;
+                rep_mouse->v = -1 * scroll_step;
             } 
             scroll_time = timer_read32();
         } else if(timer_elapsed32(pinch_time) > PINCH_TERM && data->ges_evnet1 == 4) {
