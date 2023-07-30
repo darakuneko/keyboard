@@ -15,6 +15,7 @@ typedef union {
     unsigned int  scroll_term : 7;
     unsigned int drag_term : 10;
     bool can_trackpad_layer : 1;
+    bool can_send_string : 1;
   };
 } user_config_t;
 user_config_t user_config;
@@ -25,8 +26,14 @@ enum {
   U_DD_TOGG = QK_KB_0,
   U_HPL_TOGG,
   U_TPL_TOGG,
+  U_SEND_STR_TOGG,
   U_SEND_SETTING,
   U_RESET_SETTING,
+  U_S_STP1,
+  U_S_STP2,
+  U_S_STP3,
+  U_M_ACL1,
+  U_M_ACL2,
   SCLL_UP,
   SCLL_DOWN,
   DRG_UP,
@@ -62,8 +69,8 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 	[2] = LAYOUT(
     KC_F1,   KC_F2,   KC_F3,    KC_F4,    KC_F5,   KC_F6,    KC_F7,   KC_F8,  KC_F9,  KC_F10,   KC_F11,  KC_F12,  
 		KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO, 
-		KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO, 
-		KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_ACL0,   KC_ACL1,
+		KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   U_S_STP1,   U_S_STP2,   U_S_STP3,   U_M_ACL1,   U_M_ACL2, 
+		KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,
     KC_TRNS, KC_TRNS,
     KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,
     KC_TRNS, KC_TRNS,
@@ -73,7 +80,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 	[3] = LAYOUT(
 		RGB_VAI,  RGB_SAI,    RGB_HUI,    RGB_SPI,   RGB_MOD,    RGB_TOG,  KC_NO,   KC_NO,   KC_NO,  QK_BOOT,   QK_CLEAR_EEPROM,   U_RESET_SETTING, 
 		RGB_VAD,  RGB_SAD,    RGB_HUD,    RGB_SPD,   RGB_RMOD,   KC_NO,    KC_NO,   KC_NO,   KC_NO,    KC_NO,   KC_NO,   KC_NO,
-		TD(0),    U_DD_TOGG,  TD(1),     U_HPL_TOGG, TD(2),  KC_NO,  U_TPL_TOGG,   U_SEND_SETTING,  KC_NO,    KC_NO,   KC_NO,   KC_NO,
+		TD(0),    U_DD_TOGG,  TD(1),     U_HPL_TOGG, TD(2),  KC_NO,  U_TPL_TOGG,   U_SEND_STR_TOGG,  U_SEND_SETTING,  KC_NO,   KC_NO,   KC_NO,
 		KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,
     KC_TRNS, KC_TRNS,
     KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,
@@ -85,7 +92,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     MT(MOD_LALT,KC_ESC), KC_Q,    KC_W,    KC_E,    KC_R,    KC_T,         KC_Y,    KC_U,    KC_I,    KC_O,    KC_P,    MT(MOD_RALT,KC_BSLS), 
     MT(MOD_LCTL,KC_TAB), KC_A,    KC_S,    KC_D,    KC_F,    KC_G,         KC_H,    KC_J,    KC_K,    KC_L,    KC_SCLN, MT(MOD_LCTL,KC_QUOT),  
     KC_LSFT,             KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,         KC_N,    KC_M,    KC_COMM, KC_DOT,  KC_SLSH, KC_LSFT, 
-		                        KC_NO,   KC_ACL0,   KC_BTN1,   KC_BTN1,   KC_ACL0,   KC_NO,
+		                        U_M_ACL2,   U_M_ACL1,   KC_BTN1,   U_S_STP1,   U_S_STP2,   U_S_STP3,
     KC_TRNS, KC_TRNS,
     KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,
     KC_TRNS, KC_TRNS,
@@ -102,6 +109,7 @@ uint32_t init_opts(user_config_t* user_config) {
   user_config->drag_term = 700;
   user_config->can_trackpad_layer = true;
   user_config->scroll_term = 0;
+  user_config->can_send_string = 1;
   eeconfig_update_user(user_config->raw); 
   DRV_pulse(53);
   return eeconfig_read_user();
@@ -114,7 +122,9 @@ void set_opts(user_config_t user_config) {
   drag_term = user_config.drag_term;
   can_trackpad_layer = user_config.can_trackpad_layer;
   scroll_term = user_config.scroll_term;
+  can_send_string = user_config.can_send_string;
   accel_speed = 1;
+  scroll_step = 1;
   trackpad_layer = 4;
   use_trackpad_layer = false;
   use_drag = false;
@@ -151,27 +161,32 @@ char* can_trackpad_layer_char(void) {
   return user_config.can_trackpad_layer ? "Trackpad Layer: on\n" : "Trackpad Layer: off\n";
 }
 
+char* can_send_string_char(void) {
+  return user_config.can_send_string ? "Send String: on\n" : "Send String: off\n";
+}
+
 void send_setting_string(char* t, int i) {
-  char cn[12];
-  sprintf(cn, "%d", i);
-  char end = '\n';
+  if(can_send_string){
+    char cn[12];
+    sprintf(cn, "%d", i);
+    char end = '\n';
 
-  size_t len1 = strlen(t);
-  size_t len2 = 1;
-  size_t len3 = 1;
-  size_t buffer_size = len1 + len2 + len3 + 1;
+    size_t len1 = strlen(t);
+    size_t len2 = 1;
+    size_t len3 = 1;
+    size_t buffer_size = len1 + len2 + len3 + 1;
 
-  char* c = (char*)malloc(buffer_size);
-  memset(c, 0, buffer_size);
+    char* c = (char*)malloc(buffer_size);
+    memset(c, 0, buffer_size);
 
-  strcat(c, t);
-  strcat(c, cn);
-  strncat(c, &end, 1);
+    strcat(c, t);
+    strcat(c, cn);
+    strncat(c, &end, 1);
 
-  send_string(c);
+    send_string(c);
 
-  free(c);
-
+    free(c);
+  } 
 }
 
 void hf_DRV_pulse(bool ee2_up) {
@@ -224,16 +239,29 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         send_pointing_device_user(ms_key_status);
       }
       return false;    
-    case KC_ACL0:
+    case U_S_STP1:
       if (record->event.pressed) {
-        float as = accel_speed == 2 ? 1 : 2;
-        accel_speed = as;
+        scroll_step = scroll_step == 4 ? 1 : 4;
       }
       return false;  
-    case KC_ACL1:
+    case U_S_STP2:
       if (record->event.pressed) {
-        float as = accel_speed == 4 ? 1 : 4;
-        accel_speed = as;
+        scroll_step = scroll_step == 8 ? 1 : 8;
+      }
+      return false; 
+    case U_S_STP3:
+      if (record->event.pressed) {
+        scroll_step = scroll_step == 16 ? 1 : 16;
+      }
+      return false; 
+    case U_M_ACL1:
+      if (record->event.pressed) {
+        accel_speed = accel_speed == 2 ? 1 : 2;
+      }
+      return false;  
+    case U_M_ACL2:
+      if (record->event.pressed) {
+        accel_speed = accel_speed == 4 ? 1 : 4;
       }
       return false;  
     case SCLL_UP: 
@@ -263,7 +291,9 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         eeconfig_update_user(user_config.raw); 
         can_drag = user_config.can_drag;   
         char* dm = can_drag_char();
-        send_string(dm);
+        if(can_send_string) {
+          send_string(dm);
+        }
       }
       return false;             
     case DRG_UP: 
@@ -288,8 +318,10 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         user_config.can_hf_for_layer = !can_hf_for_layer;  
         eeconfig_update_user(user_config.raw); 
         can_hf_for_layer = user_config.can_hf_for_layer;  
-        char* hl = can_hf_for_layer_to_char();  
-        send_string(hl);
+        char* hl = can_hf_for_layer_to_char(); 
+        if(can_send_string) {
+          send_string(hl);
+        }
       }
       return false;         
     case HF_UP:
@@ -316,9 +348,22 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         eeconfig_update_user(user_config.raw); 
         can_trackpad_layer = user_config.can_trackpad_layer;  
         char* atl = can_trackpad_layer_char();
-        send_string(atl);
+        if(can_send_string) {
+          send_string(atl);
+        }
       }
-      return false;    
+      return false; 
+    case U_SEND_STR_TOGG: 
+      if (record->event.pressed) {
+        user_config.can_send_string = !can_send_string;  
+        eeconfig_update_user(user_config.raw); 
+        can_send_string = user_config.can_send_string; 
+        char* ss = can_send_string_char();
+        if(can_send_string) {
+          send_string(ss);
+        }
+      }
+      return false;  
     case U_SEND_SETTING: 
       if (record->event.pressed) {  
         char st[100];        
@@ -339,8 +384,11 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 
         char* atl = can_trackpad_layer_char();
         
-        char at[100];
-        sprintf(at, "Accel Speed: %d\n", (int)accel_speed);
+        char as[100];
+        sprintf(as, "Accel Speed: %d\n", (int)accel_speed);
+
+        char ss[100];
+        sprintf(ss, "Scroll Step: %d\n", (int)scroll_step);
 
         size_t len1 = strlen(st);
         size_t len2 = strlen(dm);
@@ -348,9 +396,10 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         size_t len4 = strlen(hl);
         size_t len5 = strlen(hm);
         size_t len6 = strlen(atl);
-        size_t len7 = strlen(at);
+        size_t len7 = strlen(as);
+        size_t len8 = strlen(ss);
 
-        size_t buffer_size = len1 + len2 + len3 + len4 + len5 + len6 + len7 + 1;
+        size_t buffer_size = len1 + len2 + len3 + len4 + len5 + len6 + len7 + len8  + 1;
         char* c = (char*)malloc(buffer_size);
         memset(c, 0, buffer_size);
 
@@ -360,8 +409,9 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         strcat(c, hl);       
         strcat(c, hm);
         strcat(c, atl);
-        strcat(c, at);
-       
+        strcat(c, as);
+        strcat(c, ss);
+
         send_string(c);
 
         free(c);
