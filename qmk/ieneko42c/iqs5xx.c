@@ -36,17 +36,17 @@ static inline uint8_t iqs_app_writeReg(uint16_t regaddr, uint8_t* data, uint16_t
 }
 
 void iqs_app_writeRegR(uint16_t regaddr, uint8_t* data, uint16_t len) {
-    int retry_count = 30;
+    int retry_count = 10;
     while (retry_count > 0) {
         uint8_t res = iqs_app_writeReg(regaddr, data, len);
-        if (!res) {
+        if (res) {
             break;
-        } 
+        }
         wait_ms(100);
         retry_count--;
     }
 }
-    
+
 //set absolutely
 void init_iqs5xx(void) {
     uint16_t default_addr = IQS5xx_FINGER_NUM << 8;
