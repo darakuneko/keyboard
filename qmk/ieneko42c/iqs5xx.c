@@ -35,21 +35,24 @@ static inline uint8_t iqs_app_writeReg(uint16_t regaddr, uint8_t* data, uint16_t
     return res;
 }
 
-void iqs_app_writeRegL(uint16_t regaddr, uint8_t* data, uint16_t len) {
-    while (1) {
+void iqs_app_writeRegR(uint16_t regaddr, uint8_t* data, uint16_t len) {
+    int retry_count = 30;
+    while (retry_count > 0) {
         uint8_t res = iqs_app_writeReg(regaddr, data, len);
         if (!res) {
             break;
-        }
+        } 
+        wait_ms(100);
+        retry_count--;
     }
 }
     
 //set absolutely
 void init_iqs5xx(void) {
     uint16_t default_addr = IQS5xx_FINGER_NUM << 8;
-    iqs_app_writeRegL(IQS5xx_DEFAULT_READ, (uint8_t*)&default_addr, sizeof(default_addr));
+    iqs_app_writeRegR(IQS5xx_DEFAULT_READ, (uint8_t*)&default_addr, sizeof(default_addr));
     uint8_t distance = 0x02;
-    iqs_app_writeRegL(IQS5xx_ZOOM, &distance, 1);
+    iqs_app_writeRegR(IQS5xx_ZOOM, &distance, 1);
 }
 
 bool read_iqs5xx(iqs5xx_data_t* const data) {
