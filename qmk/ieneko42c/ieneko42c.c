@@ -13,9 +13,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
+#include QMK_KEYBOARD_H
 #include "iqs5xx.h"
-#include "ieneko42c.h"
 
 keypos_t get_d_3 = (keypos_t){.row = 4, .col = 0};
 keypos_t get_u_3 = (keypos_t){.row = 4, .col = 1};
