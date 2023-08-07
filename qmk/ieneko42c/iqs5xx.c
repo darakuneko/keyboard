@@ -46,13 +46,14 @@ void iqs_app_writeRegR(uint16_t regaddr, uint8_t* data, uint16_t len) {
         retry_count--;
     }
 }
-
 //set absolutely
 void init_iqs5xx(void) {
     uint16_t default_addr = IQS5xx_FINGER_NUM << 8;
     iqs_app_writeRegR(IQS5xx_DEFAULT_READ, (uint8_t*)&default_addr, sizeof(default_addr));
-    uint8_t distance = 0x02;
-    iqs_app_writeRegR(IQS5xx_ZOOM, &distance, 1);
+    uint8_t distance[] = {0x01, 0xA0};
+    iqs_app_writeRegR(IQS5xx_ZOOM, distance, 2);
+    uint8_t hold_time = 0x00;
+    iqs_app_writeRegR(IQS5xx_HOLD_TIME, &hold_time, 1);
 }
 
 bool read_iqs5xx(iqs5xx_data_t* const data) {
@@ -60,7 +61,8 @@ bool read_iqs5xx(iqs5xx_data_t* const data) {
     i2c_res |= iqs_app_readReg_continue(IQS5xx_GESTURE_EVENT0, &data->ges_evnet0, 1);
     i2c_res |= iqs_app_readReg_continue(IQS5xx_GESTURE_EVENT1, &data->ges_evnet1, 1);
     i2c_res |= iqs_app_readReg_continue(IQS5xx_RELATIVE_XY, (uint8_t*)&data->relative_xy, 4);
-    i2c_res |= iqs_app_readReg_continue(IQS5xx_TOUCH_STRENGTH_FINGER_THREE, &data->touch_strenght_finger_three, 1);
+    i2c_res |= iqs_app_readReg_continue(IQS5xx_TOUCH_STRENGTH_FINGER1, (uint8_t*)&data->touch_strenght1, 1);
+    i2c_res |= iqs_app_readReg_continue(IQS5xx_TOUCH_STRENGTH_FINGER3, &data->touch_strenght3, 1);
 
     bool res = false;
     if (i2c_res != 0) {
@@ -94,14 +96,17 @@ void set_tap(iqs5xx_data_t* const data, report_mouse_t* const rep_mouse) {
         rep_mouse->buttons |= (1 << (KC_BTN2 - KC_BTN1));
         tapped = true;
     } else if(can_drag && !use_drag && data->ges_evnet0 == 2) {
-        if(drag_time == 0) {
+        if(!drag_strength_mode && drag_time == 0) {
             drag_time = timer_read32();
-        } else if(timer_elapsed32(drag_time) > drag_term){
+        } else if(
+            (!drag_strength_mode && timer_elapsed32(drag_time) > drag_term) || 
+            (drag_strength_mode && data->touch_strenght1 >= drag_strength)
+            ){
             DRV_pulse(hf_waveform_number); 
             use_drag = true;
             drag_time = 0;
         }
-    } else if(data->touch_strenght_finger_three < 255 && data->ges_evnet1 == 0) {
+    } else if(data->touch_strenght3 < 255 && data->ges_evnet1 == 0) {
         tapped3_cnt = tapped3_cnt + 1;
     } 
 

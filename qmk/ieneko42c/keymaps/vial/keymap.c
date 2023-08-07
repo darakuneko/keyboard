@@ -12,10 +12,12 @@ typedef union {
     unsigned int hf_waveform_number : 7;
     bool can_hf_for_layer : 1;
     bool can_drag : 1;
-    unsigned int  scroll_term : 7;
-    unsigned int drag_term : 10;
+    unsigned int scroll_term : 5;
+    unsigned int drag_term : 7;
     bool can_trackpad_layer : 1;
     bool can_send_string : 1;
+    bool drag_strength_mode : 1;
+    unsigned int drag_strength : 4;
   };
 } user_config_t;
 user_config_t user_config;
@@ -23,7 +25,8 @@ user_config_t user_config;
 #define DOUBLE_KEY_TAP_TERM 200
 
 enum {
-  U_DD_TOGG = QK_KB_0,
+  U_DRG_TOGG = QK_KB_0,
+  U_DRG_MODE,
   U_HPL_TOGG,
   U_TPL_TOGG,
   U_SEND_STR_TOGG,
@@ -34,10 +37,12 @@ enum {
   U_S_STP3,
   U_M_ACL1,
   U_M_ACL2,
-  SCLL_UP,
-  SCLL_DOWN,
   DRG_UP,
   DRG_DOWN,
+  DRG_STRN_UP,
+  DRG_STRN_DOWN,
+  SCLL_UP,
+  SCLL_DOWN,
   HF_UP,
   HF_DOWN
 };
@@ -80,7 +85,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 	[3] = LAYOUT(
 		RGB_VAI,  RGB_SAI,    RGB_HUI,    RGB_SPI,   RGB_MOD,    RGB_TOG,  KC_NO,   KC_NO,   KC_NO,  QK_BOOT,   QK_CLEAR_EEPROM,   U_RESET_SETTING, 
 		RGB_VAD,  RGB_SAD,    RGB_HUD,    RGB_SPD,   RGB_RMOD,   KC_NO,    KC_NO,   KC_NO,   KC_NO,    KC_NO,   KC_NO,   KC_NO,
-		TD(0),    U_DD_TOGG,  TD(1),     U_HPL_TOGG, TD(2),  KC_NO,  U_TPL_TOGG,   U_SEND_STR_TOGG,  U_SEND_SETTING,  KC_NO,   KC_NO,   KC_NO,
+		U_DRG_TOGG, U_DRG_MODE, TD(0),   TD(1),     U_HPL_TOGG, TD(2),  U_TPL_TOGG, TD(3), U_SEND_STR_TOGG,   U_SEND_SETTING,   KC_NO, KC_NO,  
 		KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,
     KC_TRNS, KC_TRNS,
     KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,
@@ -106,7 +111,9 @@ uint32_t init_opts(user_config_t* user_config) {
   user_config->can_hf_for_layer = true;
   user_config->hf_waveform_number = 47;   
   user_config->can_drag = true;  
-  user_config->drag_term = 700;
+  user_config->drag_term = 70;
+  user_config->drag_strength_mode = false;
+  user_config->drag_strength = 7;
   user_config->can_trackpad_layer = true;
   user_config->scroll_term = 0;
   user_config->can_send_string = 1;
@@ -119,10 +126,12 @@ void set_opts(user_config_t user_config) {
   hf_waveform_number = user_config.hf_waveform_number;
   can_hf_for_layer = user_config.can_hf_for_layer;
   can_drag = user_config.can_drag;  
-  drag_term = user_config.drag_term;
+  drag_term = user_config.drag_term * 10;
   can_trackpad_layer = user_config.can_trackpad_layer;
-  scroll_term = user_config.scroll_term;
+  scroll_term = user_config.scroll_term * 5;
   can_send_string = user_config.can_send_string;
+  drag_strength_mode = user_config.drag_strength_mode;
+  drag_strength = user_config.drag_strength + 1;
   accel_speed = 1;
   scroll_step = 1;
   trackpad_layer = 4;
@@ -137,32 +146,40 @@ void keyboard_post_init_user(void) {
   }
   set_opts(user_config);
 
-  vial_tap_dance_entry_t td0 = { SCLL_UP, KC_NO, SCLL_DOWN, KC_NO,  DOUBLE_KEY_TAP_TERM };
-  vial_tap_dance_entry_t td1 = { DRG_UP, KC_NO, DRG_DOWN, KC_NO, DOUBLE_KEY_TAP_TERM };
+  vial_tap_dance_entry_t td0 = { DRG_UP, KC_NO, DRG_DOWN, KC_NO, DOUBLE_KEY_TAP_TERM };
+  vial_tap_dance_entry_t td1 = { DRG_STRN_UP, KC_NO, DRG_STRN_DOWN, KC_NO, DOUBLE_KEY_TAP_TERM };
   vial_tap_dance_entry_t td2 = { HF_UP, KC_NO, HF_DOWN, KC_NO, DOUBLE_KEY_TAP_TERM };
+  vial_tap_dance_entry_t td3 = { SCLL_UP, KC_NO, SCLL_DOWN, KC_NO,  DOUBLE_KEY_TAP_TERM };
+
   dynamic_keymap_set_tap_dance(0, &td0);
   dynamic_keymap_set_tap_dance(1, &td1);
   dynamic_keymap_set_tap_dance(2, &td2);
+  dynamic_keymap_set_tap_dance(3, &td3);
 }
 
-char prefix_scroll_term[] = "Scroll Term: ";
 char prefix_drag_term[] = "Drag&Drop Term: ";
+char prefix_drag_strength[] = "Drag&Drop Strength: ";
 char prefix_haptic_number[] = "HF Waveform Number: ";
+char prefix_scroll_term[] = "Scroll Term: ";
 
 char* can_hf_for_layer_to_char(void) {
-  return user_config.can_hf_for_layer ? "HF for Layer: on\n" : "HF for Layer: off\n";
+  return can_hf_for_layer ? "HF for Layer: on\n" : "HF for Layer: off\n";
 }
 
 char* can_drag_char(void) {
-  return user_config.can_drag ? "Drag&Drop: on\n" : "Drag&Drop: off\n";
+  return can_drag ? "Drag&Drop: on\n" : "Drag&Drop: off\n";
+}
+
+char* drag_strength_mode_char(void) {
+  return drag_strength_mode  ? "Drag&Drop Mode: Strength\n" : "Drag&Drop Mode: Term\n";
 }
 
 char* can_trackpad_layer_char(void) {
-  return user_config.can_trackpad_layer ? "Trackpad Layer: on\n" : "Trackpad Layer: off\n";
+  return can_trackpad_layer ? "Trackpad Layer: on\n" : "Trackpad Layer: off\n";
 }
 
 char* can_send_string_char(void) {
-  return user_config.can_send_string ? "Send String: on\n" : "Send String: off\n";
+  return can_send_string ? "Send String: on\n" : "Send String: off\n";
 }
 
 void send_setting_string(char* t, int i) {
@@ -189,16 +206,6 @@ void send_setting_string(char* t, int i) {
   } 
 }
 
-void hf_DRV_pulse(bool ee2_up) {
-  if (ee2_up) {
-    user_config.hf_waveform_number = hf_waveform_number;  
-    eeconfig_update_user(user_config.raw); 
-    hf_waveform_number = user_config.hf_waveform_number;
-  }
-  DRV_pulse(hf_waveform_number);
-  send_setting_string(prefix_haptic_number, hf_waveform_number);
-}
-
 void send_pointing_device_user(ms_key_status_t ms_key_status) {
     report_mouse_t mouse_report = {0};
     if(ms_key_status.is_pressed) {
@@ -210,22 +217,37 @@ void send_pointing_device_user(ms_key_status_t ms_key_status) {
     pointing_device_send();
 }
 
-void update_drag_term(uint32_t dt){
-  user_config.drag_term = dt;
+void update_config_send_string(char* t, uint32_t i){
   eeconfig_update_user(user_config.raw); 
-  drag_term = user_config.drag_term;
-  send_setting_string(prefix_drag_term, dt);
+  send_setting_string(t, i);
 }
-  
+
+void update_drag_term(uint32_t i){
+  user_config.drag_term = i / 10;
+  drag_term = i;
+  update_config_send_string(prefix_drag_term, i);
+}
+
+void update_drag_strength(uint32_t i){
+  user_config.drag_strength = i - 1;
+  drag_strength = i;
+  update_config_send_string(prefix_drag_strength, i);
+}
+
+void update_scroll_term(uint32_t i){
+  user_config.scroll_term = i / 5;
+  scroll_term = i;
+  update_config_send_string(prefix_scroll_term, i);
+}
+
+void update_hf_waveform(uint32_t i){
+  hf_waveform_number = user_config.hf_waveform_number = i;  
+  update_config_send_string(prefix_haptic_number, i);
+  DRV_pulse(hf_waveform_number);
+}
+
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
   switch (keycode) {  
-    case U_RESET_SETTING : 
-      if (record->event.pressed) {
-        user_config.raw = eeconfig_read_user();
-        init_opts(&user_config);
-        set_opts(user_config);
-      }
-      return false;
     case KC_BTN1 ... KC_BTN5:
       if (record->event.pressed) {
         if(!(keycode == KC_BTN1 && tapped)){
@@ -239,6 +261,136 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         send_pointing_device_user(ms_key_status);
       }
       return false;    
+    case U_DRG_TOGG: 
+      if (record->event.pressed) {
+        user_config.can_drag = !can_drag;  
+        eeconfig_update_user(user_config.raw); 
+        can_drag = user_config.can_drag;   
+        char* dm = can_drag_char();
+        if(can_send_string) {
+          send_string(dm);
+        }
+      }
+      return false; 
+    case U_DRG_MODE: 
+      if (record->event.pressed) {
+        user_config.drag_strength_mode = !drag_strength_mode;
+        eeconfig_update_user(user_config.raw); 
+        drag_strength_mode = user_config.drag_strength_mode;   
+        char* dm = drag_strength_mode_char();
+        if(can_send_string) {
+          send_string(dm);
+        }
+      }
+      return false; 
+    case U_HPL_TOGG: 
+      if (record->event.pressed) {
+        user_config.can_hf_for_layer = !can_hf_for_layer;  
+        eeconfig_update_user(user_config.raw); 
+        can_hf_for_layer = user_config.can_hf_for_layer;  
+        char* hl = can_hf_for_layer_to_char(); 
+        if(can_send_string) {
+          send_string(hl);
+        }
+      }
+      return false; 
+    case U_TPL_TOGG: 
+      if (record->event.pressed) {
+        user_config.can_trackpad_layer = !can_trackpad_layer;  
+        eeconfig_update_user(user_config.raw); 
+        can_trackpad_layer = user_config.can_trackpad_layer;  
+        char* atl = can_trackpad_layer_char();
+        if(can_send_string) {
+          send_string(atl);
+        }
+      }
+      return false; 
+
+    case U_SEND_STR_TOGG: 
+      if (record->event.pressed) {
+        user_config.can_send_string = !can_send_string;  
+        eeconfig_update_user(user_config.raw); 
+        can_send_string = user_config.can_send_string; 
+        char* ss = can_send_string_char();
+        if(can_send_string) {
+          send_string(ss);
+        }
+      }
+      return false;  
+    case U_SEND_SETTING: 
+      if (record->event.pressed) {  
+
+        char* cd = can_drag_char();
+        char* dm = drag_strength_mode_char();
+
+        char dt[100];
+        strcpy(dt, prefix_drag_term);     
+        sprintf(dt + strlen(dt), "%d\n", (int)drag_term);
+
+        char ds[100];
+        strcpy(ds, prefix_drag_strength);     
+        sprintf(ds + strlen(ds), "%d\n", (int)drag_strength);
+
+        char* ch = can_hf_for_layer_to_char();
+
+        char hm[100];
+        strcpy(hm, prefix_haptic_number);     
+        sprintf(hm + strlen(hm), "%d\n", (int)hf_waveform_number);
+
+        char* ct = can_trackpad_layer_char();
+        
+        char st[100];        
+        strcpy(st, prefix_scroll_term); 
+        sprintf(st + strlen(st), "%d\n", (int)scroll_term);
+
+        char sst[100];
+        sprintf(sst, "Scroll Step: %d\n", (int)scroll_step);
+
+        char as[100];
+        sprintf(as, "Accel Speed: %d\n", (int)accel_speed);
+
+        char* ss = can_send_string_char();
+        
+        size_t len1 = strlen(cd);
+        size_t len2 = strlen(dm);
+        size_t len3 = strlen(dt);
+        size_t len4 = strlen(ds);
+        size_t len5 = strlen(ch);
+        size_t len6 = strlen(hm);
+        size_t len7 = strlen(ct);
+        size_t len8 = strlen(st);
+        size_t len9 = strlen(sst);
+        size_t len10 = strlen(as);
+        size_t len11 = strlen(ss);
+
+        size_t buffer_size = len1 + len2 + len3 + len4 + len5 + len6 + len7 + len8 + len9 + len10 + len11 + 1;
+        char* c = (char*)malloc(buffer_size);
+        memset(c, 0, buffer_size);
+
+        strcat(c, cd);
+        strcat(c, dm);
+        strcat(c, dt);
+        strcat(c, ds);      
+        strcat(c, ch);       
+        strcat(c, hm);
+        strcat(c, ct);
+        strcat(c, st);
+        strcat(c, sst);
+        strcat(c, as);
+        strcat(c, ss);
+
+        send_string(c);
+
+        free(c);
+      }
+      return false; 
+    case U_RESET_SETTING : 
+      if (record->event.pressed) {
+        user_config.raw = eeconfig_read_user();
+        init_opts(&user_config);
+        set_opts(user_config);
+      }
+      return false;
     case U_S_STP1:
       if (record->event.pressed) {
         scroll_step = scroll_step == 4 ? 1 : 4;
@@ -264,64 +416,64 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         accel_speed = accel_speed == 4 ? 1 : 4;
       }
       return false;  
-    case SCLL_UP: 
-      if (record->event.pressed) {
-        scroll_term = scroll_term + 5;
-        if(scroll_term > 100) {
-          scroll_term = 100;
-        }
-        user_config.scroll_term = scroll_term;  
-        eeconfig_update_user(user_config.raw); 
-        send_setting_string(prefix_scroll_term, scroll_term);
-      }
-      return false;
-    case SCLL_DOWN: 
-      if (record->event.pressed) {
-        if(scroll_term != 0) {
-          scroll_term = scroll_term - 5;
-          user_config.scroll_term = scroll_term;  
-          eeconfig_update_user(user_config.raw); 
-        }
-        send_setting_string(prefix_scroll_term, scroll_term);      
-      }
-      return false;  
-    case U_DD_TOGG: 
-      if (record->event.pressed) {
-        user_config.can_drag = !can_drag;  
-        eeconfig_update_user(user_config.raw); 
-        can_drag = user_config.can_drag;   
-        char* dm = can_drag_char();
-        if(can_send_string) {
-          send_string(dm);
-        }
-      }
-      return false;             
     case DRG_UP: 
       if (record->event.pressed) {
-        drag_term = drag_term + 10;
-        if(drag_term > 1000) {
-          drag_term = 1000;
+        if(drag_term < 1000) {
+          drag_term = drag_term + 10;
+          update_drag_term(drag_term);
+        } else {
+          send_setting_string(prefix_drag_term, drag_term);
         }
-        update_drag_term(drag_term);
       }
       return false;
     case DRG_DOWN: 
       if (record->event.pressed) {
-        if(drag_term != 0) {
+        if(drag_term > 0) {
           drag_term = drag_term - 10;
+          update_drag_term(drag_term);
+        } else {
+          send_setting_string(prefix_drag_term, drag_term);
         }
-        update_drag_term(drag_term);
       }
       return false;
-    case U_HPL_TOGG: 
+    case DRG_STRN_UP: 
       if (record->event.pressed) {
-        user_config.can_hf_for_layer = !can_hf_for_layer;  
-        eeconfig_update_user(user_config.raw); 
-        can_hf_for_layer = user_config.can_hf_for_layer;  
-        char* hl = can_hf_for_layer_to_char(); 
-        if(can_send_string) {
-          send_string(hl);
+        if(drag_strength < 16) {
+          drag_strength = drag_strength + 1;
+          update_drag_strength(drag_strength);
+        } else {
+          send_setting_string(prefix_drag_strength, drag_strength);
         }
+      }
+      return false;
+    case DRG_STRN_DOWN: 
+      if (record->event.pressed) {
+        if(drag_strength > 1) {
+          drag_strength = drag_strength - 1;
+          update_drag_strength(drag_strength);
+        } else {
+          send_setting_string(prefix_drag_strength, drag_strength);
+        }
+      }
+      return false;
+    case SCLL_UP: 
+      if (record->event.pressed) {
+        if(scroll_term < 100) {
+          scroll_term = scroll_term + 5;
+          update_scroll_term(scroll_term);
+        } else {
+          send_setting_string(prefix_scroll_term, scroll_term);
+        } 
+      }
+      return false;
+    case SCLL_DOWN: 
+      if (record->event.pressed) {
+        if(scroll_term > 0) {
+          scroll_term = scroll_term - 5;
+          update_scroll_term(scroll_term);
+        } else {
+          send_setting_string(prefix_scroll_term, scroll_term);
+        }   
       }
       return false;         
     case HF_UP:
@@ -330,7 +482,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         if(hf_waveform_number == 124) {
           hf_waveform_number = 0;
         }
-        hf_DRV_pulse(true);
+        update_hf_waveform(hf_waveform_number);
       }
       return false;
     case HF_DOWN:
@@ -339,84 +491,10 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         if(hf_waveform_number == -1) {
           hf_waveform_number = 123;
         }
-        hf_DRV_pulse(true);
+        update_hf_waveform(hf_waveform_number);
       }
       return false;
-    case U_TPL_TOGG: 
-      if (record->event.pressed) {
-        user_config.can_trackpad_layer = !can_trackpad_layer;  
-        eeconfig_update_user(user_config.raw); 
-        can_trackpad_layer = user_config.can_trackpad_layer;  
-        char* atl = can_trackpad_layer_char();
-        if(can_send_string) {
-          send_string(atl);
-        }
-      }
-      return false; 
-    case U_SEND_STR_TOGG: 
-      if (record->event.pressed) {
-        user_config.can_send_string = !can_send_string;  
-        eeconfig_update_user(user_config.raw); 
-        can_send_string = user_config.can_send_string; 
-        char* ss = can_send_string_char();
-        if(can_send_string) {
-          send_string(ss);
-        }
-      }
-      return false;  
-    case U_SEND_SETTING: 
-      if (record->event.pressed) {  
-        char st[100];        
-        strcpy(st, prefix_scroll_term); 
-        sprintf(st + strlen(st), "%d\n", user_config.scroll_term);
 
-        char* dm = can_drag_char();
-
-        char dt[100];
-        strcpy(dt, prefix_drag_term);     
-        sprintf(dt + strlen(dt), "%d\n", user_config.drag_term);
-
-        char* hl = can_hf_for_layer_to_char();
-
-        char hm[100];
-        strcpy(hm, prefix_haptic_number);     
-        sprintf(hm + strlen(hm), "%d\n", user_config.hf_waveform_number);
-
-        char* atl = can_trackpad_layer_char();
-        
-        char as[100];
-        sprintf(as, "Accel Speed: %d\n", (int)accel_speed);
-
-        char ss[100];
-        sprintf(ss, "Scroll Step: %d\n", (int)scroll_step);
-
-        size_t len1 = strlen(st);
-        size_t len2 = strlen(dm);
-        size_t len3 = strlen(dt);
-        size_t len4 = strlen(hl);
-        size_t len5 = strlen(hm);
-        size_t len6 = strlen(atl);
-        size_t len7 = strlen(as);
-        size_t len8 = strlen(ss);
-
-        size_t buffer_size = len1 + len2 + len3 + len4 + len5 + len6 + len7 + len8  + 1;
-        char* c = (char*)malloc(buffer_size);
-        memset(c, 0, buffer_size);
-
-        strcat(c, st);
-        strcat(c, dm);
-        strcat(c, dt);      
-        strcat(c, hl);       
-        strcat(c, hm);
-        strcat(c, atl);
-        strcat(c, as);
-        strcat(c, ss);
-
-        send_string(c);
-
-        free(c);
-      }
-      return false; 
     default:
       return true;
   }
