@@ -11,7 +11,12 @@
     {
       "shortName": "Drag\nDrop\nToggle",
       "title": "Toggle Drag&Drop",
-      "name": "U_DD_TOGG"
+      "name": "U_DRG_TOGG"
+    },
+    {
+      "shortName": "Drag\nDrop\nMode",
+      "title": "Change Drag&Drop Mode",
+      "name": "U_DRG_MODE"
     },
     {
       "shortName": "HP\nLayer\nToggle",

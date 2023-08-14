@@ -29,7 +29,9 @@
 #define IQS5xx_GESTURE_EVENT1 0x000E
 #define IQS5xx_FINGER_NUM 0x0011
 #define IQS5xx_RELATIVE_XY 0x0012
-#define IQS5xx_TOUCH_STRENGTH_FINGER_THREE 0x0026
+#define IQS5xx_TOUCH_STRENGTH_FINGER1 0x001A
+#define IQS5xx_TOUCH_STRENGTH_FINGER3 0x0026
+#define IQS5xx_HOLD_TIME 0x06BD
 #define IQS5xx_ZOOM 0x06CB
 #define IQS5xx_DEFAULT_READ 0x0675
 #define IQS5xx_DEVICE_ADDR 0x74
@@ -55,7 +57,8 @@ typedef struct {
     uint8_t          ges_evnet0;
     uint8_t          ges_evnet1;
     iqs5xx_xy_t      relative_xy;
-    uint8_t          touch_strenght_finger_three;
+    uint8_t          touch_strenght1;
+    uint8_t          touch_strenght3;
     iqs5xx_gesture_t gesture;
 } iqs5xx_data_t;
 
@@ -67,6 +70,8 @@ uint32_t scroll_time;
 uint32_t scroll_term;
 uint32_t drag_time;
 uint32_t drag_term;
+bool drag_strength_mode;
+uint32_t drag_strength;
 
 bool clear_buttons;
 bool tapped;
