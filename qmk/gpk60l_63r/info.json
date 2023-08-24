@@ -52,7 +52,7 @@
   "url": "",
   "usb": {
     "device_version": "1.0.0",
-    "pid": "0x1537",
+    "pid": "0x1538",
     "vid": "0x7A79"
   },
   "layouts": {
