@@ -168,7 +168,7 @@ char prefix_drag_term[] = "Drag&Drop Term: ";
 char prefix_drag_strength[] = "Drag&Drop Strength: ";
 char prefix_haptic_number[] = "HF Waveform Number: ";
 char prefix_scroll_term[] = "Scroll Term: ";
-char prefix_default_speed[] = "Default Mouse Speed: ";
+char prefix_default_speed[] = "Default Speed: ";
 
 char* can_hf_for_layer_to_char(void) {
   return can_hf_for_layer ? "HF for Layer: on\n" : "HF for Layer: off\n";
