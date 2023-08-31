@@ -127,8 +127,8 @@ void set_tap(iqs5xx_data_t* const data, report_mouse_t* const rep_mouse) {
 }
 
 void set_gesture(iqs5xx_data_t* const data, report_mouse_t* const rep_mouse) {
-    uint32_t dx = ((data->relative_xy.bytes[1] - data->relative_xy.bytes[0]) / 2) * accel_speed;
-    uint32_t dy = ((data->relative_xy.bytes[3] - data->relative_xy.bytes[2]) / 2) * accel_speed;
+    uint32_t dx = ((data->relative_xy.bytes[1] - data->relative_xy.bytes[0]) * default_speed) * accel_speed;
+    uint32_t dy = ((data->relative_xy.bytes[3] - data->relative_xy.bytes[2]) * default_speed) * accel_speed;
     if (data->finger_cnt == 1) {
         rep_mouse->x = dx;
         rep_mouse->y = dy;

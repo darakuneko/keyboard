@@ -19,7 +19,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 		KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_PPLS,
 		KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,
 		KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_UP,   KC_NO,   KC_NO,
-		KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_RIGHT,KC_DOWN, KC_LEFT,   KC_NO
+		KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_LEFT,KC_DOWN, KC_RIGHT,   KC_NO
 	),
 
 	[2] = LAYOUT(
@@ -96,6 +96,21 @@ bool rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
           rgb_matrix_set_color(i, rgb.r, rgb.g, rgb.b);
         }
     }
+
+  const led_t led_state = host_keyboard_led_state();
+  HSV state_hsv = {0, 255, rgblight_get_val()};
+  state_hsv.h = 0;
+  RGB state_rgb = hsv_to_rgb(state_hsv);
+
+  if (led_state.num_lock) {
+        rgb_matrix_set_color(94, state_rgb.r, state_rgb.g, state_rgb.b);
+  }
+  if (led_state.caps_lock || is_caps_word_on()) {
+        rgb_matrix_set_color(95, state_rgb.r, state_rgb.g, state_rgb.b);
+  }
+  if (led_state.scroll_lock) {
+        rgb_matrix_set_color(96, state_rgb.r, state_rgb.g, state_rgb.b);
+  }
 	return false;
 };
 

@@ -72,6 +72,7 @@ uint32_t drag_time;
 uint32_t drag_term;
 bool drag_strength_mode;
 uint32_t drag_strength;
+float default_speed;
 
 bool clear_buttons;
 bool tapped;

@@ -13,11 +13,12 @@ typedef union {
     bool can_hf_for_layer : 1;
     bool can_drag : 1;
     unsigned int scroll_term : 5;
-    unsigned int drag_term : 7;
+    unsigned int drag_term : 4;
     bool can_trackpad_layer : 1;
     bool can_send_string : 1;
     bool drag_strength_mode : 1;
     unsigned int drag_strength : 4;
+    unsigned int default_speed : 4;
   };
 } user_config_t;
 user_config_t user_config;
@@ -44,7 +45,9 @@ enum {
   SCLL_UP,
   SCLL_DOWN,
   HF_UP,
-  HF_DOWN
+  HF_DOWN,
+  D_M_SPD_UP,
+  D_M_SPD_DOWN
 };
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
@@ -85,7 +88,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 	[3] = LAYOUT(
 		RGB_VAI,  RGB_SAI,    RGB_HUI,    RGB_SPI,   RGB_MOD,    RGB_TOG,  KC_NO,   KC_NO,   KC_NO,  QK_BOOT,   QK_CLEAR_EEPROM,   U_RESET_SETTING, 
 		RGB_VAD,  RGB_SAD,    RGB_HUD,    RGB_SPD,   RGB_RMOD,   KC_NO,    KC_NO,   KC_NO,   KC_NO,    KC_NO,   KC_NO,   KC_NO,
-		U_DRG_TOGG, U_DRG_MODE, TD(0),   TD(1),     U_HPL_TOGG, TD(2),  U_TPL_TOGG, TD(3), U_SEND_STR_TOGG,   U_SEND_SETTING,   KC_NO, KC_NO,  
+		U_DRG_TOGG, U_DRG_MODE, TD(0),   TD(1),     U_HPL_TOGG, TD(2),  U_TPL_TOGG, TD(3),   TD(4), KC_NO,   U_SEND_SETTING, U_SEND_STR_TOGG,  
 		KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,
     KC_TRNS, KC_TRNS,
     KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,
@@ -111,12 +114,13 @@ uint32_t init_opts(user_config_t* user_config) {
   user_config->can_hf_for_layer = true;
   user_config->hf_waveform_number = 47;   
   user_config->can_drag = true;  
-  user_config->drag_term = 70;
-  user_config->drag_strength_mode = false;
+  user_config->drag_term = 5;
+  user_config->drag_strength_mode = true;
   user_config->drag_strength = 7;
   user_config->can_trackpad_layer = true;
   user_config->scroll_term = 0;
   user_config->can_send_string = 1;
+  user_config->default_speed = 9;
   eeconfig_update_user(user_config->raw); 
   DRV_pulse(53);
   return eeconfig_read_user();
@@ -126,12 +130,13 @@ void set_opts(user_config_t user_config) {
   hf_waveform_number = user_config.hf_waveform_number;
   can_hf_for_layer = user_config.can_hf_for_layer;
   can_drag = user_config.can_drag;  
-  drag_term = user_config.drag_term * 10;
+  drag_term = user_config.drag_term * 100;
   can_trackpad_layer = user_config.can_trackpad_layer;
   scroll_term = user_config.scroll_term * 5;
   can_send_string = user_config.can_send_string;
   drag_strength_mode = user_config.drag_strength_mode;
   drag_strength = user_config.drag_strength + 1;
+  default_speed = ((float)user_config.default_speed / 10) + 0.1;
   accel_speed = 1;
   scroll_step = 1;
   trackpad_layer = 4;
@@ -150,17 +155,20 @@ void keyboard_post_init_user(void) {
   vial_tap_dance_entry_t td1 = { DRG_STRN_UP, KC_NO, DRG_STRN_DOWN, KC_NO, DOUBLE_KEY_TAP_TERM };
   vial_tap_dance_entry_t td2 = { HF_UP, KC_NO, HF_DOWN, KC_NO, DOUBLE_KEY_TAP_TERM };
   vial_tap_dance_entry_t td3 = { SCLL_UP, KC_NO, SCLL_DOWN, KC_NO,  DOUBLE_KEY_TAP_TERM };
+  vial_tap_dance_entry_t td4 = { D_M_SPD_UP, KC_NO, D_M_SPD_DOWN, KC_NO,  DOUBLE_KEY_TAP_TERM };
 
   dynamic_keymap_set_tap_dance(0, &td0);
   dynamic_keymap_set_tap_dance(1, &td1);
   dynamic_keymap_set_tap_dance(2, &td2);
   dynamic_keymap_set_tap_dance(3, &td3);
+  dynamic_keymap_set_tap_dance(4, &td4);
 }
 
 char prefix_drag_term[] = "Drag&Drop Term: ";
 char prefix_drag_strength[] = "Drag&Drop Strength: ";
 char prefix_haptic_number[] = "HF Waveform Number: ";
 char prefix_scroll_term[] = "Scroll Term: ";
+char prefix_default_speed[] = "Default Speed: ";
 
 char* can_hf_for_layer_to_char(void) {
   return can_hf_for_layer ? "HF for Layer: on\n" : "HF for Layer: off\n";
@@ -182,10 +190,23 @@ char* can_send_string_char(void) {
   return can_send_string ? "Send String: on\n" : "Send String: off\n";
 }
 
-void send_setting_string(char* t, int i) {
-  if(can_send_string){
-    char cn[12];
-    sprintf(cn, "%d", i);
+char *float_to_char(float f, int decimals) {
+  int integer_part = (int)f;
+  float fractional_part = f - integer_part;
+    
+  int scale = 1;
+  for (int i = 0; i < decimals; i++) {
+      scale *= 10;
+      fractional_part *= 10;
+  }
+    
+  int int_fractional_part = (int)(fractional_part + 0.5);
+  char *buffer = (char *)malloc(20);
+  snprintf(buffer, 20, "%d.%d", integer_part, int_fractional_part);
+  return buffer;
+}
+
+void send_setting_string(char* t, char* cn) {
     char end = '\n';
 
     size_t len1 = strlen(t);
@@ -203,6 +224,20 @@ void send_setting_string(char* t, int i) {
     send_string(c);
 
     free(c);
+}
+
+void send_setting_float_string(char* t, float f) {
+  if(can_send_string){
+    char *buffer = float_to_char(f, 1);
+    send_setting_string(t, buffer);  
+  }
+}
+
+void send_setting_int_string(char* t, int i) {
+  if(can_send_string){
+    char buffer[12];
+    sprintf(buffer, "%d", i);
+    send_setting_string(t, buffer);
   } 
 }
 
@@ -217,33 +252,40 @@ void send_pointing_device_user(ms_key_status_t ms_key_status) {
     pointing_device_send();
 }
 
-void update_config_send_string(char* t, uint32_t i){
+void update_config_send_int_string(char* t, uint32_t i){
   eeconfig_update_user(user_config.raw); 
-  send_setting_string(t, i);
+  send_setting_int_string(t, i);
+}
+
+void update_config_send_float_string(char* t, float f){
+  eeconfig_update_user(user_config.raw); 
+  send_setting_float_string(t, f);
 }
 
 void update_drag_term(uint32_t i){
-  user_config.drag_term = i / 10;
-  drag_term = i;
-  update_config_send_string(prefix_drag_term, i);
+  user_config.drag_term = i / 100;
+  update_config_send_int_string(prefix_drag_term, i);
 }
 
 void update_drag_strength(uint32_t i){
   user_config.drag_strength = i - 1;
-  drag_strength = i;
-  update_config_send_string(prefix_drag_strength, i);
+  update_config_send_int_string(prefix_drag_strength, i);
 }
 
 void update_scroll_term(uint32_t i){
   user_config.scroll_term = i / 5;
-  scroll_term = i;
-  update_config_send_string(prefix_scroll_term, i);
+  update_config_send_int_string(prefix_scroll_term, i);
 }
 
 void update_hf_waveform(uint32_t i){
   hf_waveform_number = user_config.hf_waveform_number = i;  
-  update_config_send_string(prefix_haptic_number, i);
+  update_config_send_int_string(prefix_haptic_number, i);
   DRV_pulse(hf_waveform_number);
+}
+
+void update_default_speed(float f){
+  user_config.default_speed = (f - 0.1) * 10;
+  update_config_send_float_string(prefix_default_speed, f);
 }
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
@@ -346,6 +388,10 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         char sst[100];
         sprintf(sst, "Scroll Step: %d\n", (int)scroll_step);
 
+        char dms[100];        
+        strcpy(dms, prefix_default_speed); 
+        sprintf(dms + strlen(dms), "%s\n", float_to_char(default_speed, 1));
+
         char as[100];
         sprintf(as, "Accel Speed: %d\n", (int)accel_speed);
 
@@ -360,10 +406,11 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         size_t len7 = strlen(ct);
         size_t len8 = strlen(st);
         size_t len9 = strlen(sst);
-        size_t len10 = strlen(as);
-        size_t len11 = strlen(ss);
+        size_t len10 = strlen(dms);       
+        size_t len11 = strlen(as);
+        size_t len12 = strlen(ss);
 
-        size_t buffer_size = len1 + len2 + len3 + len4 + len5 + len6 + len7 + len8 + len9 + len10 + len11 + 1;
+        size_t buffer_size = len1 + len2 + len3 + len4 + len5 + len6 + len7 + len8 + len9 + len10 + len11 + len12 + 1;
         char* c = (char*)malloc(buffer_size);
         memset(c, 0, buffer_size);
 
@@ -376,6 +423,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         strcat(c, ct);
         strcat(c, st);
         strcat(c, sst);
+        strcat(c, dms);
         strcat(c, as);
         strcat(c, ss);
 
@@ -419,20 +467,20 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     case DRG_UP: 
       if (record->event.pressed) {
         if(drag_term < 1000) {
-          drag_term = drag_term + 10;
+          drag_term = drag_term + 100;
           update_drag_term(drag_term);
         } else {
-          send_setting_string(prefix_drag_term, drag_term);
+          send_setting_int_string(prefix_drag_term, drag_term);
         }
       }
       return false;
     case DRG_DOWN: 
       if (record->event.pressed) {
         if(drag_term > 0) {
-          drag_term = drag_term - 10;
+          drag_term = drag_term - 100;
           update_drag_term(drag_term);
         } else {
-          send_setting_string(prefix_drag_term, drag_term);
+          send_setting_int_string(prefix_drag_term, drag_term);
         }
       }
       return false;
@@ -442,7 +490,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
           drag_strength = drag_strength + 1;
           update_drag_strength(drag_strength);
         } else {
-          send_setting_string(prefix_drag_strength, drag_strength);
+          send_setting_int_string(prefix_drag_strength, drag_strength);
         }
       }
       return false;
@@ -452,7 +500,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
           drag_strength = drag_strength - 1;
           update_drag_strength(drag_strength);
         } else {
-          send_setting_string(prefix_drag_strength, drag_strength);
+          send_setting_int_string(prefix_drag_strength, drag_strength);
         }
       }
       return false;
@@ -462,7 +510,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
           scroll_term = scroll_term + 5;
           update_scroll_term(scroll_term);
         } else {
-          send_setting_string(prefix_scroll_term, scroll_term);
+          send_setting_int_string(prefix_scroll_term, scroll_term);
         } 
       }
       return false;
@@ -472,7 +520,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
           scroll_term = scroll_term - 5;
           update_scroll_term(scroll_term);
         } else {
-          send_setting_string(prefix_scroll_term, scroll_term);
+          send_setting_int_string(prefix_scroll_term, scroll_term);
         }   
       }
       return false;         
@@ -494,7 +542,26 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         update_hf_waveform(hf_waveform_number);
       }
       return false;
-
+    case D_M_SPD_UP: 
+      if (record->event.pressed) {
+        if(default_speed < 1.5) {
+          default_speed = default_speed + 0.1;
+          update_default_speed(default_speed);
+        } else {
+          send_setting_float_string(prefix_default_speed, default_speed);
+        }
+      }
+      return false;
+    case D_M_SPD_DOWN: 
+      if (record->event.pressed) {
+        if(default_speed > 0.1) {
+          default_speed = default_speed - 0.1;
+          update_default_speed(default_speed);
+        } else {
+          send_setting_float_string(prefix_default_speed, default_speed);
+        }
+      }
+      return false;
     default:
       return true;
   }
