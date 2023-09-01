@@ -2,7 +2,7 @@
   "name": "Trident44",
   "vendorId": "0x7A79",
   "productId": "0x1537",
-  "lighting": "none",
+  "lighting": "vialrgb",
   "matrix": {
     "rows": 4,
     "cols": 12
@@ -64,6 +64,17 @@
         "3,7",
         "3,8",
         "3,9"
+      ],
+      [
+        "0,0\n\n\n\n\n\n\n\n\ne",
+        "3,10",
+        "0,1\n\n\n\n\n\n\n\n\ne",
+        {
+          "x": 6
+        },    
+        "1,0\n\n\n\n\n\n\n\n\ne",
+        "3,11",
+        "1,1\n\n\n\n\n\n\n\n\ne"
       ]
     ]
   }
