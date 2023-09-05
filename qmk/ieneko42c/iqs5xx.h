@@ -92,7 +92,7 @@ bool can_send_string;
 int trackpad_layer;
 bool use_trackpad_layer;
 int scroll_step;
-int accel_speed;
+float accel_speed;
 
 void init_iqs5xx(void);
 bool read_iqs5xx(iqs5xx_data_t* const data);

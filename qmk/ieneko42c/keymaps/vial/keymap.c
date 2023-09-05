@@ -4,6 +4,7 @@
 #include "drivers/haptic/DRV2605L.h"
 #include <stdio.h>
 #include "iqs5xx.h"
+#include <math.h>
 
 typedef union {
   uint32_t raw;
@@ -36,6 +37,7 @@ enum {
   U_S_STP1,
   U_S_STP2,
   U_S_STP3,
+  U_M_ACL0,
   U_M_ACL1,
   U_M_ACL2,
   DRG_UP,
@@ -100,7 +102,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     MT(MOD_LALT,KC_ESC), KC_Q,    KC_W,    KC_E,    KC_R,    KC_T,         KC_Y,    KC_U,    KC_I,    KC_O,    KC_P,    MT(MOD_RALT,KC_BSLS), 
     MT(MOD_LCTL,KC_TAB), KC_A,    KC_S,    KC_D,    KC_F,    KC_G,         KC_H,    KC_J,    KC_K,    KC_L,    KC_SCLN, MT(MOD_LCTL,KC_QUOT),  
     KC_LSFT,             KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,         KC_N,    KC_M,    KC_COMM, KC_DOT,  KC_SLSH, KC_LSFT, 
-		                        U_M_ACL2,   U_M_ACL1,   KC_BTN1,   U_S_STP1,   U_S_STP2,   U_S_STP3,
+		                        U_M_ACL1,   U_M_ACL0,   KC_BTN1,   KC_BTN2, U_S_STP1,   U_S_STP2,
     KC_TRNS, KC_TRNS,
     KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,
     KC_TRNS, KC_TRNS,
@@ -393,7 +395,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         sprintf(dms + strlen(dms), "%s\n", float_to_char(default_speed, 1));
 
         char as[100];
-        sprintf(as, "Accel Speed: %d\n", (int)accel_speed);
+        sprintf(as, "Accel Speed: %s\n", float_to_char(accel_speed, 1));
 
         char* ss = can_send_string_char();
         
@@ -454,6 +456,16 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         scroll_step = scroll_step == 16 ? 1 : 16;
       }
       return false; 
+    case U_M_ACL0:
+      if (record->event.pressed) {
+        float epsilon = 1e-6f;
+        if (fabs(accel_speed - 0.5f) < epsilon) {
+          accel_speed = 1.0f;
+        } else {
+          accel_speed = 0.5f;
+        }
+      }
+      return false;  
     case U_M_ACL1:
       if (record->event.pressed) {
         accel_speed = accel_speed == 2 ? 1 : 2;

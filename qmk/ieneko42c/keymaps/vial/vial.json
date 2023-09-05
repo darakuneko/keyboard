@@ -57,6 +57,11 @@
       "shortName": "Scroll\nStep3",
       "title": "Scroll Step3",
       "name": "U_S_STP3"
+    }, 
+    {
+      "shortName": "Mouse\nAccel0",
+      "title": "Mouse Accel0",
+      "name": "U_M_ACL0"
     },
     {
       "shortName": "Mouse\nAccel1",

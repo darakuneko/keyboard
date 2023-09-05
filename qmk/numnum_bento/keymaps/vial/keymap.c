@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include "iqs5xx.h"
 #include "drivers/haptic/DRV2605L.h"
+#include <math.h>
 
 typedef union {
   uint32_t raw;
@@ -438,7 +439,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         sprintf(dms + strlen(dms), "%s\n", float_to_char(default_speed, 1));
 
         char as[100];
-        sprintf(as, "Accel Speed: %d\n", (int)accel_speed);
+        sprintf(as, "Accel Speed: %s\n", float_to_char(accel_speed, 1));
 
         char* ss = can_send_string_char();
         
@@ -501,7 +502,12 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
       return false; 
     case U_M_ACL0:
       if (record->event.pressed) {
-        accel_speed = accel_speed == 0.5 ? 1 : 0.5;
+        float epsilon = 1e-6f;
+        if (fabs(accel_speed - 0.5f) < epsilon) {
+          accel_speed = 1.0f;
+        } else {
+          accel_speed = 0.5f;
+        }
       }
       return false;  
     case U_M_ACL1:
