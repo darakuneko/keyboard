@@ -243,7 +243,7 @@ struct Code2Name kbName3[] = {
 	{"RALT", 0x1400},
 	{"RGUI", 0x1800},
 	{"RCG", 0x1900},
-  {"QK_MOD_TAP", 0x2000},
+	{"QK_MOD_TAP", 0x2000},
 	{"LCTL_T", 0x2100},
 	{"LSFT_T", 0x2200},
 	{"C_S_T", 0x2300},
@@ -273,7 +273,7 @@ struct Code2Name kbName3[] = {
 	{"QK_LAYER_TAP_TOGGLE", 0x52C0},
 	{"QK_TAP_DANCE", 0x5700},
 	{"QK_MACRO", 0x7700},
-  {"QK_KB", 0x7E00}
+	{"QK_KB", 0x7E00}
 };
 int numElm3 = sizeof(kbName3) / sizeof(kbName3[0]);
 
@@ -336,7 +336,7 @@ struct Code2Name kbName4[] = {
 	{"M_USWP_CTL_G", 0x701C},
 	{"M_TGGL_CTL_G", 0x701D},
 	{"M_EE_HANDS_L", 0x701E},
-  {"M_TOGGLE_A_G", 0x7016},
+	{"M_TOGGLE_A_G", 0x7016},
 	{"M_EE_HANDS_R", 0x701F},
 	{"MI_C", 0x7103},
 	{"MI_Cs", 0x7104},
@@ -720,7 +720,7 @@ char* modName(uint16_t keycode) {
   return mod;
 }
 
-char* set_key_name(uint16_t keycode, struct Code2Name kbName[], int numElm) {
+char* get_key_name(uint16_t keycode, struct Code2Name kbName[], int numElm) {
   char* key_name = "";
   for (int i = 0; i < numElm; i++) {
     char* key = kbName[i].key;
@@ -737,11 +737,11 @@ void set_code_to_name(uint16_t keycode) {
   strcpy(key_name, "UNDEF-KEY");
 
   if(isInRange(keycode, 0x00, 0xFF)){
-    char* key = set_key_name(keycode, kbName1, numElm1);
+    char* key = get_key_name(keycode, kbName1, numElm1);
     strcpy(key_name, key);
   }
   else if(isInRange(keycode, 0x21E, 0x238)){
-    char* key = set_key_name(keycode, kbName2, numElm2);
+    char* key = get_key_name(keycode, kbName2, numElm2);
     strcpy(key_name, key);
   }
   else if((isInRange(keycode, 0x4000, 0x4FFF) || isInRange(keycode, 0x5000, 0x51FF))){
@@ -749,7 +749,7 @@ void set_code_to_name(uint16_t keycode) {
     uint16_t thirdDigit = (keycode >> 8) & 0xF;
     uint16_t code = isInRange(keycode, 0x4000, 0x4FFF) ? 0x40 : 0x50;
     char* mod = modName(code);
-    char* key = set_key_name(firstTwoDigits, kbName1, numElm1);
+    char* key = get_key_name(firstTwoDigits, kbName1, numElm1);
     snprintf(key_name, sizeof(key_name), "%s%d(%s)", mod, thirdDigit, key);
   }
   else if(
@@ -766,11 +766,11 @@ void set_code_to_name(uint16_t keycode) {
     uint16_t firstTwoDigits = keycode & 0xFF;
     uint16_t thirdFourthDigits = (keycode >> 8) & 0xFF;
     char* mod = modName(thirdFourthDigits);
-    char* key = set_key_name(firstTwoDigits, kbName1, numElm1);
+    char* key = get_key_name(firstTwoDigits, kbName1, numElm1);
     snprintf(key_name, sizeof(key_name), "%s(%s)", mod, key);
   }
   else{
-    char* key = set_key_name(keycode, kbName4, numElm4);
+    char* key = get_key_name(keycode, kbName4, numElm4);
     strcpy(key_name, key);
   }
 }
