@@ -18,7 +18,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #pragma once
 
 #define WS2812_DI_PIN GP0
-#define RGB_MATRIX_LED_COUNT 19
+#define RGB_MATRIX_LED_COUNT 20
 #define RGB_MATRIX_CENTER { 112, 32 }
 #define RGB_MATRIX_MAXIMUM_BRIGHTNESS 180
 #define RGB_MATRIX_STARTUP_VAL 180
