@@ -77,11 +77,13 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 };
 
 keyevent_t encoder1_ccw = {
+    .type = KEY_EVENT,
     .key = (keypos_t){.row = 7, .col = 0},
     .pressed = false
 };
 
 keyevent_t encoder1_cw = {
+    .type = KEY_EVENT,
     .key = (keypos_t){.row = 7, .col = 1},
     .pressed = false
 }; 
@@ -132,7 +134,7 @@ void encoder_cw(void) {
 
 bool encoder_update_user(uint8_t index, bool clockwise) {
     if (index == 0) { clockwise ? encoder_cw() : encoder_ccw(); }
-    return true;
+    return false;
 }
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
