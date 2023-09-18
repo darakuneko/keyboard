@@ -18,9 +18,9 @@
 #include "drivers/haptic/DRV2605L.h"
 
 uint16_t iqs_device_addr = IQS5xx_DEVICE_ADDR<<1;
+
 static inline uint8_t iqs_app_readReg_continue(uint16_t regaddr, uint8_t* data, uint16_t len) {
-    i2c_status_t status = i2c_readReg16(iqs_device_addr, regaddr, data, len, 100);
-    return (status < 0) ? status : I2C_STATUS_SUCCESS;
+    return i2c_readReg16(iqs_device_addr, regaddr, data, len, 100);
 }
 
 static inline uint8_t iqs_app_end_communication(void) {
@@ -29,23 +29,21 @@ static inline uint8_t iqs_app_end_communication(void) {
 }
 
 static inline uint8_t iqs_app_writeReg(uint16_t regaddr, uint8_t* data, uint16_t len) {
-    uint8_t res = i2c_writeReg16(iqs_device_addr, regaddr, data, len, 100);
-    res |= iqs_app_end_communication();
-
-    return res;
+    return i2c_writeReg16(iqs_device_addr, regaddr, data, len, 100);
 }
 
 void iqs_app_writeRegR(uint16_t regaddr, uint8_t* data, uint16_t len) {
     int retry_count = 10;
     while (retry_count > 0) {
         uint8_t res = iqs_app_writeReg(regaddr, data, len);
-        if (res) {
+        if(res == I2C_STATUS_SUCCESS){
             break;
         }
         wait_ms(100);
         retry_count--;
     }
 }
+
 //set absolutely
 void init_iqs5xx(void) {
     uint16_t default_addr = IQS5xx_FINGER_NUM << 8;
