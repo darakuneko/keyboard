@@ -16,7 +16,6 @@
 
 #include QMK_KEYBOARD_H
 #include "iqs5xx.h"
-#include "numnum_bento.h"
 
 keypos_t get_d_3 = (keypos_t){.row = 1, .col = 0};
 keypos_t get_u_3 = (keypos_t){.row = 1, .col = 1};
