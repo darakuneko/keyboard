@@ -1,7 +1,7 @@
 /* SPDX-License-Identifier: GPL-2.0-or-later */
 
 #include QMK_KEYBOARD_H
-#include "drivers/haptic/DRV2605L.h"
+#include "drivers/haptic/drv2605l.h"
 #include <stdio.h>
 #include "iqs5xx.h"
 #include <math.h>
@@ -124,7 +124,7 @@ uint32_t init_opts(user_config_t* user_config) {
   user_config->can_send_string = 1;
   user_config->default_speed = 9;
   eeconfig_update_user(user_config->raw); 
-  DRV_pulse(53);
+  drv2605l_pulse(53);
   return eeconfig_read_user();
 }
 
@@ -282,7 +282,7 @@ void update_scroll_term(uint32_t i){
 void update_hf_waveform(uint32_t i){
   hf_waveform_number = user_config.hf_waveform_number = i;  
   update_config_send_int_string(prefix_haptic_number, i);
-  DRV_pulse(hf_waveform_number);
+  drv2605l_pulse(hf_waveform_number);
 }
 
 void update_default_speed(float f){
@@ -584,7 +584,7 @@ int layer = 0;
 void matrix_scan_user(void) {
   int current_layer = get_highest_layer(layer_state|default_layer_state); 
   if(current_layer != trackpad_layer && can_hf_for_layer && layer != current_layer){
-    DRV_pulse(hf_waveform_number);
+    drv2605l_pulse(hf_waveform_number);
     layer = current_layer;
   }
 }
@@ -592,29 +592,6 @@ void matrix_scan_user(void) {
 bool get_haptic_enabled_key(uint16_t keycode, keyrecord_t *record) {
     return false;
 }
-
-led_config_t g_led_config = { {
-  // Key Matrix to LED Index
-    { 0,  1,  2,  3,  4,  5,  6,  7,  8,  9,  10, 11, }, 
-    { 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, }, 
-    { 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, }, 
-    { NO_LED, NO_LED, NO_LED, 36, 37, 38, 39, 40, 41 }
-}, {
-  // LED Index to Physical Position 
-  {0, 0},     {20, 0},     {40, 0},     {60, 0},     {80, 0},     {100, 0},    {120, 0},     {140, 0},     {160, 0},     {180, 0},     {200, 0},     {224, 0},  
-  {0, 21},    {20, 21},    {40, 21},    {60, 21},    {80, 21},    {100, 21},   {120, 21},    {140, 21},    {160, 21},    {180, 21},    {200, 21},    {224, 21},  
-  {0, 42},    {20, 42},    {40, 42},    {60, 42},    {80, 42},    {100, 42},   {120, 42},    {140, 42},    {160, 42},    {180, 42},    {200, 42},    {224, 42},  
-                                        {60, 64},    {80, 64},    {100, 64},   {120, 64},    {140, 64},    {160, 64}
-  }, {
-  // LED Index to Flag
-  4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4,
-  4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4,
-  4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4,
-  4, 4, 4, 4, 4, 4, 
-  2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
-  2, 2, 2
-  } 
-};
 
 bool rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) { 
   int current_layer = get_highest_layer(layer_state|default_layer_state);  

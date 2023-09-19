@@ -13,9 +13,10 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+#include "i2c_master.h"
 #include "iqs5xx.h"
 #include "quantum.h"
-#include "drivers/haptic/DRV2605L.h"
+#include "drivers/haptic/drv2605l.h"
 
 uint16_t iqs_device_addr = IQS5xx_DEVICE_ADDR<<1;
 
@@ -100,7 +101,7 @@ void set_tap(iqs5xx_data_t* const data, report_mouse_t* const rep_mouse) {
             (!drag_strength_mode && timer_elapsed32(drag_time) > drag_term) || 
             (drag_strength_mode && data->touch_strenght1 >= drag_strength)
             ){
-            DRV_pulse(hf_waveform_number); 
+            drv2605l_pulse(hf_waveform_number); 
             use_drag = true;
             drag_time = 0;
         }
