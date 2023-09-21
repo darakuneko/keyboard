@@ -21,8 +21,8 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 	),
 
 	[2] = LAYOUT(
-		KC_NO,   RGB_VAI, RGB_SAI, RGB_HUI, RGB_SPI, RGB_MOD, RGB_TOG, KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   EE_CLR,
-		KC_NO,   RGB_VAD, RGB_SAD, RGB_HUD, RGB_SPD, RGB_RMOD,KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,
+		KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   EE_CLR,
+		KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,
 		KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   QK_BOOT,
 		KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,
 		KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO
@@ -36,31 +36,6 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 		KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO
 	),
 
-};
-
-led_config_t g_led_config = { {
-  // Key Matrix to LED Index
-  {  0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, },
-  { 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, },
-  { 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, },
-  { 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, },
-  { 54, 55, 56, 57, 58, 59, 60, 61, 62 }
-}, {
-  // LED Index to Physical Position
-  {0, 0},  {20, 0},  {40, 0},  {60, 0},  {80, 0},  {100, 0},  {120, 0},  {140, 0},  {160, 0},  {180, 0},  {200, 0},  {220, 0},
-  {0, 13}, {20, 13}, {40, 13}, {60, 13}, {80, 13}, {100, 13}, {120, 13}, {140, 13}, {160, 13}, {180, 13}, {200, 13}, {220, 13},
-  {0, 26}, {20, 26}, {40, 26}, {60, 26}, {80, 26}, {100, 26}, {120, 26}, {140, 26}, {160, 26}, {180, 26},            {220, 26},
-  		   {20, 52}, {40, 52}, {60, 52}, {80, 52}, {100, 52}, {120, 52}, {140, 52}, {160, 52}, {180, 52}, {200, 52}, {220, 52},
-  		   {20, 64}, {40, 64}, {60, 64}, {80, 64}, {100, 64}, {120, 64}, {140, 64}, {160, 64}, {180, 64}
-}, {
-  // LED Index to Flag
-  4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4,
-  4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4,
-  4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 
-  4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4,    
-  4, 4, 4, 4, 4, 4, 4, 4, 4,
-  2, 2, 2, 2, 2, 2, 2, 2
-  } 
 };
 
 bool rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) { 
