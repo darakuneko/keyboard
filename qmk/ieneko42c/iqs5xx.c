@@ -77,7 +77,7 @@ bool read_iqs5xx(iqs5xx_data_t* const data) {
 int tapped3_cnt = 0;
 void set_tap(iqs5xx_data_t* const data, report_mouse_t* const rep_mouse) {    
     if(tapped && data->finger_cnt == 0){
-        rep_mouse->buttons &= ~(1 << (KC_BTN1 - KC_BTN1));
+        rep_mouse->buttons = 0;
         clear_buttons = true;
         tapped = false;
         use_drag = false;
@@ -89,10 +89,10 @@ void set_tap(iqs5xx_data_t* const data, report_mouse_t* const rep_mouse) {
     }  
 
     if (data->ges_evnet0 == 1) {    
-        rep_mouse->buttons |= (1 << (KC_BTN1 - KC_BTN1));
+        rep_mouse->buttons |= 1;
         tapped = true;
     } else if (timer_elapsed32(tap_time) > TAP_TERM && !use_drag && data->ges_evnet1 == 1) {
-        rep_mouse->buttons |= (1 << (KC_BTN2 - KC_BTN1));
+        rep_mouse->buttons |= 2;
         tapped = true;
     } else if(can_drag && !use_drag && data->ges_evnet0 == 2) {
         if(!drag_strength_mode && drag_time == 0) {
