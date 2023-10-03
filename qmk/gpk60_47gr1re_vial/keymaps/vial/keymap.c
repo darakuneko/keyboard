@@ -1,7 +1,7 @@
 /* SPDX-License-Identifier: GPL-2.0-or-later */
 
 #include QMK_KEYBOARD_H
-#include "code_to_name.c"
+#include "code2name.c"
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
@@ -9,14 +9,14 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 		KC_ESC,  KC_Q,    KC_W,    KC_E,    KC_R,    KC_T,    KC_Y,    KC_U,    KC_I,    KC_O,    KC_P,    KC_LBRC, KC_RBRC, KC_BSLS,
 		MT(MOD_LCTL,KC_TAB),KC_A,    KC_S,    KC_D,    KC_F,    KC_G,    KC_H,    KC_J,    KC_K,    KC_L,    KC_SCLN, KC_QUOT, KC_ENT,
 		KC_LSFT, KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,    KC_N,    KC_M,    KC_COMM, KC_DOT,  KC_SLSH, KC_RSFT,
-		KC_LGUI, KC_LALT, MO(3),   MO(2),   LT(1,KC_SPC),  LT(1,KC_BSPC), KC_RALT, KC_RGUI, KC_F24
+		KC_LGUI, KC_LALT, MO(2),   MO(1),   LT(1,KC_SPC),  LT(1,KC_BSPC), KC_RALT, KC_RGUI, KC_F24
 	),
 
 	[1] = LAYOUT(
 		KC_GRV,  KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_MINS, KC_EQL,  KC_NO,
 		KC_NO,   KC_1,    KC_2,    KC_3,    KC_4,    KC_5,    KC_LEFT, KC_DOWN, KC_UP,   KC_RGHT, KC_NO,   KC_NO,   KC_NO,
 		KC_NO,   KC_6,    KC_7,    KC_8,    KC_9,    KC_0,    KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,
-		KC_NO,   KC_NO,   KC_NO,   KC_NO, KC_LSFT,   KC_LSFT, KC_NO,   KC_NO,   KC_F24
+		KC_NO,   KC_NO,   KC_NO,   KC_LSFT, KC_LSFT,   KC_LSFT, MO(3),   KC_NO,   KC_F24
 	),
 
 	[2] = LAYOUT(
@@ -27,8 +27,8 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 	),
 
 	[3] = LAYOUT(
-		KC_NO,   RGB_VAI, RGB_SAI, RGB_HUI, RGB_SPI, RGB_TOG, DT_PRNT, DT_UP,   DT_DOWN, KC_NO,   KC_NO,   KC_NO,   KC_NO,   EE_CLR,
-		KC_NO,   RGB_VAD, RGB_SAD, RGB_HUD, RGB_SPD, KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   QK_BOOT,
+		KC_NO,   KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO,   KC_NO, KC_NO,   KC_NO,   KC_NO,   KC_NO,   EE_CLR,
+		KC_NO,   KC_NO, KC_NO, KC_NO, KC_NO, KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   QK_BOOT,
 		KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,
 		KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_F24
 	),
@@ -43,29 +43,7 @@ const uint16_t PROGMEM encoder_map[][NUM_ENCODERS][2] = {
 };
 
 
-led_config_t g_led_config = { {
-  // Key Matrix to LED Index
-  {  0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, },
-  { 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26,},
-  { 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38,},
-  { 39, 40, 41, 42, 43, 44, 45, 46, NO_LED }
-}, {
-  // LED Index to Physical Position
-{0, 0},  {20, 0},  {40, 0},  {60, 0},  {80, 0},  {100, 0},  {120, 0},  {140, 0},  {160, 0},  {180, 0},  {200, 0},  {220, 0},
-{0, 21}, {20, 21}, {40, 21}, {60, 21}, {80, 21}, {100, 21}, {120, 21}, {140, 21}, {160, 21}, {180, 21}, {200, 21}, {220, 21},
-{0, 42}, {20, 42}, {40, 42}, {60, 42}, {80, 42}, {100, 42}, {120, 42}, {140, 42}, {160, 42}, {180, 42}, {200, 42}, {220, 42},
-{0, 63}, {20, 63}, {40, 63}, {60, 63}, {80, 63}, {100, 63}, {120, 63}, {140, 63}, {160, 63}, {180, 63}, {200, 63}
-}, {
-  // LED Index to Flag
-  4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4,
-  4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4,
-  4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 
-  4, 4, 4, 4, 4, 4, 4, 4, 
-  2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2
-  } 
-};
-
-void rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) { 
+bool rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) { 
   int curr_layer = get_highest_layer(layer_state|default_layer_state);  
   HSV hsv = {0, 255, rgb_matrix_get_val()};
   if (curr_layer == 1) {
@@ -84,7 +62,7 @@ void rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
       rgb_matrix_set_color(i, rgb.r, rgb.g, rgb.b);
     }
   }
-
+  return false;
 };
 
 void encoder_layer_up(void) { 
@@ -260,14 +238,14 @@ void render_rgb_status(void) {
                 oled_write_ln(PSTR("RGB: SOLID_MPLASH"), false);
                 break;
             default:
-                oled_write_ln(PSTR("RGB: OTHER"), false);
+                oled_write_ln(PSTR("RGB: NONE"), false);
                 break;
     }
 }
 
 bool oled_task_user(void) {
     oled_write_P(PSTR("KN: "), false);
-    oled_write_ln(name, false);
+    oled_write_ln(key_name, false);
     oled_write_P(PSTR("Layer:"), false);
     oled_write_ln(get_u8_str(get_highest_layer(layer_state), ' '), false);     
     render_rgb_status();
