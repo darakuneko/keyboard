@@ -50,14 +50,10 @@ bool read_iqs5xx(iqs5xx_data_t* const data) {
     i2c_res |= iqs_app_readReg_continue(IQS5xx_TOUCH_STRENGTH_FINGER1, (uint8_t*)&data->touch_strenght1, 1);
     i2c_res |= iqs_app_readReg_continue(IQS5xx_TOUCH_STRENGTH_FINGER3, &data->touch_strenght3, 1);
 
-    bool res = false;
-    if (i2c_res != 0) {
-        res = false;
-    } else {
+    bool res = i2c_res == 0;
+    if (res) {
         iqs_app_end_communication();
-        res = true;
     }
-
     return res;
 }
 
@@ -101,7 +97,7 @@ void set_tap(iqs5xx_data_t* const data, report_mouse_t* const rep_mouse) {
     }
     
     if (use_drag){
-        rep_mouse->buttons |= (1 << (KC_BTN1 - KC_BTN1));
+        rep_mouse->buttons |=  1;
     } else if(ms_key_status.is_pressed){
         rep_mouse->buttons |= (1 << (ms_key_status.keycode - KC_BTN1));
     }
