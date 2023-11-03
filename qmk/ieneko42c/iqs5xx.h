@@ -16,8 +16,10 @@
 #define IQS5xx_GESTURE_EVENT1 0x000E
 #define IQS5xx_FINGER_NUM 0x0011
 #define IQS5xx_RELATIVE_XY 0x0012
+#define IQS5xx_ABSOLUTE_XY 0x0016
 #define IQS5xx_TOUCH_STRENGTH_FINGER1 0x001A
 #define IQS5xx_TOUCH_STRENGTH_FINGER3 0x0026
+#define IQS5xx_FINGER_SPLIT 0x066B
 #define IQS5xx_HOLD_TIME 0x06BD
 #define IQS5xx_ZOOM 0x06CB
 #define IQS5xx_DEFAULT_READ 0x0675
@@ -36,7 +38,11 @@ typedef enum {
     GESTURE_SWIPE_D,
     GESTURE_PINCH_OUT,
     GESTURE_PINCH_IN,
-    TAP_FINGER_THREE
+    TAP_FINGER_ONE_LEFT,
+    TAP_FINGER_ONE_CENTER,
+    TAP_FINGER_ONE_RIGHT,
+    TAP_FINGER_TWO,
+    TAP_FINGER_THREE,
 } iqs5xx_gesture_t;
 
 typedef struct {
@@ -44,6 +50,7 @@ typedef struct {
     uint8_t          ges_evnet0;
     uint8_t          ges_evnet1;
     iqs5xx_xy_t      relative_xy;
+    iqs5xx_xy_t      absolute_xy;
     uint8_t          touch_strenght1;
     uint8_t          touch_strenght3;
     iqs5xx_gesture_t gesture;

@@ -62,7 +62,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
       LGUI(KC_TAB), LGUI(KC_TAB),
       LALT(KC_RGHT),     LCTL(LGUI(KC_RIGHT)), LALT(KC_LEFT), LCTL(LGUI(KC_LEFT)),
       LCTL(KC_PPLS), LCTL(KC_PMNS),
-      KC_ESC            
+      KC_ESC, KC_BTN1, KC_BTN1, KC_BTN1, KC_BTN2                    
   ),
 
 	[1] = LAYOUT(
@@ -73,7 +73,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     KC_TRNS, KC_TRNS,
     KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,
     KC_TRNS, KC_TRNS,  
-    KC_TRNS
+    KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS
 	),
 
 	[2] = LAYOUT(
@@ -84,7 +84,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     KC_TRNS, KC_TRNS,
     KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,
     KC_TRNS, KC_TRNS,
-    KC_TRNS
+    KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS
 	),
 
 	[3] = LAYOUT(
@@ -95,7 +95,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     KC_TRNS, KC_TRNS,
     KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,
     KC_TRNS, KC_TRNS,
-    KC_TRNS
+    KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS
 	),
 
 	[4] = LAYOUT(
@@ -106,7 +106,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     KC_TRNS, KC_TRNS,
     KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,
     KC_TRNS, KC_TRNS,
-    KC_TRNS
+    KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS
 	),
 };
 
@@ -243,17 +243,6 @@ void send_setting_int_string(char* t, int i) {
   } 
 }
 
-void send_pointing_device_user(ms_key_status_t ms_key_status) {
-    report_mouse_t mouse_report = {0};
-    if(ms_key_status.is_pressed) {
-      mouse_report.buttons |= 1 << (ms_key_status.keycode - KC_BTN1);
-    } else {
-      mouse_report.buttons &= ~(1 << (ms_key_status.keycode - KC_BTN1));
-    }
-    pointing_device_set_report(mouse_report);
-    pointing_device_send();
-}
-
 void update_config_send_int_string(char* t, uint32_t i){
   eeconfig_update_user(user_config.raw); 
   send_setting_int_string(t, i);
@@ -292,19 +281,6 @@ void update_default_speed(float f){
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
   switch (keycode) {  
-    case KC_BTN1 ... KC_BTN5:
-      if (record->event.pressed) {
-        if(!(keycode == KC_BTN1 && tapped)){
-          ms_key_status.is_pressed = true;
-          ms_key_status.keycode = keycode;
-          send_pointing_device_user(ms_key_status);
-        }
-      } else {
-        ms_key_status.is_pressed = false;
-        ms_key_status.keycode = keycode;
-        send_pointing_device_user(ms_key_status);
-      }
-      return false;    
     case U_DRG_TOGG: 
       if (record->event.pressed) {
         user_config.can_drag = !can_drag;  
