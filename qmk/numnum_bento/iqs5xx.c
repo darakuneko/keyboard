@@ -47,6 +47,7 @@ bool read_iqs5xx(iqs5xx_data_t* const data) {
     i2c_res |= iqs_app_readReg_continue(IQS5xx_GESTURE_EVENT0, &data->ges_evnet0, 1);
     i2c_res |= iqs_app_readReg_continue(IQS5xx_GESTURE_EVENT1, &data->ges_evnet1, 1);
     i2c_res |= iqs_app_readReg_continue(IQS5xx_RELATIVE_XY, (uint8_t*)&data->relative_xy, 4);
+    i2c_res |= iqs_app_readReg_continue(IQS5xx_ABSOLUTE_XY, (uint8_t*)&data->absolute_xy, 4);
     i2c_res |= iqs_app_readReg_continue(IQS5xx_TOUCH_STRENGTH_FINGER1, (uint8_t*)&data->touch_strenght1, 1);
     i2c_res |= iqs_app_readReg_continue(IQS5xx_TOUCH_STRENGTH_FINGER3, &data->touch_strenght3, 1);
 
@@ -69,13 +70,19 @@ void set_tap(iqs5xx_data_t* const data, report_mouse_t* const rep_mouse) {
 
     if(data->finger_cnt == 0 && tapped3_cnt > FINGER_THREE_TAP_CNT){
         data->gesture = TAP_FINGER_THREE;
-    }  
-
-    if (data->ges_evnet0 == 1) {    
-        rep_mouse->buttons |= 1;
+    } 
+    
+    if (data->ges_evnet0 == 1) {  
+        if(data->absolute_xy.bytes[0] == 0 && data->absolute_xy.bytes[1] < 128){
+            data->gesture = TAP_FINGER_ONE_LEFT;
+        } else if(data->absolute_xy.bytes[0] == 3 && data->absolute_xy.bytes[1] > 128){
+            data->gesture = TAP_FINGER_ONE_RIGHT;
+        } else {
+            data->gesture = TAP_FINGER_ONE_CENTER;
+        }
         tapped = true;
     } else if (timer_elapsed32(tap_time) > TAP_TERM && !use_drag && data->ges_evnet1 == 1) {
-        rep_mouse->buttons |= 2;
+        data->gesture = TAP_FINGER_TWO;
         tapped = true;
     } else if(can_drag && !use_drag && data->ges_evnet0 == 2) {
         if(!drag_strength_mode && drag_time == 0) {
@@ -92,14 +99,12 @@ void set_tap(iqs5xx_data_t* const data, report_mouse_t* const rep_mouse) {
         tapped3_cnt = tapped3_cnt + 1;
     } 
 
-    if(rep_mouse->buttons || data->gesture == TAP_FINGER_THREE){
+    if(tapped || data->gesture == TAP_FINGER_THREE){
         tap_time = timer_read32();
     }
     
     if (use_drag){
         rep_mouse->buttons |=  1;
-    } else if(ms_key_status.is_pressed){
-        rep_mouse->buttons |= (1 << (ms_key_status.keycode - KC_BTN1));
     }
 
     if(data->finger_cnt == 0){
@@ -172,7 +177,7 @@ void set_trackpad_layer(iqs5xx_data_t* const data) {
 
 void process_iqs5xx(iqs5xx_data_t* const data, report_mouse_t* const rep_mouse) {
     //debug
-    //uprintf("finger: %d evnet0: %d  evnet1: %d\n", data->finger_cnt, data->ges_evnet0, data->ges_evnet1);
+    //uprintf("finger: %d iqs5xx_data.gesture: %d\n", data->finger_cnt, data->gesture);
 
     set_trackpad_layer(data);
     set_gesture(data, rep_mouse);

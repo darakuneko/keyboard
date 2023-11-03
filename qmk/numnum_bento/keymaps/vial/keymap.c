@@ -67,7 +67,8 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     LGUI(KC_TAB),   LGUI(KC_TAB),
     LALT(KC_RGHT),  LCTL(LGUI(KC_RIGHT)), LALT(KC_LEFT), LCTL(LGUI(KC_LEFT)),
     LCTL(KC_PPLS),  LCTL(KC_PMNS),
-    KC_ESC        
+    KC_ESC,
+    KC_BTN1, KC_BTN1, KC_BTN1, KC_BTN2        
   ),
   [1] = LAYOUT(
     KC_1,    KC_2,    KC_3,    KC_4,   KC_5,
@@ -79,7 +80,8 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     KC_TRNS, KC_TRNS,
     KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,
     KC_TRNS, KC_TRNS,
-    KC_TRNS 
+    KC_TRNS,
+    KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS
   ),
   [2] = LAYOUT(
     KC_1,    KC_2,    KC_3,    KC_4,   KC_5,
@@ -91,7 +93,8 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     KC_TRNS, KC_TRNS,
     KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,
     KC_TRNS, KC_TRNS,
-    KC_TRNS 
+    KC_TRNS,
+    KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS
   ),
   [3] = LAYOUT(
     KC_1,    KC_2,    KC_3,    KC_4,   KC_5,
@@ -103,7 +106,8 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     LGUI(KC_TAB),   LGUI(KC_TAB),
     LALT(KC_RGHT),  LCTL(LGUI(KC_RIGHT)), LALT(KC_LEFT), LCTL(LGUI(KC_LEFT)),
     LCTL(KC_PPLS),  LCTL(KC_PMNS),
-    KC_ESC  
+    KC_ESC,
+    KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS
   ),
   [4] = LAYOUT(
     KC_1,    KC_2,    KC_3,    KC_4,   KC_5,
@@ -115,7 +119,8 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     LGUI(KC_TAB),   LGUI(KC_TAB),
     LALT(KC_RGHT),  LCTL(LGUI(KC_RIGHT)), LALT(KC_LEFT), LCTL(LGUI(KC_LEFT)),
     LCTL(KC_PPLS),  LCTL(KC_PMNS),
-    KC_ESC  
+    KC_ESC,
+    KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS
   ),
   [5] = LAYOUT(
     KC_1,    KC_2,    KC_3,    KC_4,   KC_5,
@@ -127,7 +132,8 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     LGUI(KC_TAB),   LGUI(KC_TAB),
     LALT(KC_RGHT),  LCTL(LGUI(KC_RIGHT)), LALT(KC_LEFT), LCTL(LGUI(KC_LEFT)),
     LCTL(KC_PPLS),  LCTL(KC_PMNS),
-    KC_ESC  
+    KC_ESC,
+    KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS
   ),
   [6] = LAYOUT(
     U_DRG_TOGG,    U_DRG_MODE,   TD(0),   TD(1),  U_SEND_STR_TOGG,
@@ -139,7 +145,8 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     KC_TRNS, KC_TRNS,
     KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,
     KC_TRNS, KC_TRNS,
-    KC_TRNS 
+    KC_TRNS,
+    KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS
   )
 };
 
@@ -261,17 +268,6 @@ void update_config_send_float_string(char* t, float f){
   send_setting_float_string(t, f);
 }
 
-void send_pointing_device_user(ms_key_status_t ms_key_status) {
-    report_mouse_t mouse_report = {0};
-    if(ms_key_status.is_pressed) {
-      mouse_report.buttons |= 1 << (ms_key_status.keycode - KC_BTN1);
-    } else {
-      mouse_report.buttons &= ~(1 << (ms_key_status.keycode - KC_BTN1));
-    }
-    pointing_device_set_report(mouse_report);
-    pointing_device_send();
-}
-
 void update_config_send_string(char* t, uint32_t i){
   eeconfig_update_user(user_config.raw); 
   send_setting_int_string(t, i);
@@ -326,19 +322,6 @@ void layer_down(void) {
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
   switch (keycode) {  
-    case KC_BTN1 ... KC_BTN5:
-      if (record->event.pressed) {
-        if(!(keycode == KC_BTN1 && tapped)){
-          ms_key_status.is_pressed = true;
-          ms_key_status.keycode = keycode;
-          send_pointing_device_user(ms_key_status);
-        }
-      } else {
-        ms_key_status.is_pressed = false;
-        ms_key_status.keycode = keycode;
-        send_pointing_device_user(ms_key_status);
-      }
-      return false;  
     case U_Layer_UP:
       if (record->event.pressed) {    
         layer_up();
