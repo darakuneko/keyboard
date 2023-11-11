@@ -1,7 +1,7 @@
 {
   "name": "GPK60-60R",
-  "vendorId": "0xFEED",
-  "productId": "0x9999",
+  "vendorId": "0x1544",
+  "productId": "0x7A79",
   "lighting": "qmk_rgblight",
   "matrix": {
     "rows": 5,
