@@ -12,6 +12,10 @@ keypos_t get_l_3 = (keypos_t){.row = 4, .col = 5};
 keypos_t get_i_2 = (keypos_t){.row = 4, .col = 6};
 keypos_t get_o_2 = (keypos_t){.row = 4, .col = 7};
 keypos_t get_t_3 = (keypos_t){.row = 4, .col = 8};
+keypos_t get_t_1_l = (keypos_t){.row = 4, .col = 9};
+keypos_t get_t_1_c = (keypos_t){.row = 4, .col = 10};
+keypos_t get_t_1_r = (keypos_t){.row = 4, .col = 11};
+keypos_t get_t_2 = (keypos_t){.row = 5, .col = 0};
 
 void gesture_press_key(keypos_t k) {
     keyevent_t k_event = { .key = k, .type = KEY_EVENT };
@@ -79,6 +83,18 @@ void matrix_scan_kb() {
                 break;
             case GESTURE_PINCH_IN:
                 gesture_press_key(get_i_2);
+                break;
+            case TAP_FINGER_ONE_LEFT:
+                gesture_press_key(get_t_1_l);
+                break;
+            case TAP_FINGER_ONE_CENTER:
+                gesture_press_key(get_t_1_c);
+                break;
+            case TAP_FINGER_ONE_RIGHT:
+                gesture_press_key(get_t_1_r);
+                break;
+            case TAP_FINGER_TWO:
+                gesture_press_key(get_t_2);
                 break;
             case TAP_FINGER_THREE:
                 gesture_press_key(get_t_3);

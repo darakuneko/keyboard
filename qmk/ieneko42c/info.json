@@ -18,6 +18,7 @@
 	  "rgb_matrix": {
 		"driver": "ws2812",
 		"timeout": 120000,
+		"max_brightness": 180,
 		"hue_steps": 4,
 		"sat_steps": 4,
 		"val_steps": 4,
@@ -148,7 +149,8 @@
 			"GP5",
 			"GP6",
 			"GP7",
-			"GP25"
+			"GP25",
+			"GP22"
 		],
 		"cols": [
 			"GP10",
@@ -225,12 +227,16 @@
 				{ "matrix": [4,5], "x": 7, "y": 4.5 },
 				{ "matrix": [4,6], "x": 8.5, "y": 4.5 },
 				{ "matrix": [4,7], "x": 9.5, "y": 4.5 },
-				{ "matrix": [4,8], "x": 11, "y": 4.5}
+				{ "matrix": [4,8], "x": 11, "y": 4.5},
+				{ "matrix": [4,9], "x": 12, "y":  4.5 },
+				{ "matrix": [4,10], "x": 13, "y":  4.5 },
+				{ "matrix": [4,11], "x": 14, "y":  4.5 },
+				{ "matrix": [5,0], "x": 1, "y":  5 }
 			]
 		}
 	},
 	"matrix_size": {
-		"rows": 5,
+		"rows": 6,
 		"cols": 12
 	}
 }
