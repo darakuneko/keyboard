@@ -33,10 +33,6 @@
       "cols": 15,
       "rows": 5
   },
-  "caps_word": {
-    "enabled": true,
-    "double_tap_shift_turns_on": true
-  },  
   "layouts": {
     "LAYOUT": {
       "layout": [
