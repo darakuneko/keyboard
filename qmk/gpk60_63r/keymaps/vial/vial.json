@@ -7,6 +7,33 @@
     "rows": 5,
     "cols": 14
   },
+  "customKeycodes": [
+    {
+      "shortName": "START\nCOLOR\nLAYER",
+      "title": "START COLOR LAYER",
+      "name": "START_COLOR_LAYER"
+    },
+    {
+      "shortName": "SET\nCOLOR\nLAYER0",
+      "title": "SET COLOR LAYER0",
+      "name": "SET_COLOR_LAYER0"
+    },
+    {
+      "shortName": "SET\nCOLOR\nLAYER1",
+      "title": "SET COLOR LAYER1",
+      "name": "SET_COLOR_LAYER1"
+    },
+    {
+      "shortName": "SET\nCOLOR\nLAYER2",
+      "title": "SET COLOR LAYER2",
+      "name": "SET_COLOR_LAYER2"
+    },
+    {
+      "shortName": "SET\nCOLOR\nLAYER3",
+      "title": "SET COLOR LAYER3",
+      "name": "SET_COLOR_LAYER3"
+    }
+  ],
   "layouts": {
     "keymap": [
       [
