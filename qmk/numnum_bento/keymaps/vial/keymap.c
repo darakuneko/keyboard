@@ -322,6 +322,14 @@ void layer_down(void) {
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
   switch (keycode) {  
+    case KC_BTN1: {
+      if (record->event.pressed) {
+        use_drag = true;
+      } else {
+        use_drag = false;
+      }
+      return true; 
+    }
     case U_Layer_UP:
       if (record->event.pressed) {    
         layer_up();
