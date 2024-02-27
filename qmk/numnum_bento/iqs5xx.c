@@ -81,7 +81,7 @@ void set_tap(iqs5xx_data_t* const data, report_mouse_t* const rep_mouse) {
             data->gesture = TAP_FINGER_ONE_CENTER;
         }
         tapped = true;
-    } else if (timer_elapsed32(tap_time) > TAP_TERM && !use_drag && data->ges_evnet1 == 1) {
+    } else if (timer_elapsed32(tap_time) > TAP_TERM && data->ges_evnet1 == 1) {
         data->gesture = TAP_FINGER_TWO;
         tapped = true;
     } else if(can_drag && !use_drag && data->ges_evnet0 == 2) {
