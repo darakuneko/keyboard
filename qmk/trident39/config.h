@@ -1,0 +1,15 @@
+/* SPDX-License-Identifier: GPL-2.0-or-later */
+
+#pragma once
+
+#define WS2812_PWM_DRIVER PWMD1
+#define WS2812_PWM_CHANNEL 2
+#define WS2812_PWM_PAL_MODE 1
+#define WS2812_PWM_COMPLEMENTARY_OUTPUT
+#define WS2812_DMA_STREAM STM32_DMA1_STREAM6
+#define WS2812_DMA_CHANNEL 7 
+
+#define VIAL_KEYBOARD_UID {0x87, 0xE7, 0xEF, 0xBD, 0xAB, 0xA1, 0x6B, 0xE2}
+
+#define VIAL_UNLOCK_COMBO_ROWS {0, 0}
+#define VIAL_UNLOCK_COMBO_COLS {0, 1}
