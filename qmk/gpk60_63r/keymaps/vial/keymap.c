@@ -91,7 +91,7 @@ void update_hsv_layer(keyrecord_t *record, int layer_num) {
 	}
 }
 
-bool process_record_user(uint16_t keycode, keyrecord_t *record) {
+bool process_record_user(uint16_t keycode, keyrecord_t record) {
   switch (keycode) {
 	case START_COLOR_LAYER:
 		if (record->event.pressed) {
