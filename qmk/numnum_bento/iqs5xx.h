@@ -66,7 +66,7 @@ uint32_t drag_time;
 uint32_t drag_term;
 bool drag_strength_mode;
 uint32_t drag_strength;
-float default_speed;
+double default_speed;
 
 bool clear_buttons;
 bool tapped;
@@ -74,19 +74,13 @@ bool can_hf_for_layer;
 int hf_waveform_number;
 bool can_drag;
 bool use_drag;
-
-typedef struct {
-    bool        is_pressed;
-    uint16_t    keycode;
-} ms_key_status_t;
-ms_key_status_t ms_key_status;
-
+bool can_reverse_scrolling_direction;
 bool can_trackpad_layer;
-bool can_send_string;
 int trackpad_layer;
 bool use_trackpad_layer;
 int scroll_step;
 float accel_speed;
+int accel_step;
 
 void init_iqs5xx(void);
 bool read_iqs5xx(iqs5xx_data_t* const data);

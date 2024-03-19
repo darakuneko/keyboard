@@ -1,5 +1,5 @@
 {
-  "name": "NumNum Totsu",
+  "name": "NumNum Bento",
   "vid": "0x7A79",
   "pid": "0x1538",
   "lighting": "vialrgb",
@@ -9,79 +9,49 @@
   },
   "customKeycodes": [
     {
-      "shortName": "Drag\nDrop\nToggle",
-      "title": "Toggle Drag&Drop",
-      "name": "U_DRG_TOGG"
-    },
-    {
-      "shortName": "Drag\nDrop\nMode",
-      "title": "Change Drag&Drop Mode",
-      "name": "U_DRG_MODE"
-    },
-    {
-      "shortName": "HP\nLayer\nToggle",
-      "title": "Toggle HP Layer",
-      "name": "U_HPL_TOGG"
-    },
-    {
-      "shortName": "Tpad\nLayer\nToggle",
-      "title": "Toggle TrackPad Layer",
-      "name": "U_TPL_TOGG"
-    },
-    {
-      "shortName": "Send\nString\nToggle",
-      "title": "Toggle Send String",
-      "name": "U_SEND_STR_TOGG"
-    },
-    {
-      "shortName": "Send\nSetting",
-      "title": "Send String User Setting",
-      "name": "U_SEND_SETTING"
-    },
-    {
-      "shortName": "Reset\nSetting",
-      "title": "Reset Setting",
-      "name": "U_RESET_SETTING"
-    },
-    {
-      "shortName": "Scroll\nStep1",
-      "title": "Scroll Step1",
-      "name": "U_S_STP1"
-    },
-    {
-      "shortName": "Scroll\nStep2",
-      "title": "Scroll Step2",
-      "name": "U_S_STP2"
-    },
-    {
-      "shortName": "Scroll\nStep3",
-      "title": "Scroll Step3",
-      "name": "U_S_STP3"
-    },
-    {
-      "shortName": "Mouse\nAccel0",
-      "title": "Mouse Accel0",
-      "name": "U_M_ACL0"
-    },
-    {
-      "shortName": "Mouse\nAccel1",
-      "title": "Mouse Accel1",
-      "name": "U_M_ACL1"
-    },
-    {
-      "shortName": "Mouse\nAccel2",
-      "title": "Mouse Accel2",
-      "name": "U_M_ACL2"
-    },
-    {
-      "shortName": "UP\nLayer",
-      "title": "UP Layer",
+      "shortName": "Layer\nUP",
+      "title": "Layer UP",
       "name": "U_Layer_UP"
     },
     {
-      "shortName": "DOWN\nLayer",
-      "title": "DOWN Layer",
+      "shortName": "Layer\nDOWN",
+      "title": "Layer DOWN",
       "name": "U_Layer_DOWN"
+    },
+    {
+      "shortName": "Mouse\nAccel 2",
+      "title": "Mouse Accel 2",
+      "name": "U_M_ACL_2x"
+    },
+    {
+      "shortName": "Mouse\nAccel 4",
+      "title": "Mouse Accel 4",
+      "name": "U_M_ACL_4x"
+    },
+    {
+      "shortName": "Mouse\nAccel 1/2",
+      "title": "Mouse Accel 1/2",
+      "name": "U_M_ACL_HALF"
+    },
+    {
+      "shortName": "Mouse\nAccel 1/4",
+      "title": "Mouse  1/4",
+      "name": "U_M_ACL_QUARTER"
+    },
+    {
+      "shortName": "Scroll\nAccell 2",
+      "title": "Scroll Step2",
+      "name": "U_S_ACL_2x"
+    },
+    {
+      "shortName": "Scroll\nAccell 4",
+      "title": "Scroll Step4",
+      "name": "U_S_ACL_4x"
+    },
+    {
+      "shortName": "Scroll\nAccell 8",
+      "title": "Scroll Step8",
+      "name": "U_S_ACL_8x"
     }
   ],
   "layouts": {

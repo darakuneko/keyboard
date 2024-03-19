@@ -144,11 +144,15 @@ void set_gesture(iqs5xx_data_t* const data, report_mouse_t* const rep_mouse) {
             gesture_time = timer_read32();
             tapped3_cnt = 0;
         } else if(timer_elapsed32(scroll_time) > scroll_term && data->ges_evnet1 == 2) {
+            int scrolling_direction = 0;
             if(data->relative_xy.bytes[2] > 1 && data->relative_xy.bytes[3] > 1 ){
-                rep_mouse->v = 1 * scroll_step;
+                scrolling_direction = can_reverse_scrolling_direction ? 1 : -1;
             } else if(data->relative_xy.bytes[3] > 1 ){
-                rep_mouse->v = -1 * scroll_step;
-            } 
+                scrolling_direction = can_reverse_scrolling_direction ? -1 : 1;
+            }
+            if(scrolling_direction != 0){
+                rep_mouse->v = (scroll_step * accel_step) * scrolling_direction;
+            }
             scroll_time = timer_read32();
         } else if(timer_elapsed32(pinch_time) > PINCH_TERM && data->ges_evnet1 == 4) {
             if(data->relative_xy.bytes[0] > 0 && data->relative_xy.bytes[1] > 0) {
@@ -163,12 +167,12 @@ void set_gesture(iqs5xx_data_t* const data, report_mouse_t* const rep_mouse) {
 
 void set_trackpad_layer(iqs5xx_data_t* const data) {
     if (data->finger_cnt == 0) {
-        if(!ms_key_status.is_pressed && use_trackpad_layer && can_trackpad_layer){
+        if(use_trackpad_layer && can_trackpad_layer){
             layer_move(get_highest_layer(default_layer_state));
             use_trackpad_layer = false;
         }
    } else {
-        if(!ms_key_status.is_pressed && !use_trackpad_layer && can_trackpad_layer){
+        if(!use_trackpad_layer && can_trackpad_layer){
             layer_move(trackpad_layer);
             use_trackpad_layer = true;
         }

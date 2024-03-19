@@ -1,6 +1,6 @@
 {
 	"manufacturer": "Daraku-Neko",
-	"keyboard_name": "Ieneko42c ",
+	"keyboard_name": "Ieneko42c",
 	"maintainer": "Daraku-Neko",
 	"bootloader": "rp2040",
 	"diode_direction": "COL2ROW",
@@ -8,8 +8,7 @@
 		"console": false,
 		"extrakey": true,
 		"mousekey": true,
-		"rgb_matrix": true,
-		"via": true
+		"rgb_matrix": true
 	},
 	"ws2812": {
 		"driver": "vendor",
