@@ -1,0 +1,920 @@
+{
+  "manufacturer": "Daraku-Neko",
+  "keyboard_name": "Yadama Willow",
+  "maintainer": "Daraku-Neko",
+  "bootloader": "rp2040",
+  "diode_direction": "COL2ROW",
+  "features": {
+    "bootmagic": true,
+    "command": false,
+    "console": false,
+    "extrakey": true,
+    "mousekey": true,
+    "nkro": true,
+    "rgb_matrix": true
+  },
+  "ws2812": {
+    "driver": "vendor",
+    "pin": "GP0"
+  },
+  "rgb_matrix": {
+		"driver": "ws2812",
+		"timeout": 120000,
+    "max_brightness": 180,
+		"hue_steps": 4,
+		"sat_steps": 4,
+		"val_steps": 4,
+		"speed_steps": 4,
+    "sleep": true,
+    "default": {
+      "animation": "rainbow_moving_chevron"
+    },
+		"animations": {
+			"alphas_mods": true,
+			"gradient_up_down": true,
+			"gradient_left_right": true,
+			"breathing": true,
+			"band_sat": true,
+			"band_val": true,
+			"band_pinwheel_sat": true,
+			"band_pinwheel_val": true,
+			"band_spiral_sat": true,
+			"band_spiral_val": true,
+			"cycle_all": true,
+			"cycle_left_right": true,
+			"cycle_up_down": true,
+			"cycle_out_in": true,
+			"cycle_out_in_dual": true,
+			"rainbow_moving_chevron": true,
+			"cycle_pinwheel": true,
+			"cycle_spiral": true,
+			"dual_beacon": true,
+			"rainbow_beacon": true,
+			"rainbow_pinwheels": true,
+			"raindrops": true,
+			"jellybean_raindrops": true,
+			"hue_breathing": true,
+			"hue_pendulum": true,
+			"hue_wave": true,
+			"pixel_fractal": true,
+			"pixel_flow": true,
+			"pixel_rain": true,
+			"typing_heatmap": true,
+			"digital_rain": true,
+			"solid_reactive_simple": true,
+			"solid_reactive": true,
+			"solid_reactive_wide": true,
+			"solid_reactive_multiwide": true,
+			"solid_reactive_cross": true,
+			"solid_reactive_multicross": true,
+			"solid_reactive_nexus": true,
+			"solid_reactive_multinexus": true,
+			"splash": true,
+			"multisplash": true,
+			"solid_splash": true,
+			"solid_multisplash": true,
+      "starlight": true,
+      "starlight_dual_sat": true,
+      "starlight_dual_hue": true,
+      "riverflow": true
+		},
+    "layout": [
+      {"x":  0, "y": 0, "flags": 1},
+			{"x":  0, "y": 0, "flags": 1},
+			{"x":  0, "y": 0, "flags": 1},
+			{"x":  0, "y": 0, "flags": 1},
+			{"x":  0, "y": 0, "flags": 1},
+
+			{"x":  0, "y": 0, "flags": 1},
+      {"x":  0, "y": 0, "flags": 1},
+			{"x":  0, "y": 0, "flags": 1},
+			{"x":  0, "y": 0, "flags": 1},
+			{"x":  0, "y": 0, "flags": 1},
+
+      {"x":  0, "y": 0, "flags": 1},
+			{"x":  0, "y": 0, "flags": 1},
+			{"x":  0, "y": 0, "flags": 1},
+			{"x":  0, "y": 0, "flags": 1},
+			{"x":  0, "y": 0, "flags": 1},
+      
+			{"x":  0, "y": 0, "flags": 1},
+      {"x":  0, "y": 0, "flags": 1},
+			{"x":  0, "y": 0, "flags": 1},
+			{"x":  0, "y": 0, "flags": 1},
+			{"x":  0, "y": 0, "flags": 1},
+
+      {"x":  0, "y": 0, "flags": 1},
+			{"x":  0, "y": 0, "flags": 1},
+			{"x":  0, "y": 0, "flags": 1},
+			{"x":  0, "y": 0, "flags": 1},
+			{"x":  0, "y": 0, "flags": 1},
+      
+			{"x":  0, "y": 0, "flags": 1},
+      {"x":  0, "y": 0, "flags": 1},
+			{"x":  0, "y": 0, "flags": 1},
+			{"x":  0, "y": 0, "flags": 1},
+			{"x":  0, "y": 0, "flags": 1},
+
+      {"matrix": [0, 0], "x":  0, "y": 0, "flags": 4},
+			{"matrix": [0, 1], "x": 28, "y": 0, "flags": 4},
+			{"matrix": [0, 2], "x": 42, "y": 0, "flags": 4},
+			{"matrix": [0, 3], "x": 56, "y": 0, "flags": 4},
+			{"matrix": [0, 4], "x": 70, "y": 0, "flags": 4},
+			{"matrix": [0, 5], "x": 84, "y": 0, "flags": 4},
+			{"matrix": [0, 8], "x": 126, "y": 0, "flags": 4},
+      {"matrix": [0, 9], "x": 140, "y": 0, "flags": 4},
+			{"matrix": [0, 10], "x": 154, "y": 0, "flags": 4},
+			{"matrix": [0, 11], "x": 168, "y": 0, "flags": 4},
+			{"matrix": [0, 12], "x": 182, "y": 0, "flags": 4},
+			{"matrix": [0, 13], "x": 224, "y": 0, "flags": 4},
+
+      {"matrix": [1, 0], "x":  0, "y": 12, "flags": 4},
+			{"matrix": [1, 1], "x": 28, "y": 12, "flags": 4},
+			{"matrix": [1, 2], "x": 42, "y": 12, "flags": 4},
+			{"matrix": [1, 3], "x": 56, "y": 12, "flags": 4},
+			{"matrix": [1, 4], "x": 70, "y": 12, "flags": 4},
+			{"matrix": [1, 5], "x": 84, "y": 12, "flags": 4},
+			{"matrix": [1, 8], "x": 126, "y": 12, "flags": 4},
+      {"matrix": [1, 9], "x": 140, "y": 12, "flags": 4},
+			{"matrix": [1, 10], "x": 154, "y": 12, "flags": 4},
+			{"matrix": [1, 11], "x": 168, "y": 12, "flags": 4},
+			{"matrix": [1, 12], "x": 182, "y": 12, "flags": 4},
+			{"matrix": [1, 13], "x": 224, "y": 12, "flags": 4},
+
+      {"matrix": [2, 0], "x":  0, "y": 24, "flags": 4},
+			{"matrix": [2, 1], "x": 28, "y": 24, "flags": 4},
+			{"matrix": [2, 2], "x": 42, "y": 24, "flags": 4},
+			{"matrix": [2, 3], "x": 56, "y": 24, "flags": 4},
+			{"matrix": [2, 4], "x": 70, "y": 24, "flags": 4},
+			{"matrix": [2, 5], "x": 84, "y": 24, "flags": 4},
+			{"matrix": [2, 8], "x": 126, "y": 24, "flags": 4},
+      {"matrix": [2, 9], "x": 140, "y": 24, "flags": 4},
+			{"matrix": [2, 10], "x": 154, "y": 24, "flags": 4},
+			{"matrix": [2, 11], "x": 168, "y": 24, "flags": 4},
+			{"matrix": [2, 12], "x": 182, "y": 24, "flags": 4},
+			{"matrix": [2, 13], "x": 224, "y": 24, "flags": 4},
+
+      {"matrix": [3, 0], "x":  0, "y": 36, "flags": 4},
+			{"matrix": [3, 1], "x": 28, "y": 36, "flags": 4},
+			{"matrix": [3, 2], "x": 42, "y": 36, "flags": 4},
+			{"matrix": [3, 3], "x": 56, "y": 36, "flags": 4},
+			{"matrix": [3, 4], "x": 70, "y": 36, "flags": 4},
+			{"matrix": [3, 5], "x": 84, "y": 36, "flags": 4},
+			{"matrix": [3, 6], "x": 98, "y": 36, "flags": 4},
+			{"matrix": [3, 7], "x": 112, "y": 36, "flags": 4},
+			{"matrix": [3, 8], "x": 126, "y": 36, "flags": 4},
+      {"matrix": [3, 9], "x": 140, "y": 36, "flags": 4},
+			{"matrix": [3, 10], "x": 154, "y": 36, "flags": 4},
+			{"matrix": [3, 11], "x": 168, "y": 36, "flags": 4},
+			{"matrix": [3, 12], "x": 182, "y": 36, "flags": 4},
+			{"matrix": [3, 13], "x": 224, "y": 36, "flags": 4},
+
+			{"matrix": [4, 3], "x": 56, "y": 48, "flags": 4},
+			{"matrix": [4, 4], "x": 70, "y": 48, "flags": 4},
+			{"matrix": [4, 5], "x": 84, "y": 48, "flags": 4},
+			{"matrix": [4, 6], "x": 98, "y": 48, "flags": 4},
+			{"matrix": [4, 7], "x": 112, "y": 48, "flags": 4},
+			{"matrix": [4, 8], "x": 126, "y": 48, "flags": 4},
+      {"matrix": [4, 9], "x": 140, "y": 48, "flags": 4},
+			{"matrix": [4, 10], "x": 154, "y": 48, "flags": 4},
+
+      {"x":  0, "y": 0, "flags": 2},
+			{"x":  0, "y": 0, "flags": 2},
+			{"x":  0, "y": 0, "flags": 2},
+			{"x":  0, "y": 0, "flags": 2},
+			{"x":  0, "y": 0, "flags": 2},
+			{"x":  0, "y": 0, "flags": 2},
+      {"x":  0, "y": 0, "flags": 2},
+			{"x":  0, "y": 0, "flags": 2},
+			{"x":  0, "y": 0, "flags": 2},
+			{"x":  0, "y": 0, "flags": 2},
+			{"x":  0, "y": 0, "flags": 2},
+			{"x":  0, "y": 0, "flags": 2},
+      {"x":  0, "y": 0, "flags": 2}
+		]
+	},  
+  "matrix_pins": {
+    "rows": [
+      "GP1",
+      "GP2",
+      "GP3",
+      "GP4",
+      "GP5",
+      "GP6",
+      "GP7",
+      "GP8",
+      "GP9"
+    ],
+    "cols": [
+      "GP10",
+      "GP11",
+      "GP12",
+      "GP13",
+      "GP14",
+      "GP15",
+      "GP16",
+      "GP17",
+      "GP18",
+      "GP19",
+      "GP20",
+      "GP21",
+      "GP22",
+      "GP23"
+    ]
+  },
+  "encoder": {
+    "enabled": true,
+		"rotary": [
+			{
+				"pin_a": "GP24",
+				"pin_b": "GP25"
+			},
+			{
+				"pin_a": "GP26",
+				"pin_b": "GP27"
+			},
+			{
+				"pin_a": "GP28",
+				"pin_b": "GP29"
+			}
+		]
+	},
+  "processor": "RP2040",
+  "url": "",
+  "usb": {
+    "device_version": "1.0.0",
+    "pid": "0x154E",
+    "vid": "0x7A79"
+  },
+  "layouts": {
+    "LAYOUT": {
+      "layout": [
+        {
+          "label": "F1",
+          "matrix": [
+            0,
+            0
+          ],
+          "x": 0,
+          "y": 0
+        },
+        {
+          "label": "F2",
+          "matrix": [
+            0,
+            1
+          ],
+          "x": 1,
+          "y": 0
+        },
+        {
+          "label": "F3",
+          "matrix": [
+            0,
+            2
+          ],
+          "x": 2,
+          "y": 0
+        },
+        {
+          "label": "F4",
+          "matrix": [
+            0,
+            3
+          ],
+          "x": 3,
+          "y": 0
+        },
+        {
+          "label": "F5",
+          "matrix": [
+            0,
+            4
+          ],
+          "x": 4,
+          "y": 0
+        },
+        {
+          "label": "F6",
+          "matrix": [
+            0,
+            5
+          ],
+          "x": 5,
+          "y": 0
+        },
+        {
+          "matrix": [
+            0,
+            6
+          ],
+          "x": 8,
+          "y": 0
+        },
+        {
+          "matrix": [
+            1,
+            6
+          ],
+          "x": 9,
+          "y": 0
+        },
+        {
+          "matrix": [
+            2,
+            6
+          ],
+          "x": 10,
+          "y": 0
+        },
+        {
+          "label": "F7",
+          "matrix": [
+            0,
+            8
+          ],
+          "x": 13,
+          "y": 0
+        },
+        {
+          "label": "F8",
+          "matrix": [
+            0,
+            9
+          ],
+          "x": 14,
+          "y": 0
+        },
+        {
+          "label": "F9",
+          "matrix": [
+            0,
+            10
+          ],
+          "x": 15,
+          "y": 0
+        },
+        {
+          "label": "F10",
+          "matrix": [
+            0,
+            11
+          ],
+          "x": 16,
+          "y": 0
+        },
+        {
+          "label": "F11",
+          "matrix": [
+            0,
+            12
+          ],
+          "x": 17,
+          "y": 0
+        },
+        {
+          "label": "F12",
+          "matrix": [
+            0,
+            13
+          ],
+          "x": 18,
+          "y": 0
+        },
+        {
+          "label": "Esc",
+          "matrix": [
+            1,
+            0
+          ],
+          "x": 0,
+          "y": 1
+        },
+        {
+          "label": "Q",
+          "matrix": [
+            1,
+            1
+          ],
+          "x": 1,
+          "y": 1
+        },
+        {
+          "label": "W",
+          "matrix": [
+            1,
+            2
+          ],
+          "x": 2,
+          "y": 1
+        },
+        {
+          "label": "E",
+          "matrix": [
+            1,
+            3
+          ],
+          "x": 3,
+          "y": 1
+        },
+        {
+          "label": "R",
+          "matrix": [
+            1,
+            4
+          ],
+          "x": 4,
+          "y": 1
+        },
+        {
+          "label": "T",
+          "matrix": [
+            1,
+            5
+          ],
+          "x": 5,
+          "y": 1
+        },
+        {
+          "label": "Y",
+          "matrix": [
+            1,
+            8
+          ],
+          "x": 13,
+          "y": 1
+        },
+        {
+          "label": "U",
+          "matrix": [
+            1,
+            9
+          ],
+          "x": 14,
+          "y": 1
+        },
+        {
+          "label": "I",
+          "matrix": [
+            1,
+            10
+          ],
+          "x": 15,
+          "y": 1
+        },
+        {
+          "label": "O",
+          "matrix": [
+            1,
+            11
+          ],
+          "x": 16,
+          "y": 1
+        },
+        {
+          "label": "P",
+          "matrix": [
+            1,
+            12
+          ],
+          "x": 17,
+          "y": 1
+        },
+        {
+          "label": "|",
+          "matrix": [
+            1,
+            13
+          ],
+          "x": 18,
+          "y": 1
+        },
+        {
+          "label": "Tab",
+          "matrix": [
+            2,
+            0
+          ],
+          "x": 0,
+          "y": 2
+        },
+        {
+          "label": "A",
+          "matrix": [
+            2,
+            1
+          ],
+          "x": 1,
+          "y": 2
+        },
+        {
+          "label": "S",
+          "matrix": [
+            2,
+            2
+          ],
+          "x": 2,
+          "y": 2
+        },
+        {
+          "label": "D",
+          "matrix": [
+            2,
+            3
+          ],
+          "x": 3,
+          "y": 2
+        },
+        {
+          "label": "F",
+          "matrix": [
+            2,
+            4
+          ],
+          "x": 4,
+          "y": 2
+        },
+        {
+          "label": "G",
+          "matrix": [
+            2,
+            5
+          ],
+          "x": 5,
+          "y": 2
+        },
+        {
+          "label": "H",
+          "matrix": [
+            2,
+            8
+          ],
+          "x": 13,
+          "y": 2
+        },
+        {
+          "label": "J",
+          "matrix": [
+            2,
+            9
+          ],
+          "x": 14,
+          "y": 2
+        },
+        {
+          "label": "K",
+          "matrix": [
+            2,
+            10
+          ],
+          "x": 15,
+          "y": 2
+        },
+        {
+          "label": "L",
+          "matrix": [
+            2,
+            11
+          ],
+          "x": 16,
+          "y": 2
+        },
+        {
+          "label": ":",
+          "matrix": [
+            2,
+            12
+          ],
+          "x": 17,
+          "y": 2
+        },
+        {
+          "label": "\"",
+          "matrix": [
+            2,
+            13
+          ],
+          "x": 18,
+          "y": 2
+        },
+        {
+          "label": "Shift",
+          "matrix": [
+            3,
+            0
+          ],
+          "x": 0,
+          "y": 3
+        },
+        {
+          "label": "Z",
+          "matrix": [
+            3,
+            1
+          ],
+          "x": 1,
+          "y": 3
+        },
+        {
+          "label": "X",
+          "matrix": [
+            3,
+            2
+          ],
+          "x": 2,
+          "y": 3
+        },
+        {
+          "label": "C",
+          "matrix": [
+            3,
+            3
+          ],
+          "x": 3,
+          "y": 3
+        },
+        {
+          "label": "V",
+          "matrix": [
+            3,
+            4
+          ],
+          "x": 4,
+          "y": 3
+        },
+        {
+          "label": "B",
+          "matrix": [
+            3,
+            5
+          ],
+          "x": 5,
+          "y": 3
+        },
+        {
+          "label": "{",
+          "matrix": [
+            3,
+            6
+          ],
+          "x": 6,
+          "y": 3
+        },
+        {
+          "label": "}",
+          "matrix": [
+            3,
+            7
+          ],
+          "x": 12,
+          "y": 3
+        },
+        {
+          "label": "N",
+          "matrix": [
+            3,
+            8
+          ],
+          "x": 13,
+          "y": 3
+        },
+        {
+          "label": "M",
+          "matrix": [
+            3,
+            9
+          ],
+          "x": 14,
+          "y": 3
+        },
+        {
+          "label": "<",
+          "matrix": [
+            3,
+            10
+          ],
+          "x": 15,
+          "y": 3
+        },
+        {
+          "label": ">",
+          "matrix": [
+            3,
+            11
+          ],
+          "x": 16,
+          "y": 3
+        },
+        {
+          "label": "?",
+          "matrix": [
+            3,
+            12
+          ],
+          "x": 17,
+          "y": 3
+        },
+        {
+          "label": "Shift",
+          "matrix": [
+            3,
+            13
+          ],
+          "x": 18,
+          "y": 3
+        },
+        {
+          "label": "!",
+          "matrix": [
+            5,
+            5
+          ],
+          "x": 8,
+          "y": 3.25
+        },
+        {
+          "label": "@",
+          "matrix": [
+            5,
+            6
+          ],
+          "x": 9,
+          "y": 3.25
+        },
+        {
+          "label": "#",
+          "matrix": [
+            5,
+            7
+          ],
+          "x": 10,
+          "y": 3.25
+        },
+        {
+          "label": "Ctrl",
+          "matrix": [
+            4,
+            3
+          ],
+          "x": 3,
+          "y": 4
+        },
+        {
+          "label": "Win",
+          "matrix": [
+            4,
+            4
+          ],
+          "x": 4,
+          "y": 4
+        },
+        {
+          "label": "Alt",
+          "matrix": [
+            4,
+            5
+          ],
+          "x": 5,
+          "y": 4
+        },
+        {
+          "matrix": [
+            4,
+            6
+          ],
+          "x": 6,
+          "y": 4
+        },
+        {
+          "label": "Enter",
+          "matrix": [
+            4,
+            7
+          ],
+          "x": 12,
+          "y": 4
+        },
+        {
+          "label": "Alt",
+          "matrix": [
+            4,
+            8
+          ],
+          "x": 13,
+          "y": 4
+        },
+        {
+          "label": "Win",
+          "matrix": [
+            4,
+            9
+          ],
+          "x": 14,
+          "y": 4
+        },
+        {
+          "label": "Ctrl",
+          "matrix": [
+            4,
+            10
+          ],
+          "x": 15,
+          "y": 4
+        },
+        {
+          "label": "$",
+          "matrix": [
+            6,
+            5
+          ],
+          "x": 7.5,
+          "y": 4.25
+        },
+        {
+          "label": "%",
+          "matrix": [
+            6,
+            6
+          ],
+          "x": 8.5,
+          "y": 4.25
+        },
+        {
+          "label": "^",
+          "matrix": [
+            6,
+            7
+          ],
+          "x": 9.5,
+          "y": 4.25
+        },
+        {
+          "label": ")",
+          "matrix": [
+            6,
+            8
+          ],
+          "x": 10.5,
+          "y": 4.25
+        },
+        {
+          "label": "&",
+          "matrix": [
+            7,
+            5
+          ],
+          "x": 7.5,
+          "y": 5.25
+        },
+        {
+          "label": "*",
+          "matrix": [
+            7,
+            6
+          ],
+          "x": 8.5,
+          "y": 5.25
+        },
+        {
+          "label": "(",
+          "matrix": [
+            7,
+            7
+          ],
+          "x": 9.5,
+          "y": 5.25
+        },
+        {
+          "matrix": [
+            7,
+            8
+          ],
+          "x": 10.5,
+          "y": 5.25
+        },
+        {
+          "label": "+",
+          "matrix": [
+            8,
+            5
+          ],
+          "x": 8.5,
+          "y": 6.25
+        },
+        {
+          "label": "+",
+          "matrix": [
+            8,
+            6
+          ],
+          "x": 9.5,
+          "y": 6.25
+        }
+      ]
+    }
+  },
+  "matrix_size": {
+    "rows": 9,
+    "cols": 14
+  }
+}
