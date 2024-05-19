@@ -1,0 +1,485 @@
+{
+  "manufacturer": "Daraku-Neko",
+  "keyboard_name": "GPK60-51O V2",
+  "maintainer": "Daraku-Neko",
+  "bootloader": "rp2040",
+  "diode_direction": "COL2ROW",
+  "features": {
+    "bootmagic": true,
+    "command": false,
+    "console": false,
+    "extrakey": true,
+    "mousekey": true,
+    "nkro": true,
+    "rgblight": true
+  },
+  "ws2812": {
+    "driver": "vendor",
+		"pin": "GP0"
+	},
+  "rgblight": {
+    "led_count": 8,
+    "sleep": true,
+    "animations": {
+      "alternating": false,
+      "breathing": false,
+      "christmas": false,
+      "knight": false,
+      "rainbow_mood": false,
+      "rainbow_swirl": false,
+      "rgb_test": false,
+      "snake": false,
+      "static_gradient": false,
+      "twinkle": false
+    }
+  },
+  "matrix_pins": {
+    "rows": [
+      "GP1",
+      "GP2",
+      "GP3",
+      "GP4"
+    ],
+    "cols": [
+      "GP6",
+      "GP7",
+      "GP8",
+      "GP9",
+      "GP10",
+      "GP11",
+      "GP12",
+      "GP13",
+      "GP14",
+      "GP15",
+      "GP26",
+      "GP27",
+      "GP28"
+    ]
+  },
+  "processor": "RP2040",
+  "url": "",
+  "usb": {
+    "device_version": "1.0.0",
+    "pid": "0x154D",
+    "vid": "0x7A79"
+  },
+  "layouts": {
+    "LAYOUT": {
+      "layout": [
+        {
+          "matrix": [
+            0,
+            0
+          ],
+          "x": 0,
+          "y": 0
+        },
+        {
+          "matrix": [
+            0,
+            1
+          ],
+          "x": 1.5,
+          "y": 0
+        },
+        {
+          "matrix": [
+            0,
+            2
+          ],
+          "x": 2.5,
+          "y": 0
+        },
+        {
+          "matrix": [
+            0,
+            3
+          ],
+          "x": 3.5,
+          "y": 0
+        },
+        {
+          "matrix": [
+            0,
+            4
+          ],
+          "x": 4.5,
+          "y": 0
+        },
+        {
+          "matrix": [
+            0,
+            5
+          ],
+          "x": 5.5,
+          "y": 0
+        },
+        {
+          "matrix": [
+            0,
+            6
+          ],
+          "x": 6.5,
+          "y": 0
+        },
+        {
+          "matrix": [
+            0,
+            7
+          ],
+          "x": 7.5,
+          "y": 0
+        },
+        {
+          "matrix": [
+            0,
+            8
+          ],
+          "x": 8.5,
+          "y": 0
+        },
+        {
+          "matrix": [
+            0,
+            9
+          ],
+          "x": 9.5,
+          "y": 0
+        },
+        {
+          "matrix": [
+            0,
+            10
+          ],
+          "x": 10.5,
+          "y": 0
+        },
+        {
+          "matrix": [
+            0,
+            11
+          ],
+          "x": 11.5,
+          "y": 0
+        },
+        {
+          "matrix": [
+            0,
+            12
+          ],
+          "x": 12.5,
+          "y": 0
+        },
+        {
+          "matrix": [
+            1,
+            0
+          ],
+          "x": 0,
+          "y": 1
+        },
+        {
+          "matrix": [
+            1,
+            1
+          ],
+          "x": 1.5,
+          "y": 1
+        },
+        {
+          "matrix": [
+            1,
+            2
+          ],
+          "x": 2.5,
+          "y": 1
+        },
+        {
+          "matrix": [
+            1,
+            3
+          ],
+          "x": 3.5,
+          "y": 1
+        },
+        {
+          "matrix": [
+            1,
+            4
+          ],
+          "x": 4.5,
+          "y": 1
+        },
+        {
+          "matrix": [
+            1,
+            5
+          ],
+          "x": 5.5,
+          "y": 1
+        },
+        {
+          "matrix": [
+            1,
+            6
+          ],
+          "x": 6.5,
+          "y": 1
+        },
+        {
+          "matrix": [
+            1,
+            7
+          ],
+          "x": 7.5,
+          "y": 1
+        },
+        {
+          "matrix": [
+            1,
+            8
+          ],
+          "x": 8.5,
+          "y": 1
+        },
+        {
+          "matrix": [
+            1,
+            9
+          ],
+          "x": 9.5,
+          "y": 1
+        },
+        {
+          "matrix": [
+            1,
+            10
+          ],
+          "x": 10.5,
+          "y": 1
+        },
+        {
+          "matrix": [
+            1,
+            11
+          ],
+          "x": 11.5,
+          "y": 1
+        },
+        {
+          "matrix": [
+            1,
+            12
+          ],
+          "x": 12.5,
+          "y": 1
+        },
+        {
+          "matrix": [
+            2,
+            0
+          ],
+          "x": 0,
+          "y": 2
+        },
+        {
+          "matrix": [
+            2,
+            1
+          ],
+          "x": 1.5,
+          "y": 2
+        },
+        {
+          "matrix": [
+            2,
+            2
+          ],
+          "x": 2.5,
+          "y": 2
+        },
+        {
+          "matrix": [
+            2,
+            3
+          ],
+          "x": 3.5,
+          "y": 2
+        },
+        {
+          "matrix": [
+            2,
+            4
+          ],
+          "x": 4.5,
+          "y": 2
+        },
+        {
+          "matrix": [
+            2,
+            5
+          ],
+          "x": 5.5,
+          "y": 2
+        },
+        {
+          "matrix": [
+            2,
+            6
+          ],
+          "x": 6.5,
+          "y": 2
+        },
+        {
+          "matrix": [
+            2,
+            7
+          ],
+          "x": 7.5,
+          "y": 2
+        },
+        {
+          "matrix": [
+            2,
+            8
+          ],
+          "x": 8.5,
+          "y": 2
+        },
+        {
+          "matrix": [
+            2,
+            9
+          ],
+          "x": 9.5,
+          "y": 2
+        },
+        {
+          "matrix": [
+            2,
+            10
+          ],
+          "x": 10.5,
+          "y": 2
+        },
+        {
+          "matrix": [
+            2,
+            11
+          ],
+          "x": 11.5,
+          "y": 2
+        },
+        {
+          "matrix": [
+            2,
+            12
+          ],
+          "x": 12.5,
+          "y": 2
+        },
+        {
+          "matrix": [
+            3,
+            0
+          ],
+          "x": 0,
+          "y": 3
+        },
+        {
+          "matrix": [
+            3,
+            1
+          ],
+          "x": 1.5,
+          "y": 3
+        },
+        {
+          "matrix": [
+            3,
+            2
+          ],
+          "x": 2.5,
+          "y": 3
+        },
+        {
+          "matrix": [
+            3,
+            3
+          ],
+          "x": 3.5,
+          "y": 3
+        },
+        {
+          "matrix": [
+            3,
+            4
+          ],
+          "x": 4.5,
+          "y": 3
+        },
+        {
+          "matrix": [
+            3,
+            5
+          ],
+          "x": 5.5,
+          "y": 3
+        },
+        {
+          "matrix": [
+            3,
+            6
+          ],
+          "w": 2,
+          "x": 6.5,
+          "y": 3
+        },
+        {
+          "matrix": [
+            3,
+            8
+          ],
+          "x": 8.5,
+          "y": 3
+        },
+        {
+          "matrix": [
+            3,
+            9
+          ],
+          "x": 9.5,
+          "y": 3
+        },
+        {
+          "matrix": [
+            3,
+            10
+          ],
+          "x": 10.5,
+          "y": 3
+        },
+        {
+          "matrix": [
+            3,
+            11
+          ],
+          "x": 11.5,
+          "y": 3
+        },
+        {
+          "matrix": [
+            3,
+            12
+          ],
+          "x": 12.5,
+          "y": 3
+        }
+      ]
+    }
+  },
+  "matrix_size": {
+    "rows": 4,
+    "cols": 13
+  }
+}
