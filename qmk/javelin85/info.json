@@ -6,12 +6,12 @@
   "processor": "STM32F072",
   "diode_direction": "COL2ROW",
   "features": {
-    "bootmagic": true,
+    "bootmagic": false,
     "command": false,
     "console": false,
     "extrakey": true,
     "mousekey": true,
-    "nkro": false,
+    "nkro": true,
     "rgb_matrix": true
   },
   "ws2812": {
