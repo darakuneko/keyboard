@@ -1,0 +1,70 @@
+{
+  "name": "NumNum Bento",
+  "vid": "0x7A79",
+  "pid": "0x1538",
+  "lighting": "vialrgb",
+  "matrix": {
+    "rows": 4,
+    "cols": 10
+  },
+  "customKeycodes": [
+    {
+      "shortName": "Layer\nUP",
+      "title": "Layer UP",
+      "name": "U_Layer_UP"
+    },
+    {
+      "shortName": "Layer\nDOWN",
+      "title": "Layer DOWN",
+      "name": "U_Layer_DOWN"
+    },
+    {
+      "shortName": "Mouse\nAccel 2",
+      "title": "Mouse Accel 2",
+      "name": "U_M_ACL_2x"
+    },
+    {
+      "shortName": "Mouse\nAccel 4",
+      "title": "Mouse Accel 4",
+      "name": "U_M_ACL_4x"
+    },
+    {
+      "shortName": "Mouse\nAccel 1/2",
+      "title": "Mouse Accel 1/2",
+      "name": "U_M_ACL_HALF"
+    },
+    {
+      "shortName": "Mouse\nAccel 1/4",
+      "title": "Mouse  1/4",
+      "name": "U_M_ACL_QUARTER"
+    },
+    {
+      "shortName": "Scroll\nAccell 2",
+      "title": "Scroll Step2",
+      "name": "U_S_ACL_2x"
+    },
+    {
+      "shortName": "Scroll\nAccell 4",
+      "title": "Scroll Step4",
+      "name": "U_S_ACL_4x"
+    },
+    {
+      "shortName": "Scroll\nAccell 8",
+      "title": "Scroll Step8",
+      "name": "U_S_ACL_8x"
+    }
+  ],
+  "layouts": {
+    "labels": [],
+    "keymap": [ 
+    [{"x":3},"0,5","0,6","0,7","0,8","0,9"],
+    [{"x":3},"1,5","1,6","1,7","1,8","1,9"],
+    [{"x":3},"0,0"],
+    [{"x":1},"0,1","0,0\n\n\n\n\n\n\n\n\ne","2,4","0,1\n\n\n\n\n\n\n\n\ne","0,3", {"x": 0.75, "w": 1.25},"2,8"],
+    [{"x":3},"0,2"],
+    [{"x":3, "w": 1.75},"2,5",{"w": 1.75},"2,6",{"x": 0.25, "w": 1.25},"2,7"],
+    [{"y":0.25},"1,0","1,1", {"x":1.0},"1,2","1,3", {"x":1.0},"1,4","2,0",{"x":1.0},"2,1","2,2"],
+    [{"y":0.25},"3,0","3,1","3,2", {"x":1.0},"3,3",{"x":1.0}, "2,3"]
+  ]
+  }
+}
