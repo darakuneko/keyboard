@@ -44,7 +44,6 @@ void set_trackpad_config(trackpad_config_t trackpad_config) {
   trackpad_layer = 18;
   use_trackpad_layer = false;
   use_drag = false;
-  pre_layer = 0;
 }
 
 void send_trackpad_config(const trackpad_config_t *config) {

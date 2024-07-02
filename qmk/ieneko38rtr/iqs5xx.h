@@ -76,7 +76,6 @@ bool use_drag;
 bool can_reverse_scrolling_direction;
 bool can_trackpad_layer;
 int trackpad_layer;
-int pre_layer;
 bool use_trackpad_layer;
 int scroll_step;
 float accel_speed;
