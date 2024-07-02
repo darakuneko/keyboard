@@ -170,11 +170,13 @@ void set_gesture(iqs5xx_data_t* const data, report_mouse_t* const rep_mouse) {
 void set_trackpad_layer(iqs5xx_data_t* const data) { 
     if (data->finger_cnt == 0) {
         if(use_trackpad_layer && can_trackpad_layer){
-            layer_move(get_highest_layer(default_layer_state));
+            int current_layer = get_highest_layer(layer_state);
+            trackpad_layer == current_layer ? layer_move(pre_layer) : layer_move(current_layer);
             use_trackpad_layer = false;
         }
    } else {
         if(!use_trackpad_layer && can_trackpad_layer){
+            pre_layer = get_highest_layer(layer_state);
             layer_move(trackpad_layer);
             use_trackpad_layer = true;
         }
