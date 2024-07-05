@@ -5,7 +5,7 @@
 	"bootloader": "rp2040",
 	"diode_direction": "COL2ROW",
 	"features": {
-		"console": true,
+		"console": false,
 		"extrakey": true,
 		"haptic": true,
 		"mousekey": true,
