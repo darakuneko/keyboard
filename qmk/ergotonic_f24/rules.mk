@@ -1,0 +1,2 @@
+ENCODER_MAP_ENABLE = yes
+SERIAL_DRIVER = vendor
