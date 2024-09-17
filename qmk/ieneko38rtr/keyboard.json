@@ -10,7 +10,8 @@
 		"haptic": true,
 		"mousekey": true,
 		"nkro": true,
-		"rgb_matrix": true
+		"rgb_matrix": true,
+		"encoder_map": true
 	},
 	"haptic": {
 		"driver": "drv2605l"
@@ -29,7 +30,7 @@
 		"val_steps": 4,
 		"speed_steps": 4,
 		"default": {
-			"animation": "cycle_all"
+			"animation": "cycle_out_in"
 		},
 		"animations": {
 			"alphas_mods": true,

@@ -10,6 +10,9 @@
 #define SWIPE_TERM 150
 #define PINCH_TERM 200
 #define GESTURE_TERM 200
+#define SHORT_SCROLL_TERM 200
+#define SHORT_SCROLL_START_TERM 200
+#define SHORT_SCROLL_ZERO_CNT 5
 
 #define IQS5xx_COM_END_REG 0xEEEE
 #define IQS5xx_GESTURE_EVENT0 0x000D
@@ -66,7 +69,8 @@ uint32_t drag_time;
 uint32_t drag_term;
 bool drag_strength_mode;
 uint32_t drag_strength;
-float default_speed;
+double default_speed;
+
 bool clear_buttons;
 bool tapped;
 bool can_hf_for_layer;
@@ -80,6 +84,7 @@ bool use_trackpad_layer;
 int scroll_step;
 float accel_speed;
 int accel_step;
+bool can_short_scroll;
 
 void init_iqs5xx(void);
 bool read_iqs5xx(iqs5xx_data_t* const data);
