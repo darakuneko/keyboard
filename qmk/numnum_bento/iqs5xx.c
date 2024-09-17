@@ -113,7 +113,12 @@ void set_tap(iqs5xx_data_t* const data, report_mouse_t* const rep_mouse) {
     }   
 }
 
+uint32_t memo_scroll_time = 0;
+int scrolling_direction = 1;
+bool scroll_start = false;
+int scroll_zero_time_cnt = 0;
 void set_gesture(iqs5xx_data_t* const data, report_mouse_t* const rep_mouse) {
+
     uint32_t dx = ((data->relative_xy.bytes[1] - data->relative_xy.bytes[0]) * default_speed) * accel_speed;
     uint32_t dy = ((data->relative_xy.bytes[3] - data->relative_xy.bytes[2]) * default_speed) * accel_speed;
     if (data->finger_cnt == 1) {
@@ -143,17 +148,27 @@ void set_gesture(iqs5xx_data_t* const data, report_mouse_t* const rep_mouse) {
             }
             gesture_time = timer_read32();
             tapped3_cnt = 0;
-        } else if(timer_elapsed32(scroll_time) > scroll_term && data->ges_evnet1 == 2) {
-            int scrolling_direction = 0;
+        } else if(data->ges_evnet1 == 2 && data->relative_xy.bytes[1] == 0) {
             if(data->relative_xy.bytes[2] > 1 && data->relative_xy.bytes[3] > 1 ){
-                scrolling_direction = can_reverse_scrolling_direction ? 1 : -1;
+                    scrolling_direction = can_reverse_scrolling_direction ? 1 : -1;
             } else if(data->relative_xy.bytes[3] > 1 ){
-                scrolling_direction = can_reverse_scrolling_direction ? -1 : 1;
+                    scrolling_direction = can_reverse_scrolling_direction ? -1 : 1;
             }
-            if(scrolling_direction != 0){
-                rep_mouse->v = (scroll_step * accel_step) * scrolling_direction;
+            
+            if(timer_elapsed32(scroll_time) > scroll_term){
+                if((can_short_scroll && scroll_zero_time_cnt > SHORT_SCROLL_ZERO_CNT) || !can_short_scroll){
+                    rep_mouse->v = scroll_step * accel_step * scrolling_direction;
+                }
+                scroll_time = timer_read32();
             }
-            scroll_time = timer_read32();
+
+            if(scroll_time - memo_scroll_time > SHORT_SCROLL_START_TERM){
+                scroll_start = true;
+                scroll_zero_time_cnt = 1;
+            } else if(scroll_time - memo_scroll_time == 0){
+                scroll_zero_time_cnt++;
+            }
+            memo_scroll_time = scroll_time;
         } else if(timer_elapsed32(pinch_time) > PINCH_TERM && data->ges_evnet1 == 4) {
             if(data->relative_xy.bytes[0] > 0 && data->relative_xy.bytes[1] > 0) {
                 data->gesture = GESTURE_PINCH_OUT;
@@ -162,6 +177,11 @@ void set_gesture(iqs5xx_data_t* const data, report_mouse_t* const rep_mouse) {
             }
             pinch_time = timer_read32();
         }
+    }
+
+    if(can_short_scroll && scroll_start && scroll_zero_time_cnt <= SHORT_SCROLL_ZERO_CNT && timer_elapsed32(scroll_time) > SHORT_SCROLL_TERM){
+        rep_mouse->v = scroll_zero_time_cnt * 2 * accel_step * scrolling_direction;
+        scroll_start = false;
     }
 }
 
