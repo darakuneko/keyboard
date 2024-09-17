@@ -17,6 +17,7 @@ void init_trackpad_config(trackpad_config_t *trackpad_config) {
   trackpad_config->drag_strength = 6;
   trackpad_config->default_speed = 10;
   trackpad_config->scroll_step = 0;
+  trackpad_config->can_short_scroll = true;
   eeconfig_update_user_datablock(&trackpad_config); 
 }
 
@@ -35,6 +36,7 @@ void update_trackpad_config(trackpad_config_t trackpad_config) {
   drag_strength = trackpad_config.drag_strength;
   default_speed = (double)trackpad_config.default_speed / 10.0;
   scroll_step = trackpad_config.scroll_step + 1;
+  can_short_scroll = trackpad_config.can_short_scroll;  
 }
 
 void set_trackpad_config(trackpad_config_t trackpad_config) {
@@ -79,6 +81,8 @@ void send_trackpad_config(const trackpad_config_t *config) {
   data[11] = (config->default_speed & 0b001111) << 4 |
              config->scroll_step; 
 
+  data[12] = config->can_short_scroll << 7;
+
   raw_hid_send(data, sizeof(data));
 }
 
@@ -113,6 +117,7 @@ void receive_trackpad_config(uint8_t *data) {
   trackpad_config.drag_strength = (data[5] & 0b01111100) >> 2;
   trackpad_config.default_speed = joinDefaultSpeed(data[5], data[6]);
   trackpad_config.scroll_step = data[6] & 0b00001111;
+  trackpad_config.can_short_scroll = (data[7] & 0b10000000) >> 7;
   eeconfig_update_user_datablock(&trackpad_config); 
   update_trackpad_config(trackpad_config);
 }

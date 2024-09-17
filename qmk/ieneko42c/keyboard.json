@@ -8,20 +8,29 @@
 		"console": false,
 		"extrakey": true,
 		"mousekey": true,
-		"rgb_matrix": true
+		"rgb_matrix": true,
+		"haptic": true,
+		"encoder_map": true
 	},
 	"ws2812": {
 		"driver": "vendor",
 		"pin": "GP0"
 	},
-	  "rgb_matrix": {
+	"haptic": {
+		"driver": "drv2605l"
+	},
+	"rgb_matrix": {
 		"driver": "ws2812",
 		"timeout": 120000,
-		"max_brightness": 180,
+		"max_brightness": 160,
+		"sleep": true,
 		"hue_steps": 4,
 		"sat_steps": 4,
 		"val_steps": 4,
 		"speed_steps": 4,
+		"default": {
+			"animation": "cycle_out_in"
+		},
 		"animations": {
 			"alphas_mods": true,
 			"gradient_up_down": true,
@@ -65,7 +74,11 @@
 			"splash": true,
 			"multisplash": true,
 			"solid_splash": true,
-			"solid_multisplash": true
+			"solid_multisplash": true,
+			"starlight": true,
+			"starlight_dual_sat": true,
+			"starlight_dual_hue": true,
+			"riverflow": true
 		},
 		"layout": [
 			{"matrix": [0, 0], "x":  0, "y": 0, "flags": 4},
@@ -120,27 +133,11 @@
 			{"x":  0, "y": 40, "flags": 2},
 			{"x":  0, "y": 40, "flags": 2},
 			{"x":  0, "y": 40, "flags": 2},
-
-			{"x":  0, "y": 40, "flags": 2},
-			{"x":  0, "y": 40, "flags": 2},
-			{"x":  0, "y": 40, "flags": 2},
-			{"x":  0, "y": 40, "flags": 2},
-			{"x":  0, "y": 40, "flags": 2},
-			
-
-			{"x":  0, "y": 40, "flags": 2},
-			{"x":  0, "y": 40, "flags": 2},
-			{"x":  0, "y": 40, "flags": 2},
-			{"x":  0, "y": 40, "flags": 2},
 			{"x":  0, "y": 40, "flags": 2}
 		]
 	},
 	"dynamic_keymap": {
 		"layer_count": 5
-	},
-	"caps_word": {
-		"enabled": true,
-		"double_tap_shift_turns_on": true
 	},
 	"matrix_pins": {
 		"rows": [

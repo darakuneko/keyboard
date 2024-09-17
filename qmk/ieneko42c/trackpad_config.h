@@ -11,6 +11,7 @@ typedef struct {
     unsigned int drag_strength : 5;
     unsigned int default_speed : 6;
     unsigned int scroll_step : 4;
+    bool can_short_scroll: 1;
 } trackpad_config_t;
 trackpad_config_t trackpad_config;
 
