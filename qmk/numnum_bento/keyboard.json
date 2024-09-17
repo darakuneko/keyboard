@@ -79,7 +79,11 @@
 			"splash": true,
 			"multisplash": true,
 			"solid_splash": true,
-			"solid_multisplash": true
+			"solid_multisplash": true,
+      		"starlight": true,
+      		"starlight_dual_sat": true,
+      		"starlight_dual_hue": true,
+      		"riverflow": true
 		},
 		"layout": [
 			{"matrix": [0, 5], "x":  0, "y": 0, "flags": 4},
