@@ -14,14 +14,18 @@
 		"console": false,
 		"extrakey": true,
 		"mousekey": true,
-		"nkro": true,
-		"rgb_matrix": true
+		"rgb_matrix": true,
+		"haptic": true,
+		"encoder_map": true
 	},
 	"ws2812": {
 		"driver": "vendor",
 		"pin": "GP0"
 	},
-	  "rgb_matrix": {
+	"haptic": {
+		"driver": "drv2605l"
+	},
+	"rgb_matrix": {
 		"driver": "ws2812",
 		"timeout": 120000,
 		"sleep": true,
@@ -29,6 +33,9 @@
 		"sat_steps": 4,
 		"val_steps": 4,
 		"speed_steps": 4,
+		"default": {
+			"animation": "cycle_all"
+		},
 		"animations": {
 			"alphas_mods": true,
 			"gradient_up_down": true,
