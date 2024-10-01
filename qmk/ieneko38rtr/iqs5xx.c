@@ -49,7 +49,6 @@ bool read_iqs5xx(iqs5xx_data_t* const data) {
     i2c_res |= iqs_app_readReg_continue(IQS5xx_RELATIVE_XY, (uint8_t*)&data->relative_xy, 4);
     i2c_res |= iqs_app_readReg_continue(IQS5xx_ABSOLUTE_XY, (uint8_t*)&data->absolute_xy, 4);
     i2c_res |= iqs_app_readReg_continue(IQS5xx_TOUCH_STRENGTH_FINGER1, (uint8_t*)&data->touch_strenght1, 1);
-    i2c_res |= iqs_app_readReg_continue(IQS5xx_TOUCH_STRENGTH_FINGER2, &data->touch_strenght2, 1);
 
     bool res = i2c_res == 0;
     if (res) {
@@ -60,6 +59,10 @@ bool read_iqs5xx(iqs5xx_data_t* const data) {
 
 int tapped2_cnt = 0;
 int tapped3_cnt = 0;
+int scrolling_direction = 1;
+bool scroll_start = false;
+bool scroll_end = false;
+
 void set_tap(iqs5xx_data_t* const data, report_mouse_t* const rep_mouse) {    
     if(tapped && data->finger_cnt == 0){
         rep_mouse->buttons = 0;
@@ -116,16 +119,13 @@ void set_tap(iqs5xx_data_t* const data, report_mouse_t* const rep_mouse) {
     if(data->finger_cnt == 0){
         drag_time = 0;
     }   
+
     if(data->ges_evnet1 > 0){
         tapped2_cnt = 0;
         tapped3_cnt = 0;
     }   
 }
 
-uint32_t memo_scroll_time = 0;
-int scrolling_direction = 1;
-bool scroll_start = false;
-int scroll_zero_time_cnt = 0;
 void set_gesture(iqs5xx_data_t* const data, report_mouse_t* const rep_mouse) {
 
     uint32_t dx = ((data->relative_xy.bytes[1] - data->relative_xy.bytes[0]) * default_speed) * accel_speed;
@@ -157,26 +157,21 @@ void set_gesture(iqs5xx_data_t* const data, report_mouse_t* const rep_mouse) {
             }
             gesture_time = timer_read32();
         } else if(data->ges_evnet1 == 2 && data->relative_xy.bytes[1] == 0) {
+            if(!scroll_start){
+                scroll_start = true;
+                short_scroll_term = timer_read32();
+            }
+
             if(data->relative_xy.bytes[2] > 1 && data->relative_xy.bytes[3] > 1 ){
                     scrolling_direction = can_reverse_scrolling_direction ? 1 : -1;
             } else if(data->relative_xy.bytes[3] > 1 ){
                     scrolling_direction = can_reverse_scrolling_direction ? -1 : 1;
             }
             
-            if(timer_elapsed32(scroll_time) > scroll_term){
-                if((can_short_scroll && scroll_zero_time_cnt > SHORT_SCROLL_ZERO_CNT) || !can_short_scroll){
-                    rep_mouse->v = scroll_step * accel_step * scrolling_direction;
-                }
+           if(timer_elapsed32(scroll_time) > scroll_term){
+                rep_mouse->v = scroll_step * accel_step * scrolling_direction;
                 scroll_time = timer_read32();
             }
-
-            if(scroll_time - memo_scroll_time > SHORT_SCROLL_START_TERM){
-                scroll_start = true;
-                scroll_zero_time_cnt = 1;
-            } else if(scroll_time - memo_scroll_time == 0){
-                scroll_zero_time_cnt++;
-            }
-            memo_scroll_time = scroll_time;
         } else if(timer_elapsed32(pinch_time) > PINCH_TERM && data->ges_evnet1 == 4) {
             if(data->relative_xy.bytes[0] > 0 && data->relative_xy.bytes[1] > 0) {
                 data->gesture = GESTURE_PINCH_OUT;
@@ -186,14 +181,21 @@ void set_gesture(iqs5xx_data_t* const data, report_mouse_t* const rep_mouse) {
             pinch_time = timer_read32();
         }
     }
+ 
+    if(scroll_start && data->finger_cnt == 0){
+        scroll_end = true; 
+    }
 
-    if(can_short_scroll && 
-    scroll_start && 
-    scroll_zero_time_cnt <= SHORT_SCROLL_ZERO_CNT && 
-    data->touch_strenght2 > 1 && 
-    timer_elapsed32(scroll_time) > SHORT_SCROLL_TERM){
-        rep_mouse->v = scroll_zero_time_cnt * 2 * accel_step * scrolling_direction;
+    if(can_short_scroll && scroll_end){
+        if(timer_elapsed32(short_scroll_term) < SHORT_SCROLL_TERM){
+            int base_scroll = 6;
+            rep_mouse->v = base_scroll * accel_step * scrolling_direction;
+                             uprintf("end");
+
+        }
+        short_scroll_term = timer_read32();
         scroll_start = false;
+        scroll_end = false;
     }
 }
 
@@ -216,10 +218,7 @@ void process_iqs5xx(iqs5xx_data_t* const data, report_mouse_t* const rep_mouse) 
     //uprintf("finger: %d iqs5xx_data.gesture: %d\n", data->finger_cnt, data->gesture);
 
     set_trackpad_layer(data);
+    set_tap(data, rep_mouse);
     set_gesture(data, rep_mouse);
-
-    if(!data->gesture) {
-        set_tap(data, rep_mouse);
-    }
 }
 

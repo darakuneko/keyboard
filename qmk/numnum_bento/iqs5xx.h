@@ -10,9 +10,7 @@
 #define SWIPE_TERM 150
 #define PINCH_TERM 200
 #define GESTURE_TERM 200
-#define SHORT_SCROLL_TERM 200
-#define SHORT_SCROLL_START_TERM 200
-#define SHORT_SCROLL_ZERO_CNT 5
+#define SHORT_SCROLL_TERM 100
 
 #define IQS5xx_COM_END_REG 0xEEEE
 #define IQS5xx_GESTURE_EVENT0 0x000D
@@ -21,7 +19,6 @@
 #define IQS5xx_RELATIVE_XY 0x0012
 #define IQS5xx_ABSOLUTE_XY 0x0016
 #define IQS5xx_TOUCH_STRENGTH_FINGER1 0x001A
-#define IQS5xx_TOUCH_STRENGTH_FINGER2 0x0021
 #define IQS5xx_FINGER_SPLIT 0x066B
 #define IQS5xx_HOLD_TIME 0x06BD
 #define IQS5xx_ZOOM 0x06CB
@@ -55,7 +52,6 @@ typedef struct {
     iqs5xx_xy_t      relative_xy;
     iqs5xx_xy_t      absolute_xy;
     uint8_t          touch_strenght1;
-    uint8_t          touch_strenght2;
     iqs5xx_gesture_t gesture;
 } iqs5xx_data_t;
 
@@ -65,6 +61,7 @@ uint32_t pinch_time;
 uint32_t gesture_time;
 uint32_t scroll_time;
 uint32_t scroll_term;
+uint32_t short_scroll_term;
 uint32_t drag_time;
 uint32_t drag_term;
 bool drag_strength_mode;
