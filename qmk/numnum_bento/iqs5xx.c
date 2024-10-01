@@ -49,7 +49,7 @@ bool read_iqs5xx(iqs5xx_data_t* const data) {
     i2c_res |= iqs_app_readReg_continue(IQS5xx_RELATIVE_XY, (uint8_t*)&data->relative_xy, 4);
     i2c_res |= iqs_app_readReg_continue(IQS5xx_ABSOLUTE_XY, (uint8_t*)&data->absolute_xy, 4);
     i2c_res |= iqs_app_readReg_continue(IQS5xx_TOUCH_STRENGTH_FINGER1, (uint8_t*)&data->touch_strenght1, 1);
-    i2c_res |= iqs_app_readReg_continue(IQS5xx_TOUCH_STRENGTH_FINGER3, &data->touch_strenght3, 1);
+    i2c_res |= iqs_app_readReg_continue(IQS5xx_TOUCH_STRENGTH_FINGER2, &data->touch_strenght2, 1);
 
     bool res = i2c_res == 0;
     if (res) {
@@ -58,6 +58,7 @@ bool read_iqs5xx(iqs5xx_data_t* const data) {
     return res;
 }
 
+int tapped2_cnt = 0;
 int tapped3_cnt = 0;
 void set_tap(iqs5xx_data_t* const data, report_mouse_t* const rep_mouse) {    
     if(tapped && data->finger_cnt == 0){
@@ -68,10 +69,14 @@ void set_tap(iqs5xx_data_t* const data, report_mouse_t* const rep_mouse) {
         return;  
     }
 
-    if(data->finger_cnt == 0 && tapped3_cnt > FINGER_THREE_TAP_CNT){
-        data->gesture = TAP_FINGER_THREE;
+    if(data->ges_evnet1 == 0 && data->finger_cnt == 2) {
+        tapped2_cnt = tapped2_cnt + 1;
     } 
-    
+
+    if(data->ges_evnet1 == 0 && data->finger_cnt == 3) {
+        tapped3_cnt = tapped3_cnt + 1;
+    } 
+
     if (data->ges_evnet0 == 1) {  
         if(data->absolute_xy.bytes[0] == 0 && data->absolute_xy.bytes[1] < 128){
             data->gesture = TAP_FINGER_ONE_LEFT;
@@ -81,8 +86,11 @@ void set_tap(iqs5xx_data_t* const data, report_mouse_t* const rep_mouse) {
             data->gesture = TAP_FINGER_ONE_CENTER;
         }
         tapped = true;
-    } else if (timer_elapsed32(tap_time) > TAP_TERM && data->ges_evnet1 == 1) {
+    } else if(timer_elapsed32(tap_time) > TAP_TERM && tapped2_cnt > 2 && data->ges_evnet1 == 1) {
         data->gesture = TAP_FINGER_TWO;
+        tapped = true;
+    } else if(timer_elapsed32(tap_time) > TAP_TERM && tapped3_cnt > 2 && data->ges_evnet1 == 1){
+        data->gesture = TAP_FINGER_THREE;
         tapped = true;
     } else if(can_drag && !use_drag && data->ges_evnet0 == 2) {
         if(!drag_strength_mode && drag_time == 0) {
@@ -95,9 +103,7 @@ void set_tap(iqs5xx_data_t* const data, report_mouse_t* const rep_mouse) {
             use_drag = true;
             drag_time = 0;
         }
-    } else if(data->touch_strenght3 < 255 && data->ges_evnet1 == 0) {
-        tapped3_cnt = tapped3_cnt + 1;
-    } 
+    }
 
     if(tapped || data->gesture == TAP_FINGER_THREE){
         tap_time = timer_read32();
@@ -109,6 +115,9 @@ void set_tap(iqs5xx_data_t* const data, report_mouse_t* const rep_mouse) {
 
     if(data->finger_cnt == 0){
         drag_time = 0;
+    }   
+    if(data->ges_evnet1 > 0){
+        tapped2_cnt = 0;
         tapped3_cnt = 0;
     }   
 }
@@ -147,7 +156,6 @@ void set_gesture(iqs5xx_data_t* const data, report_mouse_t* const rep_mouse) {
                 swipe_time = timer_read32();
             }
             gesture_time = timer_read32();
-            tapped3_cnt = 0;
         } else if(data->ges_evnet1 == 2 && data->relative_xy.bytes[1] == 0) {
             if(data->relative_xy.bytes[2] > 1 && data->relative_xy.bytes[3] > 1 ){
                     scrolling_direction = can_reverse_scrolling_direction ? 1 : -1;
@@ -179,7 +187,11 @@ void set_gesture(iqs5xx_data_t* const data, report_mouse_t* const rep_mouse) {
         }
     }
 
-    if(can_short_scroll && scroll_start && scroll_zero_time_cnt <= SHORT_SCROLL_ZERO_CNT && timer_elapsed32(scroll_time) > SHORT_SCROLL_TERM){
+    if(can_short_scroll && 
+    scroll_start && 
+    scroll_zero_time_cnt <= SHORT_SCROLL_ZERO_CNT && 
+    data->touch_strenght2 > 1 && 
+    timer_elapsed32(scroll_time) > SHORT_SCROLL_TERM){
         rep_mouse->v = scroll_zero_time_cnt * 2 * accel_step * scrolling_direction;
         scroll_start = false;
     }

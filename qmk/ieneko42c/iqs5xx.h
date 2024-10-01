@@ -21,7 +21,7 @@
 #define IQS5xx_RELATIVE_XY 0x0012
 #define IQS5xx_ABSOLUTE_XY 0x0016
 #define IQS5xx_TOUCH_STRENGTH_FINGER1 0x001A
-#define IQS5xx_TOUCH_STRENGTH_FINGER3 0x0026
+#define IQS5xx_TOUCH_STRENGTH_FINGER2 0x0021
 #define IQS5xx_FINGER_SPLIT 0x066B
 #define IQS5xx_HOLD_TIME 0x06BD
 #define IQS5xx_ZOOM 0x06CB
@@ -55,7 +55,7 @@ typedef struct {
     iqs5xx_xy_t      relative_xy;
     iqs5xx_xy_t      absolute_xy;
     uint8_t          touch_strenght1;
-    uint8_t          touch_strenght3;
+    uint8_t          touch_strenght2;
     iqs5xx_gesture_t gesture;
 } iqs5xx_data_t;
 

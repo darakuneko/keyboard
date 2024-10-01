@@ -254,7 +254,7 @@ void matrix_scan_user(void) {
   }
 }
 
-const uint16_t PROGMEM encoder_map[][NUM_ENCODERS][2] = {
+const uint16_t PROGMEM encoder_map[][NUM_ENCODERS][NUM_DIRECTIONS] = {
     [0] = { ENCODER_CCW_CW(C(KC_PMNS), C(KC_PPLS)) },
     [1] = { ENCODER_CCW_CW(C(KC_PMNS), C(KC_PPLS)) },
     [2] = { ENCODER_CCW_CW(C(KC_PMNS), C(KC_PPLS)) },
