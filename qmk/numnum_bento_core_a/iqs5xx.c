@@ -126,10 +126,22 @@ void set_tap(iqs5xx_data_t* const data, report_mouse_t* const rep_mouse) {
     }   
 }
 
-void set_gesture(iqs5xx_data_t* const data, report_mouse_t* const rep_mouse) {
+int32_t move_limit_range(int32_t value, int32_t min, int32_t max) {
+    if (value > max) return max;
+    if (value < min) return min;
+    return value;
+}
 
+void set_gesture(iqs5xx_data_t* const data, report_mouse_t* const rep_mouse) {
     uint32_t dx = ((data->relative_xy.bytes[1] - data->relative_xy.bytes[0]) * default_speed) * accel_speed;
     uint32_t dy = ((data->relative_xy.bytes[3] - data->relative_xy.bytes[2]) * default_speed) * accel_speed;
+
+    dx = abs(dx) < MIN_MOVE_THRESHOLD ? 0 : dx;
+    dy = abs(dy) < MIN_MOVE_THRESHOLD ? 0 : dy;
+
+    dx = move_limit_range(dx, -MAX_SPEED, MAX_SPEED);
+    dy = move_limit_range(dy, -MAX_SPEED, MAX_SPEED);
+
     if (data->finger_cnt == 1) {
         rep_mouse->x = dx;
         rep_mouse->y = dy;
@@ -190,8 +202,6 @@ void set_gesture(iqs5xx_data_t* const data, report_mouse_t* const rep_mouse) {
         if(timer_elapsed32(short_scroll_term) < SHORT_SCROLL_TERM){
             int base_scroll = 6;
             rep_mouse->v = base_scroll * accel_step * scrolling_direction;
-                             uprintf("end");
-
         }
         short_scroll_term = timer_read32();
         scroll_start = false;
