@@ -133,8 +133,8 @@ int32_t move_limit_range(int32_t value, int32_t min, int32_t max) {
 }
 
 void set_gesture(iqs5xx_data_t* const data, report_mouse_t* const rep_mouse) {
-    uint32_t dx = ((data->relative_xy.bytes[1] - data->relative_xy.bytes[0]) * default_speed) * accel_speed;
-    uint32_t dy = ((data->relative_xy.bytes[3] - data->relative_xy.bytes[2]) * default_speed) * accel_speed;
+    int32_t dx = ((data->relative_xy.bytes[1] - data->relative_xy.bytes[0]) * default_speed) * accel_speed;
+    int32_t dy = ((data->relative_xy.bytes[3] - data->relative_xy.bytes[2]) * default_speed) * accel_speed;
 
     dx = abs(dx) < MIN_MOVE_THRESHOLD ? 0 : dx;
     dy = abs(dy) < MIN_MOVE_THRESHOLD ? 0 : dy;
