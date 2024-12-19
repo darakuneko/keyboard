@@ -199,10 +199,20 @@ void set_gesture(iqs5xx_data_t* const data, report_mouse_t* const rep_mouse) {
 
     if(can_short_scroll && scroll_end){
         if(timer_elapsed32(short_scroll_term) < SHORT_SCROLL_TERM){
-            int base_scroll = 6;
-            rep_mouse->v = base_scroll * accel_step * scrolling_direction;
-                             uprintf("end");
+            int base_scroll = 3;
+            float current_scroll = base_scroll + scroll_step;
+            float decay_step = 0.5;
+            while (current_scroll > 0) {
+                rep_mouse->v = current_scroll * accel_step * scrolling_direction;
+                pointing_device_set_report(*rep_mouse);
+                pointing_device_send();
 
+                current_scroll -= decay_step;
+                if (current_scroll < 0) {
+                    current_scroll = 0;
+                }
+                wait_ms(10);
+            }
         }
         short_scroll_term = timer_read32();
         scroll_start = false;
