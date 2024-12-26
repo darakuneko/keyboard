@@ -1,0 +1,41 @@
+name: Sync QMK Files
+
+on:
+  push:
+    branches:
+      - main
+      
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Source Repository
+        uses: actions/checkout@v3
+        with:
+          path: keyboard
+
+      - name: Checkout Destination Repository
+        uses: actions/checkout@v3
+        with:
+          repository: darakuneko/qmk_firmware
+          path: qmk_firmware
+          token: ${{ secrets.ACTIONS_TOKEN }}
+
+      - name: Create or Switch to Sync Branch
+        run: |
+          cd qmk_firmware
+          git checkout -B sync-qmk-files
+
+      - name: Copy Files
+        run: |
+          cp -r keyboard/qmk/* qmk_firmware/users/
+
+      - name: Commit and Push Changes
+        run: |
+          cd qmk_firmware
+          git config user.name "GitHub Action"
+          git config user.email "action@github.com"
+          git add .
+          git commit -m "Sync files from keyboard/qmk"
+          git push --set-upstream origin sync-qmk-files
