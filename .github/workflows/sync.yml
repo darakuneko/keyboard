@@ -33,7 +33,7 @@ jobs:
       - name: Copy Files to qmk_firmware
         run: |
           rm -rf qmk_firmware/users/*
-          cp -r keyboard/qmk/* vial-qmk/users/
+          cp -r keyboard/qmk/* qmk_firmware/users/
           rm -rf qmk_firmware/users/*.zip
           
       - name: Commit and Push Changes to qmk_firmware
