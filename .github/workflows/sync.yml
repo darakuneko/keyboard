@@ -1,4 +1,4 @@
-name: Sync QMK Files
+name: Sync Firmware Files
 
 on:
   push:
