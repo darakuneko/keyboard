@@ -1,20 +1,10 @@
-# memo
+## About Modifications
+This repository contains custom modifications for the keyboard firmware.
 
-## QMK fork merge with tags from origin
+The modifications are available in the `qmk_firmware - feature/keyboard-firmware` branch.
 
-mkdir ~/Downloads/qmk
+Please check out this branch to use the modified version:
 
-cd ~/Downloads/qmk
-
-git clone https://github.com/darakuneko/qmk_firmware.git
-
-cd qmk_firmware
-
-git remote add upstream https://github.com/qmk/qmk_firmware.git
-
-git fetch upstream
-
-git merge upstream/master
-
-git push origin --tags
-
+```bash
+git clone -b feature/keyboard-firmware https://github.com/darakuneko/qmk_firmware.git
+    
