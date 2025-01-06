@@ -46,14 +46,11 @@ jobs:
 
       - name: Resolve Merge Conflicts in qmk_firmware (Prefer Remote Changes)
         run: |
-            cd qmk_firmware
-            git diff --name-only --diff-filter=U | while read -r file; do
-            echo "Resolving conflict for $file"
-            git checkout --theirs "$file" || true
-            git add "$file" || true
-            done
-            git commit -m "Resolve binary file conflicts by preferring remote changes" || true
-    
+          cd qmk_firmware
+          git merge --strategy-option=theirs || true
+          git add .
+          git commit -m "Resolve conflicts by preferring remote changes" || true
+
       # Checkout Destination Repository (vial-qmk)
       - name: Checkout Destination Repository (vial-qmk)
         uses: actions/checkout@v3
@@ -83,12 +80,8 @@ jobs:
           git push origin feature/keyboard-firmware
 
       - name: Resolve Merge Conflicts in vial-qmk (Prefer Remote Changes)
-      run: |
-        cd vial-qmk
-        git diff --name-only --diff-filter=U | while read -r file; do
-          echo "Resolving conflict for $file"
-          git checkout --theirs "$file" || true
-          git add "$file" || true
-        done
-        git commit -m "Resolve binary file conflicts by preferring remote changes" || true
-    
+        run: |
+          cd vial-qmk
+          git merge --strategy-option=theirs || true
+          git add .
+          git commit -m "Resolve conflicts by preferring remote changes" || true
