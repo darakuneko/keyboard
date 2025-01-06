@@ -1,4 +1,4 @@
-name: Sync QMK Files
+name: Sync Firmware Files
 
 on:
   push:
@@ -10,30 +10,59 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # 1. Checkout Source Repository
       - name: Checkout Source Repository
         uses: actions/checkout@v3
         with:
           path: keyboard
 
-      - name: Checkout Destination Repository
+      # 2. Checkout and Sync to darakuneko/qmk_firmware
+      - name: Checkout Destination Repository (qmk_firmware)
         uses: actions/checkout@v3
         with:
           repository: darakuneko/qmk_firmware
           path: qmk_firmware
           token: ${{ secrets.ACTIONS_TOKEN }}
 
-      - name: Create or Switch to Sync Branch
+      - name: Create or Switch to Sync Branch (qmk_firmware)
         run: |
           cd qmk_firmware
           git checkout -B feature/keyboard-firmware
 
-      - name: Copy Files
+      - name: Copy Files to qmk_firmware
         run: |
           cp -r keyboard/qmk/* qmk_firmware/users/
 
-      - name: Commit and Push Changes
+      - name: Commit and Push Changes to qmk_firmware
         run: |
           cd qmk_firmware
+          git config user.name "GitHub Action"
+          git config user.email "action@github.com"
+          git add .
+          git commit -m "Sync files from keyboard/qmk" || echo "No changes to commit"
+          git pull --rebase origin feature/keyboard-firmware
+          git push --set-upstream origin feature/keyboard-firmware
+
+      # 3. Checkout and Sync to darakuneko/vial-qmk
+      - name: Checkout Destination Repository (vial-qmk)
+        uses: actions/checkout@v3
+        with:
+          repository: darakuneko/vial-qmk
+          path: vial-qmk
+          token: ${{ secrets.ACTIONS_TOKEN }}
+
+      - name: Create or Switch to Sync Branch (vial-qmk)
+        run: |
+          cd vial-qmk
+          git checkout -B feature/keyboard-firmware
+
+      - name: Copy Files to vial-qmk
+        run: |
+          cp -r keyboard/qmk/* vial-qmk/users/
+
+      - name: Commit and Push Changes to vial-qmk
+        run: |
+          cd vial-qmk
           git config user.name "GitHub Action"
           git config user.email "action@github.com"
           git add .
