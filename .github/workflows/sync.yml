@@ -44,6 +44,13 @@ jobs:
           git pull --rebase origin feature/keyboard-firmware
           git push origin feature/keyboard-firmware
 
+      - name: Resolve Merge Conflicts in qmk_firmware (Prefer Remote Changes)
+        run: |
+          cd qmk_firmware
+          git merge --strategy-option=theirs || true
+          git add .
+          git commit -m "Resolve conflicts by preferring remote changes" || true
+
       # Checkout Destination Repository (vial-qmk)
       - name: Checkout Destination Repository (vial-qmk)
         uses: actions/checkout@v3
@@ -71,3 +78,10 @@ jobs:
           git commit -m "Sync files from keyboard/qmk" || echo "No changes to commit"
           git pull --rebase origin feature/keyboard-firmware
           git push origin feature/keyboard-firmware
+
+      - name: Resolve Merge Conflicts in vial-qmk (Prefer Remote Changes)
+        run: |
+          cd vial-qmk
+          git merge --strategy-option=theirs || true
+          git add .
+          git commit -m "Resolve conflicts by preferring remote changes" || true
