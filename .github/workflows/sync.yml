@@ -32,9 +32,7 @@ jobs:
 
       - name: Copy Files to qmk_firmware
         run: |
-          rm -rf qmk_firmware/users/*
-          cp -r keyboard/qmk/* qmk_firmware/users/
-          rm -rf qmk_firmware/users/*.zip
+          rsync -av --exclude='*.zip' --update keyboard/qmk/ qmk_firmware/users/
           
       - name: Commit and Push Changes to qmk_firmware
         run: |
@@ -62,9 +60,7 @@ jobs:
 
       - name: Copy Files to vial-qmk
         run: |
-          rm -rf vial-qmk/users/*
-          cp -r keyboard/qmk/* vial-qmk/users/
-          rm -rf vial-qmk/users/*.zip
+          rsync -av --exclude='*.zip' --update keyboard/qmk/ vial-qmk/users/
 
       - name: Commit and Push Changes to vial-qmk
         run: |
