@@ -39,7 +39,6 @@ jobs:
           cd qmk_firmware
           git config user.name "GitHub Action"
           git config user.email "action@github.com"
-          git rebase --abort
           git add .
           git commit -m "Sync files from keyboard/qmk" || echo "No changes to commit"
           git pull --rebase origin feature/keyboard-firmware
