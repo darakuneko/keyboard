@@ -25,7 +25,7 @@ jobs:
       - name: Create or Switch to Sync Branch
         run: |
           cd qmk_firmware
-          git checkout -B sync-qmk-files
+          git checkout -B feature/keyboard-firmware
 
       - name: Copy Files
         run: |
@@ -38,5 +38,5 @@ jobs:
           git config user.email "action@github.com"
           git add .
           git commit -m "Sync files from keyboard/qmk" || echo "No changes to commit"
-          git pull --rebase origin sync-qmk-files
-          git push --set-upstream origin sync-qmk-files
+          git pull --rebase origin feature/keyboard-firmware
+          git push --set-upstream origin feature/keyboard-firmware
