@@ -1,4 +1,4 @@
-name: Sync Firmware Files
+name: Sync QMK Files
 
 on:
   push:
@@ -10,13 +10,13 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1. Checkout Source Repository
+      # Checkout Source Repository
       - name: Checkout Source Repository
         uses: actions/checkout@v3
         with:
           path: keyboard
 
-      # 2. Checkout and Sync to darakuneko/qmk_firmware
+      # Checkout Destination Repository (qmk_firmware)
       - name: Checkout Destination Repository (qmk_firmware)
         uses: actions/checkout@v3
         with:
@@ -28,6 +28,7 @@ jobs:
         run: |
           cd qmk_firmware
           git checkout -B feature/keyboard-firmware
+          git push origin feature/keyboard-firmware || echo "Branch already exists"
 
       - name: Copy Files to qmk_firmware
         run: |
@@ -41,9 +42,9 @@ jobs:
           git add .
           git commit -m "Sync files from keyboard/qmk" || echo "No changes to commit"
           git pull --rebase origin feature/keyboard-firmware
-          git push --set-upstream origin feature/keyboard-firmware
+          git push origin feature/keyboard-firmware
 
-      # 3. Checkout and Sync to darakuneko/vial-qmk
+      # Checkout Destination Repository (vial-qmk)
       - name: Checkout Destination Repository (vial-qmk)
         uses: actions/checkout@v3
         with:
@@ -55,6 +56,7 @@ jobs:
         run: |
           cd vial-qmk
           git checkout -B feature/keyboard-firmware
+          git push origin feature/keyboard-firmware || echo "Branch already exists"
 
       - name: Copy Files to vial-qmk
         run: |
@@ -68,4 +70,4 @@ jobs:
           git add .
           git commit -m "Sync files from keyboard/qmk" || echo "No changes to commit"
           git pull --rebase origin feature/keyboard-firmware
-          git push --set-upstream origin feature/keyboard-firmware
+          git push origin feature/keyboard-firmware
