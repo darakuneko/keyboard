@@ -65,5 +65,9 @@ jobs:
       - name: Commit and Push Changes to vial-qmk
         run: |
           cd vial-qmk
-          git checkout -B feature/keyboard-firmware
-          git push origin feature/keyboard-firmware || echo "Branch already exists"
+          git config user.name "GitHub Action"
+          git config user.email "action@github.com"
+          git add .
+          git commit -m "Sync files from keyboard/qmk" || echo "No changes to commit"
+          git push --force origin feature/keyboard-firmware
+
