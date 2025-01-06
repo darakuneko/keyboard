@@ -33,8 +33,9 @@ jobs:
       - name: Copy Files to qmk_firmware
         run: |
           rm -rf qmk_firmware/users/*
-          find keyboard/qmk -type f ! -name '*.zip' -exec cp --parents {} qmk_firmware/users/ \;
-
+          cp -r keyboard/qmk/* vial-qmk/users/
+          rm -rf qmk_firmware/users/*.zip
+          
       - name: Commit and Push Changes to qmk_firmware
         run: |
           cd qmk_firmware
@@ -44,16 +45,6 @@ jobs:
           git commit -m "Sync files from keyboard/qmk" || echo "No changes to commit"
           git pull --rebase origin feature/keyboard-firmware
           git push origin feature/keyboard-firmware
-
-      - name: Resolve Merge Conflicts in qmk_firmware (Prefer Remote Changes)
-        run: |
-          cd qmk_firmware
-          git diff --name-only --diff-filter=U | while read -r file; do
-          echo "Resolving conflict for $file"
-          git checkout --theirs "$file" || true
-          git add "$file" || true
-          done
-          git commit -m "Resolve binary file conflicts by preferring remote changes" || true
 
       # Checkout Destination Repository (vial-qmk)
       - name: Checkout Destination Repository (vial-qmk)
@@ -72,7 +63,8 @@ jobs:
       - name: Copy Files to vial-qmk
         run: |
           rm -rf qmk_firmware/users/*
-          find keyboard/qmk -type f ! -name '*.zip' -exec cp --parents {} qmk_firmware/users/ \;
+          cp -r keyboard/qmk/* vial-qmk/users/
+          rm -rf qmk_firmware/users/*.zip
 
       - name: Commit and Push Changes to vial-qmk
         run: |
@@ -83,13 +75,3 @@ jobs:
           git commit -m "Sync files from keyboard/qmk" || echo "No changes to commit"
           git pull --rebase origin feature/keyboard-firmware
           git push origin feature/keyboard-firmware
-
-      - name: Resolve Merge Conflicts in vial-qmk (Prefer Remote Changes)
-        run: |
-          cd vial-qmk
-          git diff --name-only --diff-filter=U | while read -r file; do
-          echo "Resolving conflict for $file"
-          git checkout --theirs "$file" || true
-          git add "$file" || true
-          done
-          git commit -m "Resolve binary file conflicts by preferring remote changes" || true
