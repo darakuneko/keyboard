@@ -62,9 +62,9 @@ jobs:
 
       - name: Copy Files to vial-qmk
         run: |
-          rm -rf qmk_firmware/users/*
+          rm -rf vial-qmk/users/*
           cp -r keyboard/qmk/* vial-qmk/users/
-          rm -rf qmk_firmware/users/*.zip
+          rm -rf vial-qmk/users/*.zip
 
       - name: Commit and Push Changes to vial-qmk
         run: |
