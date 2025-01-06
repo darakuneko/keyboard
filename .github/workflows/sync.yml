@@ -32,7 +32,7 @@ jobs:
 
       - name: Copy Files to qmk_firmware
         run: |
-          cp -r keyboard/qmk/* qmk_firmware/users/
+          find keyboard/qmk -type f ! -name '*.zip' -exec cp --parents {} qmk_firmware/users/ \;
 
       - name: Commit and Push Changes to qmk_firmware
         run: |
@@ -70,7 +70,7 @@ jobs:
 
       - name: Copy Files to vial-qmk
         run: |
-          cp -r keyboard/qmk/* vial-qmk/users/
+          find keyboard/qmk -type f ! -name '*.zip' -exec cp --parents {} qmk_firmware/users/ \;
 
       - name: Commit and Push Changes to vial-qmk
         run: |
