@@ -42,7 +42,7 @@ jobs:
           git add .
           git commit -m "Sync files from keyboard/qmk" || echo "No changes to commit"
           git pull --rebase origin feature/keyboard-firmware
-          git push origin feature/keyboard-firmware
+          git push --force origin feature/keyboard-firmware
 
       # Checkout Destination Repository (vial-qmk)
       - name: Checkout Destination Repository (vial-qmk)
@@ -68,6 +68,6 @@ jobs:
           git config user.name "GitHub Action"
           git config user.email "action@github.com"
           git add .
-          git commit -m "Sync files from keyboard/qmk" || echo "No changes to commit"
+          git commit -m "Sync files from keyboard/vial" || echo "No changes to commit"
           git pull --rebase origin feature/keyboard-firmware
-          git push origin feature/keyboard-firmware
+          git push --force origin feature/keyboard-firmware
