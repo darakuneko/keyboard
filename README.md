@@ -1,20 +1,16 @@
-# memo
+## About Modifications
+This repository contains custom modifications for the keyboard firmware.
 
-## QMK fork merge with tags from origin
+The modifications are available in the `qmk - feature/keyboard-firmware` and `vial - feature/keyboard-firmware` branch.
 
-mkdir ~/Downloads/qmk
+Please check out this branch to use the modified version:
 
-cd ~/Downloads/qmk
+```bash
+git clone -b feature/keyboard-firmware https://github.com/darakuneko/qmk_firmware.git
 
-git clone https://github.com/darakuneko/qmk_firmware.git
+git clone -b feature/keyboard-firmware https://github.com/darakuneko/vial-qmk.git
+```
 
-cd qmk_firmware
-
-git remote add upstream https://github.com/qmk/qmk_firmware.git
-
-git fetch upstream
-
-git merge upstream/master
-
-git push origin --tags
-
+## Licensing
+- This repository is generally licensed under the MIT License. See [LICENSE](./LICENSE)
+- The `/qmk` directory contains code derived from QMK Firmware and is licensed under GPL v2. See [qmk/LICENSE](./qmk/LICENSE)
