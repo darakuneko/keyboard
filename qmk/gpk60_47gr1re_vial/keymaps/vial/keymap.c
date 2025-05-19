@@ -42,7 +42,6 @@ const uint16_t PROGMEM encoder_map[][NUM_ENCODERS][2] = {
     [3] =  { ENCODER_CCW_CW(RGB_RMOD,   RGB_MOD) },
 };
 
-
 bool rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) { 
   int curr_layer = get_highest_layer(layer_state|default_layer_state);  
   HSV hsv = {0, 255, rgb_matrix_get_val()};
