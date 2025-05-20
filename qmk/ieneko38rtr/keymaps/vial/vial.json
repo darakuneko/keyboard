@@ -52,6 +52,16 @@
       "shortName": "Scroll\nAccell 8",
       "title": "Scroll Step8",
       "name": "U_S_ACL_8x"
+    },
+    {
+      "shortName": "Pomodoro\nToggle",
+      "title": "Pomodoro Toggle",
+      "name": "U_POMODR_TGL"
+    },
+    {
+      "shortName": "EEPROM\nClear",
+      "title": "EEPROM Clear",
+      "name": "U_EEP_CLR"
     }
   ],
   "layouts": {

@@ -13,6 +13,9 @@
 		"rgb_matrix": true,
 		"encoder_map": true
 	},
+	"tapping": {
+    	"term": 150
+  	},
 	"haptic": {
 		"driver": "drv2605l"
 	},
@@ -30,7 +33,7 @@
 		"val_steps": 4,
 		"speed_steps": 4,
 		"default": {
-			"animation": "cycle_out_in"
+			"animation": "solid_color"
 		},
 		"animations": {
 			"alphas_mods": true,
@@ -135,7 +138,7 @@
 		]
 	},
 	"dynamic_keymap": {
-		"layer_count": 19
+		"layer_count": 5
 	},
 	"matrix_pins": {
 		"rows": [

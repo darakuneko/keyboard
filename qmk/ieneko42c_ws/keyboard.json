@@ -12,6 +12,9 @@
 		"haptic": true,
 		"encoder_map": true
 	},
+	"tapping": {
+    	"term": 150
+  	},
 	"ws2812": {
 		"driver": "vendor",
 		"pin": "GP0"
@@ -29,7 +32,7 @@
 		"val_steps": 4,
 		"speed_steps": 4,
 		"default": {
-			"animation": "cycle_out_in"
+			"animation": "solid_color"
 		},
 		"animations": {
 			"alphas_mods": true,
