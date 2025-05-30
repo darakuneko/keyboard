@@ -29,7 +29,7 @@
 #define SCROLL_DIRECTION_THRESHOLD 128
 #define SCROLL_INTERVAL_MS 10
 #define SHORT_SCROLL_REPEAT 3
-#define TAP_EDGE_THRESHOLD 254
+#define TAP_EDGE_THRESHOLD 128
 
 typedef struct {
     union {

@@ -142,7 +142,7 @@ static void handle_tap_area(iqs5xx_data_t* const data) {
     is_tap_left_tap = true;
     is_tap_right_tap = false;
   } else if (data->absolute_xy.bytes[0] == 3 && data->absolute_xy.bytes[2] == 0 &&
-    data->absolute_xy.bytes[1] < TAP_EDGE_THRESHOLD && data->absolute_xy.bytes[3] < TAP_EDGE_THRESHOLD)  {
+    data->absolute_xy.bytes[1] > TAP_EDGE_THRESHOLD && data->absolute_xy.bytes[3] < TAP_EDGE_THRESHOLD)  {
     is_tap_center_tap = false;
     is_tap_left_tap = false;
     is_tap_right_tap = true;
