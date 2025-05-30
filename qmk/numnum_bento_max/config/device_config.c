@@ -34,7 +34,7 @@ void send_device_config(void) {
   data[2] = id_device_get_value;
   data[3] = 1;  // version
   data[4] = device_config.init;  // init flag
-  const char device_name[] = "macropad_tp_btn";
+  const char device_name[] = "macropad_tp_btns";
   memcpy(&data[5], device_name, sizeof(device_name));
   raw_hid_send(data, sizeof(data));
 }
