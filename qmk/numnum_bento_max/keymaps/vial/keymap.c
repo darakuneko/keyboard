@@ -104,18 +104,18 @@ enum {
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   [0] = LAYOUT(
     // switch
-    QK_BOOT,     U_EEP_CLR,       KC_3,       KC_4,     KC_5,
+    KC_1,     KC_2,       KC_3,       KC_4,     KC_5,
     KC_6,     KC_7,       KC_8,       KC_9,     KC_0,
 
     //funkeyswitch
-    KC_RGHT, KC_UP, KC_LEFT, KC_DOWN, KC_ENT,
+    KC_RGHT, KC_UP, KC_LEFT, KC_DOWN, KC_MPLY,
 
     // swtch
     U_POMODR_TGL, U_TRACKPAD_PRESS, U_Layer_UP, U_Layer_DOWN,
 
     // 1finger
     KC_BTN1, U_M_ACL_UP, U_S_ACL_STEP, 
-    U_DRAGDROP, U_M_ACL_DOWN, U_Layer_UP,
+    U_DRAGDROP, U_M_ACL_DOWN, U_S_ACL_2x,
 
     // 2finger
     KC_BTN2,
@@ -757,17 +757,17 @@ void matrix_scan_user() {
 
 const uint16_t PROGMEM encoder_map[][NUM_ENCODERS][2] = {
     [0] = { ENCODER_CCW_CW(KC_VOLD, KC_VOLU) },
-    [1] = { ENCODER_CCW_CW(KC_VOLD, KC_VOLU) },
-    [2] = { ENCODER_CCW_CW(KC_VOLD, KC_VOLU) },
-    [3] = { ENCODER_CCW_CW(KC_VOLD, KC_VOLU) },
-    [4] = { ENCODER_CCW_CW(KC_VOLD, KC_VOLU) },
-    [5] = { ENCODER_CCW_CW(KC_VOLD, KC_VOLU) },
-    [6] = { ENCODER_CCW_CW(KC_VOLD, KC_VOLU) },
-    [7] = { ENCODER_CCW_CW(KC_VOLD, KC_VOLU) },
-    [8] = { ENCODER_CCW_CW(KC_VOLD, KC_VOLU) },
-    [9] = { ENCODER_CCW_CW(KC_VOLD, KC_VOLU) },
-    [10] = { ENCODER_CCW_CW(KC_VOLD, KC_VOLU) },
-    [11] = { ENCODER_CCW_CW(KC_VOLD, KC_VOLU) }
+    [1] = { ENCODER_CCW_CW(KC_TRNS, KC_TRNS) },
+    [2] = { ENCODER_CCW_CW(KC_TRNS, KC_TRNS) },
+    [3] = { ENCODER_CCW_CW(KC_TRNS, KC_TRNS) },
+    [4] = { ENCODER_CCW_CW(KC_TRNS, KC_TRNS) },
+    [5] = { ENCODER_CCW_CW(KC_TRNS, KC_TRNS) },
+    [6] = { ENCODER_CCW_CW(KC_TRNS, KC_TRNS) },
+    [7] = { ENCODER_CCW_CW(KC_TRNS, KC_TRNS) },
+    [8] = { ENCODER_CCW_CW(KC_TRNS, KC_TRNS) },
+    [9] = { ENCODER_CCW_CW(KC_TRNS, KC_TRNS) },
+    [10] = { ENCODER_CCW_CW(KC_TRNS, KC_TRNS) },
+    [11] = { ENCODER_CCW_CW(KC_TRNS, KC_TRNS) }
 };
 
 bool rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) { 
