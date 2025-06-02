@@ -270,7 +270,7 @@ static void calculate_cursor_movement(iqs5xx_data_t* const data, int32_t* dx,
 }
 
 static bool is_gesture_finger_swipe(const iqs5xx_data_t* data) {
-    return (timer_elapsed32(timer.swipe_time) > swipe_term && data->finger_cnt == 2 && data->ges_evnet1 == 2);
+    return (timer_elapsed32(timer.swipe_time) > swipe_term && data->finger_cnt > 1 && data->ges_evnet1 == 2);
 }
 
 static void handle_finger_swipe(iqs5xx_data_t* const data) {
@@ -280,9 +280,9 @@ static void handle_finger_swipe(iqs5xx_data_t* const data) {
     data->gesture = GESTURE_SWIPE_L;
   } else if(data->relative_xy.bytes[1] > 0){
     data->gesture = GESTURE_SWIPE_R;
-  } else if(data->finger_cnt > 2 && data->relative_xy.bytes[2] > 1 && data->relative_xy.bytes[3] > 1 ){
+  } else if(data->finger_cnt > 2 && data->relative_xy.bytes[2] > 0 && data->relative_xy.bytes[3] > 0 ){
     data->gesture = GESTURE_SWIPE_D;
-  } else if(data->finger_cnt > 2 && data->relative_xy.bytes[3] > 1 ){
+  } else if(data->finger_cnt > 2 && data->relative_xy.bytes[3] > 0 ){
     data->gesture = GESTURE_SWIPE_U;
   }
   timer.swipe_time = timer_read32();
