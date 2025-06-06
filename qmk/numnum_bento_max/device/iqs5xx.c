@@ -70,7 +70,7 @@ void iqs_app_writeRegR(uint16_t regaddr, uint8_t* data, uint16_t len) {
 }
 
 void init_iqs5xx(void) {
-  uint8_t ati_target[] = {0, 150};
+  uint8_t ati_target[] = {0, 200};
   iqs_app_writeRegR(IQS5xx_ATI_TARGET, ati_target, 2);
   
   uint8_t distance[2];
