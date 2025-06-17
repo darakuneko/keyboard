@@ -102,7 +102,7 @@ void set_tap(iqs5xx_data_t* const data, report_mouse_t* const rep_mouse) {
         tapped3_cnt = tapped3_cnt + 1;
     } 
 
-    if (data->ges_evnet0 == 1) {  
+    if (data->ges_evnet0 == 1 && data->absolute_xy.bytes[2] != 3) {          
         if(data->absolute_xy.bytes[0] == 0 && data->absolute_xy.bytes[1] < 128){
             data->gesture = TAP_FINGER_ONE_LEFT;
         } else if(data->absolute_xy.bytes[0] == 3 && data->absolute_xy.bytes[1] > 128){
