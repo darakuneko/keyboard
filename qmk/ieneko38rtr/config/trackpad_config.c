@@ -8,32 +8,12 @@
 // Configuration structure
 trackpad_config_t trackpad_config;
 
-// Configuration variables
-uint32_t scroll_term;
-uint32_t drag_term;
-uint32_t tap_term;
-uint32_t swipe_term;
-uint32_t pinch_term;
-uint32_t gesture_term;
-uint32_t short_scroll_term;
-bool drag_strength_mode;
-uint32_t drag_strength;
-double default_speed;
-bool can_hf_for_layer;
-int hf_waveform_number;
-bool can_drag;
-bool can_reverse_scrolling_direction;
-bool can_trackpad_layer;
-int scroll_step;
-bool can_short_scroll;
-
 // State variables
 int trackpad_layer;
 bool use_trackpad_layer;
 bool use_drag;
 float accel_speed;
 int accel_step;
-bool init_trackpad_config_flag = true;
 
 void init_trackpad_config(trackpad_config_t *trackpad_config) {
   trackpad_config->hf_waveform_number = 48;   
@@ -56,47 +36,33 @@ void init_trackpad_config(trackpad_config_t *trackpad_config) {
   trackpad_config->zoom_distance = 400;
 }
 
-void update_trackpad_config(trackpad_config_t trackpad_config) {
-  if(!init_trackpad_config_flag && hf_waveform_number != trackpad_config.hf_waveform_number){
-     drv2605l_pulse(trackpad_config.hf_waveform_number);
+void update_trackpad_config(trackpad_config_t temp_confing, bool should_save) {
+  if(should_save) {
+    if(trackpad_config.hf_waveform_number != temp_confing.hf_waveform_number){
+      drv2605l_pulse(temp_confing.hf_waveform_number);
+    }
+    schedule_device_config_save(device_config);
   }
-  init_trackpad_config_flag = false; // Set flag to false after first initialization
-
-  set_iqs5xx_zoom_distance(trackpad_config.zoom_distance);
-  
-  hf_waveform_number = trackpad_config.hf_waveform_number;
-  can_hf_for_layer = trackpad_config.can_hf_for_layer;
-  can_drag = trackpad_config.can_drag;  
-  can_reverse_scrolling_direction = trackpad_config.can_reverse_scrolling_direction;
-  drag_term = trackpad_config.drag_term;
-  scroll_term = trackpad_config.scroll_term;
-  tap_term = trackpad_config.tap_term;
-  swipe_term = trackpad_config.swipe_term;
-  pinch_term = trackpad_config.pinch_term;
-  gesture_term = trackpad_config.gesture_term;
-  short_scroll_term = trackpad_config.short_scroll_term;
-  drag_strength_mode = trackpad_config.drag_strength_mode;
-  drag_strength = trackpad_config.drag_strength;
-  default_speed = (double)trackpad_config.default_speed / 10.0;
-  scroll_step = trackpad_config.scroll_step + 1;
-  can_short_scroll = trackpad_config.can_short_scroll;
-  
-  device_config.trackpad_config = trackpad_config;
-  save_device_config(device_config);
+  set_iqs5xx_zoom_distance(temp_confing.zoom_distance);
+  //global
+  device_config.trackpad_config = temp_confing;
+  //internal iqs5xx
+  trackpad_config = temp_confing;
 }
 
-void set_trackpad_config(trackpad_config_t trackpad_config) {
-  update_trackpad_config(trackpad_config);
+void set_trackpad_config(trackpad_config_t temp_config) {
+  update_trackpad_config(temp_config, false);
+  set_iqs5xx_zoom_distance(temp_config.zoom_distance);
   accel_speed = 1;
   accel_step = 1;
-  trackpad_layer = 4;
+  trackpad_layer = 3;
   use_trackpad_layer = false;
   use_drag = false;
 }
 
 void send_trackpad_config(const trackpad_config_t *config) {
   uint8_t data[32] = {0};
-  
+
   data[0] = id_gpk_rc_prefix;
   data[1] = id_gpk_rc_get_value;
   data[2] = id_trackpad_get_value;
@@ -161,45 +127,46 @@ unsigned int joinDefaultSpeed(uint8_t a, uint8_t b) {
 }
 
 void receive_trackpad_config(uint8_t *data) {
-  trackpad_config.hf_waveform_number = data[0];
-  trackpad_config.can_hf_for_layer = (data[1] & 0b10000000) >> 7;
-  trackpad_config.can_drag = (data[1] & 0b01000000) >> 6;
-  trackpad_config.scroll_term = joinScrollTerm(data[1], data[2]);
-  trackpad_config.drag_term = joinDragTerm(data[2], data[3]);
-  trackpad_config.can_trackpad_layer = (data[3] & 0b00000010) >> 1;
-  trackpad_config.can_reverse_scrolling_direction = data[3] & 0b00000001;
-  trackpad_config.drag_strength_mode = (data[4] & 0b10000000) >> 7;
-  trackpad_config.drag_strength = (data[4] & 0b01111100) >> 2;
-  trackpad_config.default_speed = joinDefaultSpeed(data[4], data[5]);
-  trackpad_config.scroll_step = data[5] & 0b00001111;
-  trackpad_config.can_short_scroll = (data[6] & 0b10000000) >> 7;
-  trackpad_config.tap_term = (data[7] << 8) | data[8];           
-  trackpad_config.swipe_term = (data[9] << 8) | data[10];        
-  trackpad_config.pinch_term = (data[11] << 8) | data[12];       
-  trackpad_config.gesture_term = (data[13] << 8) | data[14];     
-  trackpad_config.short_scroll_term = (data[15] << 8) | data[16];
-  trackpad_config.zoom_distance = (data[17] << 8) | data[18];
+  trackpad_config_t temp_config;
 
-  uprintf("trackpad_config.hf_waveform_number: %d\n", trackpad_config.hf_waveform_number);
-  uprintf("trackpad_config.can_hf_for_layer: %d\n", trackpad_config.can_hf_for_layer);
-  uprintf("trackpad_config.can_drag: %d\n", trackpad_config.can_drag); 
-  uprintf("trackpad_config.scroll_term: %d\n", trackpad_config.scroll_term);
-  uprintf("trackpad_config.drag_term: %d\n", trackpad_config.drag_term);
-  uprintf("trackpad_config.can_trackpad_layer: %d\n", trackpad_config.can_trackpad_layer);
-  uprintf("trackpad_config.can_reverse_scrolling_direction: %d\n", trackpad_config.can_reverse_scrolling_direction);
-  uprintf("trackpad_config.drag_strength_mode: %d\n", trackpad_config.drag_strength_mode);
-  uprintf("trackpad_config.drag_strength: %d\n", trackpad_config.drag_strength);
-  uprintf("trackpad_config.default_speed: %d\n", trackpad_config.default_speed);
-  uprintf("trackpad_config.scroll_step: %d\n", trackpad_config.scroll_step);
-  uprintf("trackpad_config.can_short_scroll: %d\n", trackpad_config.can_short_scroll);
-  uprintf("trackpad_config.tap_term: %d\n", trackpad_config.tap_term);
-  uprintf("trackpad_config.swipe_term: %d\n", trackpad_config.swipe_term);
-  uprintf("trackpad_config.pinch_term: %d\n", trackpad_config.pinch_term);
-  uprintf("trackpad_config.gesture_term: %d\n", trackpad_config.gesture_term);
-  uprintf("trackpad_config.short_scroll_term: %d\n", trackpad_config.short_scroll_term);
-  uprintf("trackpad_config.zoom_distance: %d\n", trackpad_config.zoom_distance);
+  temp_config.hf_waveform_number = data[0];
+  temp_config.can_hf_for_layer = (data[1] & 0b10000000) >> 7;
+  temp_config.can_drag = (data[1] & 0b01000000) >> 6;
+  temp_config.scroll_term = joinScrollTerm(data[1], data[2]);
+  temp_config.drag_term = joinDragTerm(data[2], data[3]);
+  temp_config.can_trackpad_layer = (data[3] & 0b00000010) >> 1;
+  temp_config.can_reverse_scrolling_direction = data[3] & 0b00000001;
+  temp_config.drag_strength_mode = (data[4] & 0b10000000) >> 7;
+  temp_config.drag_strength = (data[4] & 0b01111100) >> 2;
+  temp_config.default_speed = joinDefaultSpeed(data[4], data[5]);
+  temp_config.scroll_step = data[5] & 0b00001111;
+  temp_config.can_short_scroll = (data[6] & 0b10000000) >> 7;
+  temp_config.tap_term = (data[7] << 8) | data[8];           
+  temp_config.swipe_term = (data[9] << 8) | data[10];        
+  temp_config.pinch_term = (data[11] << 8) | data[12];       
+  temp_config.gesture_term = (data[13] << 8) | data[14];     
+  temp_config.short_scroll_term = (data[15] << 8) | data[16];
+  temp_config.zoom_distance = (data[17] << 8) | data[18];
+
+  uprintf("trackpad_config.hf_waveform_number: %d\n", temp_config.hf_waveform_number);
+  uprintf("trackpad_config.can_hf_for_layer: %d\n", temp_config.can_hf_for_layer);
+  uprintf("trackpad_config.can_drag: %d\n", temp_config.can_drag); 
+  uprintf("trackpad_config.scroll_term: %d\n", temp_config.scroll_term);
+  uprintf("trackpad_config.drag_term: %d\n", temp_config.drag_term);
+  uprintf("trackpad_config.can_trackpad_layer: %d\n", temp_config.can_trackpad_layer);
+  uprintf("trackpad_config.can_reverse_scrolling_direction: %d\n", temp_config.can_reverse_scrolling_direction);
+  uprintf("trackpad_config.drag_strength_mode: %d\n", temp_config.drag_strength_mode);
+  uprintf("trackpad_config.drag_strength: %d\n", temp_config.drag_strength);
+  uprintf("trackpad_config.default_speed: %d\n", temp_config.default_speed);
+  uprintf("trackpad_config.scroll_step: %d\n", temp_config.scroll_step);
+  uprintf("trackpad_config.can_short_scroll: %d\n", temp_config.can_short_scroll);
+  uprintf("trackpad_config.tap_term: %d\n", temp_config.tap_term);
+  uprintf("trackpad_config.swipe_term: %d\n", temp_config.swipe_term);
+  uprintf("trackpad_config.pinch_term: %d\n", temp_config.pinch_term);
+  uprintf("trackpad_config.gesture_term: %d\n", temp_config.gesture_term);
+  uprintf("trackpad_config.short_scroll_term: %d\n", temp_config.short_scroll_term);
+  uprintf("trackpad_config.zoom_distance: %d\n", temp_config.zoom_distance);
   uprintf("\n\n");          
-
-  device_config.trackpad_config = trackpad_config;
-  update_trackpad_config(trackpad_config);
+  
+  update_trackpad_config(temp_config, true);
 }

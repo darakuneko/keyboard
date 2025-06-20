@@ -7,6 +7,7 @@
 #include "config/trackpad_config.h"
 #include "config/device_config.h"
 #include "config/pomodoro_config.h"
+#include "config/led_config.h"
 #include "timer/pomodoro.h"
 #include <math.h>
 
@@ -271,11 +272,12 @@ void keyboard_post_init_user(void) {
 
   if(!device_config.init) {
     init_device_config(&device_config);
-    drv2605l_pulse(device_config.trackpad_config.hf_waveform_number);
+    drv2605l_pulse(trackpad_config.hf_waveform_number);
   }
 
   set_trackpad_config(device_config.trackpad_config);
-  set_pomodoro_config(device_config.pomodoro_config);  
+  set_pomodoro_config(device_config.pomodoro_config);
+  set_led_config(device_config.led_config);
 }
 
 void send_pointing_device_kb(report_mouse_t rep_mouse){
@@ -350,16 +352,18 @@ void matrix_scan_user() {
   if (timer_active) {
     pomodoro_update();
   }
+  
+  check_and_save_device_config();
 
   int current_layer = get_highest_layer(layer_state|default_layer_state); 
 
-  if(can_hf_for_layer && lasted_layer != current_layer){
-    if(device_config.trackpad_config.can_trackpad_layer &&
+  if(trackpad_config.can_hf_for_layer && lasted_layer != current_layer){
+    if(trackpad_config.can_trackpad_layer &&
        current_layer != trackpad_layer && lasted_layer != trackpad_layer
     ){
-      drv2605l_pulse(device_config.trackpad_config.hf_waveform_number);
-    } else if(!device_config.trackpad_config.can_trackpad_layer) {
-      drv2605l_pulse(device_config.trackpad_config.hf_waveform_number);
+      drv2605l_pulse(trackpad_config.hf_waveform_number);
+    } else if(!trackpad_config.can_trackpad_layer) {
+      drv2605l_pulse(trackpad_config.hf_waveform_number);
     }
     lasted_layer = current_layer;
   }
@@ -377,27 +381,18 @@ const uint16_t PROGMEM encoder_map[][NUM_ENCODERS][NUM_DIRECTIONS] = {
 
 bool rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) { 
     int current_layer = get_highest_layer(layer_state|default_layer_state);  
-    int rgb_matrix_val = rgb_matrix_get_val();
     int rgb_matrix_mode = rgb_matrix_get_mode();
 
-    HSV hsv = {0, 255, rgb_matrix_val};
-    if (current_layer == 1) {
-      hsv.h = 213; //MAGENTA
-    } else if (current_layer == 2)  {
-      hsv.h = 85; //GREEN
-    } else if (current_layer == 3)  {
-      hsv.h = 170; //BLUE
-    } else if (current_layer == 4)  {
-      hsv.h = 11; //CORAL
-      hsv.s = 176;
-    } else if (current_layer == 5)  {
-      hsv.h = 43; //YELLOW
-    } else if (current_layer == 6)  {
-      hsv.h = 255; //RED
+    RGB rgb;
+    if (current_layer < device_config.led_config.layer_count) {
+        rgb.r = device_config.led_config.layer_colors[current_layer].r;
+        rgb.g = device_config.led_config.layer_colors[current_layer].g;
+        rgb.b = device_config.led_config.layer_colors[current_layer].b;
     } else {
-      hsv.h = 128; //CYAN
+        rgb.r = device_config.led_config.layer_colors[0].r;
+        rgb.g = device_config.led_config.layer_colors[0].g;
+        rgb.b = device_config.led_config.layer_colors[0].b;
     }
-    RGB rgb = hsv_to_rgb(hsv);
   for (uint8_t i = led_min; i <= led_max; i++) {
     if(rgb_matrix_mode == 1 && HAS_FLAGS(g_led_config.flags[i], 0x04)) {
       rgb_matrix_set_color(i, 0, 0, 0);
@@ -407,8 +402,11 @@ bool rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
   }
   if(rgb_matrix_mode != 1){ return false; }
 
-  HSV hsv_speed = {255, 255, rgb_matrix_val};
-  RGB rgb_speed = hsv_to_rgb(hsv_speed);
+  RGB rgb_speed = {
+    device_config.led_config.indicator_colors.speed_r,
+    device_config.led_config.indicator_colors.speed_g,
+    device_config.led_config.indicator_colors.speed_b
+  };
   if (accel_speed == 0.25) {
     rgb_matrix_set_color(0, rgb_speed.r, rgb_speed.g, rgb_speed.b);
     rgb_matrix_set_color(1, rgb_speed.r, rgb_speed.g, rgb_speed.b);
@@ -427,8 +425,11 @@ bool rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
     rgb_matrix_set_color(4, rgb_speed.r, rgb_speed.g, rgb_speed.b);
   }
 
-  HSV hsv_step = {255, 255, rgb_matrix_val};
-  RGB rgb_step = hsv_to_rgb(hsv_step);
+  RGB rgb_step = {
+    device_config.led_config.indicator_colors.step_r,
+    device_config.led_config.indicator_colors.step_g,
+    device_config.led_config.indicator_colors.step_b
+  };
   if (accel_step == 1) {
     rgb_matrix_set_color(5, rgb_step.r, rgb_step.g, rgb_step.b);
   } else if (accel_step == 2) {
@@ -445,26 +446,41 @@ bool rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
     rgb_matrix_set_color(8, rgb_step.r, rgb_step.g, rgb_step.b);
   }
   
-  if(phase != POMODORO_IDLE){
+  const uint8_t pomodoro_leds[] = {10, 11, 12};
+  
+  // Check if we're flashing due to color change
+  if (is_pomodoro_flashing()) {
+    RGB flash_color = get_pomodoro_flash_color();
+    // Flash only pomodoro LEDs with the changed color
+    for (uint8_t i = 0; i < sizeof(pomodoro_leds); i++) {
+      rgb_matrix_set_color(pomodoro_leds[i], flash_color.r, flash_color.g, flash_color.b);
+    }
+  } else if(phase != POMODORO_IDLE){
+    // Normal pomodoro timer display
+    RGB color = {0, 0, 0};
     switch (phase) {
-      case POMODORO_WORK: // Red
-        rgb_matrix_set_color(10, 255, 0, 0);
-        rgb_matrix_set_color(11, 255, 0, 0);
-        rgb_matrix_set_color(12, 255, 0, 0);
+      case POMODORO_WORK:
+        color.r = device_config.led_config.pomodoro_colors.work_r;
+        color.g = device_config.led_config.pomodoro_colors.work_g;
+        color.b = device_config.led_config.pomodoro_colors.work_b;
         break;
-      case POMODORO_BREAK: // Green
-        rgb_matrix_set_color(10, 0, 255, 0);
-        rgb_matrix_set_color(11, 0, 255, 0);
-        rgb_matrix_set_color(12, 0, 255, 0);
+      case POMODORO_BREAK:
+        color.r = device_config.led_config.pomodoro_colors.break_r;
+        color.g = device_config.led_config.pomodoro_colors.break_g;
+        color.b = device_config.led_config.pomodoro_colors.break_b;
         break;
-      case POMODORO_LONG_BREAK: // Blue
-        rgb_matrix_set_color(10, 0, 0, 255);
-        rgb_matrix_set_color(11, 0, 0, 255);
-        rgb_matrix_set_color(12, 0, 0, 255);
+      case POMODORO_LONG_BREAK:
+        color.r = device_config.led_config.pomodoro_colors.long_break_r;
+        color.g = device_config.led_config.pomodoro_colors.long_break_g;
+        color.b = device_config.led_config.pomodoro_colors.long_break_b;
         break;
-      case POMODORO_IDLE:
       default:
         break;
+    }
+    
+    // Set all pomodoro LEDs to the same color
+    for (uint8_t i = 0; i < sizeof(pomodoro_leds); i++) {
+      rgb_matrix_set_color(pomodoro_leds[i], color.r, color.g, color.b);
     }
   }
   return false;

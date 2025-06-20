@@ -53,16 +53,11 @@ void iqs_app_writeRegR(uint16_t regaddr, uint8_t* data, uint16_t len) {
 
 //set absolutely
 void init_iqs5xx(void) {
-    uint8_t distance[2];
-    distance[0] = (trackpad_config.zoom_distance >> 8) & 0xFF; 
-    distance[1] = trackpad_config.zoom_distance & 0xFF;        
-    iqs_app_writeRegR(IQS5xx_ZOOM, distance, 2);
-
     tap_time = timer_read32();
     swipe_time = timer_read32();
     pinch_time = timer_read32();
     gesture_time = timer_read32();
-    drag_term = 0;
+    drag_time = 0;
 }
 
 bool read_iqs5xx(iqs5xx_data_t* const data) {
@@ -111,20 +106,20 @@ void set_tap(iqs5xx_data_t* const data, report_mouse_t* const rep_mouse) {
             data->gesture = TAP_FINGER_ONE_CENTER;
         }
         tapped = true;
-    } else if(timer_elapsed32(tap_time) > tap_term && tapped2_cnt > 2 && data->ges_evnet1 == 1) {
+    } else if(timer_elapsed32(tap_time) > trackpad_config.tap_term && tapped2_cnt > 2 && data->ges_evnet1 == 1) {
         data->gesture = TAP_FINGER_TWO;
         tapped = true;
-    } else if(timer_elapsed32(tap_time) > tap_term && tapped3_cnt > 2 && data->ges_evnet1 == 1){
+    } else if(timer_elapsed32(tap_time) > trackpad_config.tap_term && tapped3_cnt > 2 && data->ges_evnet1 == 1){
         data->gesture = TAP_FINGER_THREE;
         tapped = true;
-    } else if(can_drag && !use_drag && data->ges_evnet0 == 2) {
-        if(!drag_strength_mode && drag_time == 0) {
+    } else if(trackpad_config.can_drag && !use_drag && data->ges_evnet0 == 2) {
+        if(!trackpad_config.drag_strength_mode && drag_time == 0) {
             drag_time = timer_read32();
         } else if(
-            (!drag_strength_mode && timer_elapsed32(drag_time) > drag_term) || 
-            (drag_strength_mode && data->touch_strenght1 >= drag_strength)
+            (!trackpad_config.drag_strength_mode && timer_elapsed32(drag_time) > trackpad_config.drag_term) || 
+            (trackpad_config.drag_strength_mode && data->touch_strenght1 >= trackpad_config.drag_strength)
             ){
-            drv2605l_pulse(hf_waveform_number); 
+            drv2605l_pulse(trackpad_config.hf_waveform_number); 
             use_drag = true;
             drag_time = 0;
         }
@@ -155,8 +150,9 @@ int32_t move_limit_range(int32_t value, int32_t min, int32_t max) {
 }
 
 void set_gesture(iqs5xx_data_t* const data, report_mouse_t* const rep_mouse) {
-    int32_t dx = ((data->relative_xy.bytes[1] - data->relative_xy.bytes[0]) * default_speed) * accel_speed;
-    int32_t dy = ((data->relative_xy.bytes[3] - data->relative_xy.bytes[2]) * default_speed) * accel_speed;
+    double _default_speed = (double)trackpad_config.default_speed / 10.0;
+    int32_t dx = ((data->relative_xy.bytes[1] - data->relative_xy.bytes[0]) * _default_speed) * accel_speed;
+    int32_t dy = ((data->relative_xy.bytes[3] - data->relative_xy.bytes[2]) * _default_speed) * accel_speed;
 
     dx = abs(dx) < MIN_MOVE_THRESHOLD ? 0 : dx;
     dy = abs(dy) < MIN_MOVE_THRESHOLD ? 0 : dy;
@@ -168,14 +164,14 @@ void set_gesture(iqs5xx_data_t* const data, report_mouse_t* const rep_mouse) {
         rep_mouse->x = dx;
         rep_mouse->y = dy;
     } else if (data->finger_cnt >= 2) {
-        if(timer_elapsed32(swipe_time) > swipe_term && data->ges_evnet1 == 2 && data->finger_cnt == 2) {
+        if(timer_elapsed32(swipe_time) > trackpad_config.swipe_term && data->ges_evnet1 == 2 && data->finger_cnt == 2) {
             if(data->relative_xy.bytes[0] > 0 && data->relative_xy.bytes[1] > 0){
                 data->gesture = GESTURE_SWIPE_L;
             } else if(data->relative_xy.bytes[1] > 0){
                 data->gesture = GESTURE_SWIPE_R;
             } 
             swipe_time = timer_read32();
-        } else if(timer_elapsed32(gesture_time) > gesture_term && data->ges_evnet1 == 2 && data->finger_cnt == 3) {
+        } else if(timer_elapsed32(gesture_time) > trackpad_config.gesture_term && data->ges_evnet1 == 2 && data->finger_cnt == 3) {
             if(data->relative_xy.bytes[0] > 0 && data->relative_xy.bytes[1] > 0){
                 data->gesture = GESTURE_SWIPE_L;
             } else if(data->relative_xy.bytes[1] > 0){
@@ -197,16 +193,16 @@ void set_gesture(iqs5xx_data_t* const data, report_mouse_t* const rep_mouse) {
             }
 
             if(data->relative_xy.bytes[2] > 1 && data->relative_xy.bytes[3] > 1 ){
-                    scrolling_direction = can_reverse_scrolling_direction ? 1 : -1;
+                    scrolling_direction = trackpad_config.can_reverse_scrolling_direction ? 1 : -1;
             } else if(data->relative_xy.bytes[3] > 1 ){
-                    scrolling_direction = can_reverse_scrolling_direction ? -1 : 1;
+                    scrolling_direction = trackpad_config.can_reverse_scrolling_direction ? -1 : 1;
             }
             
-           if(timer_elapsed32(scroll_time) > scroll_term){
-                rep_mouse->v = scroll_step * accel_step * scrolling_direction;
+           if(timer_elapsed32(scroll_time) > trackpad_config.scroll_term){
+                rep_mouse->v = (trackpad_config.scroll_step + 1) * accel_step * scrolling_direction;
                 scroll_time = timer_read32();
             }
-        } else if(timer_elapsed32(pinch_time) > pinch_term && data->ges_evnet1 == 4) {
+        } else if(timer_elapsed32(pinch_time) > trackpad_config.pinch_term && data->ges_evnet1 == 4) {
             if(data->relative_xy.bytes[0] > 0 && data->relative_xy.bytes[1] > 0) {
                 data->gesture = GESTURE_PINCH_OUT;
             } else if(data->relative_xy.bytes[1] > 0) {
@@ -220,10 +216,10 @@ void set_gesture(iqs5xx_data_t* const data, report_mouse_t* const rep_mouse) {
         scroll_end = true; 
     }
 
-    if(can_short_scroll && scroll_end){
-        if(timer_elapsed32(short_scroll_timer) < short_scroll_term){
+    if(trackpad_config.can_short_scroll && scroll_end){
+        if(timer_elapsed32(short_scroll_timer) < trackpad_config.short_scroll_term){
             int base_scroll = 3;
-            float current_scroll = base_scroll + scroll_step;
+            float current_scroll = base_scroll + trackpad_config.scroll_step;
             float decay_step = 0.5;
             while (current_scroll > 0) {
                 rep_mouse->v = current_scroll * accel_step * scrolling_direction;
@@ -245,12 +241,12 @@ void set_gesture(iqs5xx_data_t* const data, report_mouse_t* const rep_mouse) {
 
 void set_trackpad_layer(iqs5xx_data_t* const data) {
     if (data->finger_cnt == 0) {
-        if(use_trackpad_layer && can_trackpad_layer){
+        if(use_trackpad_layer && trackpad_config.can_trackpad_layer){
             layer_move(get_highest_layer(default_layer_state));
             use_trackpad_layer = false;
         }
    } else {
-        if(!use_trackpad_layer && can_trackpad_layer){
+        if(!use_trackpad_layer && trackpad_config.can_trackpad_layer){
             layer_move(trackpad_layer);
             use_trackpad_layer = true;
         }

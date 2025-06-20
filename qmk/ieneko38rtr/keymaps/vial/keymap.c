@@ -7,6 +7,7 @@
 #include "config/trackpad_config.h"
 #include "config/device_config.h"
 #include "config/pomodoro_config.h"
+#include "config/led_config.h"
 #include "timer/pomodoro.h"
 #include <math.h>
 
@@ -48,13 +49,13 @@ enum {
   U_EEP_CLR
 };
 
-int end_layer = 4;
+int end_layer = 3;
 int lasted_layer = 0;
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 	
   [0] = LAYOUT(
-	  KC_ESC,              KC_Q,    KC_W,    KC_E,    KC_R,    KC_T,    KC_Y,    KC_U,    KC_I,    KC_O,    KC_P,    KC_BSLS,
+	  KC_ESC,              QK_BOOT,    KC_W,    KC_E,    KC_R,    KC_T,    KC_Y,    KC_U,    KC_I,    KC_O,    KC_P,    KC_BSLS,
 		MT(MOD_LCTL,KC_TAB), KC_A,    KC_S,    KC_D,    KC_F,    KC_G,    KC_H,    KC_J,    KC_K,    KC_L,    KC_ENT,
 		KC_LSFT,             KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,    KC_N,    KC_M,    KC_COMM, KC_DOT,  KC_RSFT,
 		           KC_MNXT,           KC_RALT, LT(1, KC_SPC),LT(1, KC_BSPC),MO(2),  
@@ -99,7 +100,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 	  KC_ESC,              KC_Q,    KC_W,    KC_E,    KC_R,    KC_T,    KC_Y,    KC_U,    KC_I,    KC_O,    KC_P,    KC_BSLS,
 		MT(MOD_LCTL,KC_TAB), KC_A,    KC_S,    KC_D,    KC_F,    KC_G,    KC_H,    KC_J,    KC_K,    KC_L,    KC_ENT,
 		KC_LSFT,             KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,    KC_N,    KC_M,    KC_COMM, KC_DOT,  KC_RSFT,
-				       KC_MNXT,           KC_RALT, LT(4, KC_SPC),LT(4, KC_BSPC),MO(5),  
+				       KC_MNXT,           KC_RALT, KC_BTN1,LT(1, KC_BSPC),MO(2),  
     KC_VOLU,   KC_MPLY,   KC_MPRV,   
                KC_VOLD,
 
@@ -107,21 +108,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     LALT(KC_RGHT), LCTL(LGUI(KC_RIGHT)), LALT(KC_LEFT), LCTL(LGUI(KC_LEFT)),
     LCTL(KC_PPLS), LCTL(KC_PMNS),
     KC_ESC, KC_BTN1, KC_BTN1, KC_BTN1, KC_BTN2                    
-  ),
-
-	[4] = LAYOUT(
-		KC_GRV,    KC_MINS, KC_EQL,  KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO, KC_NO,
-		KC_LGUI,   KC_1,    KC_2,    KC_3,    KC_4,    KC_5,    KC_LEFT, KC_DOWN, KC_UP,   KC_RGHT, KC_NO,
-		KC_LSFT,   KC_6,    KC_7,    KC_8,    KC_9,    KC_0,    KC_LBRC, KC_RBRC, KC_SCLN, KC_QUOT, KC_SLSH,
-		KC_NO,   KC_NO,   KC_LSFT, KC_LSFT, KC_NO,
-	
-    KC_NO,   KC_NO,   KC_NO,   KC_NO, 
-
-    KC_TRNS, KC_TRNS,
-    KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,
-    KC_TRNS, KC_TRNS,  
-    KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS
-	),
+  )
 };
 
 void layer_up(void) { 
@@ -236,6 +223,7 @@ void keyboard_post_init_user(void) {
 
   set_trackpad_config(device_config.trackpad_config);
   set_pomodoro_config(device_config.pomodoro_config);  
+  set_led_config(device_config.led_config);
 }
 
 void send_pointing_device_kb(report_mouse_t rep_mouse){
@@ -310,9 +298,11 @@ void matrix_scan_user(void) {
     pomodoro_update();
   }
 
+  check_and_save_device_config();
+
   int current_layer = get_highest_layer(layer_state|default_layer_state); 
 
-  if(can_hf_for_layer && lasted_layer != current_layer){
+  if(trackpad_config.can_hf_for_layer && lasted_layer != current_layer){
     if(device_config.trackpad_config.can_trackpad_layer &&
        current_layer != trackpad_layer && lasted_layer != trackpad_layer
     ){
@@ -332,28 +322,24 @@ const uint16_t PROGMEM encoder_map[][NUM_ENCODERS][2] = {
     [0] = { ENCODER_CCW_CW(LCTL(KC_KP_MINUS), LCTL(KC_KP_PLUS)) },
     [1] = { ENCODER_CCW_CW(KC_NO, KC_NO) },
     [2] = { ENCODER_CCW_CW(KC_NO, KC_NO) },
-    [3] = { ENCODER_CCW_CW(KC_NO, KC_NO) },
-    [4] = { ENCODER_CCW_CW(KC_NO, KC_NO) }
+    [3] = { ENCODER_CCW_CW(KC_NO, KC_NO) }
 };
 
 
 bool rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) { 
-  int current_layer = get_highest_layer(layer_state|default_layer_state);  
-  int rgb_matrix_val = rgb_matrix_get_val();
-  int rgb_matrix_mode = rgb_matrix_get_mode();
-  HSV hsv = {0, 255, rgb_matrix_val};
-  if (current_layer == 1) {
-    hsv.h = 191; //PURPLE
-  } else if (current_layer == 2)  {
-    hsv.h = 85; //GREEN
-  } else if (current_layer == 3)  {
-    hsv.h = 43; //YELLOW
-  } else if (current_layer == 4)  {
-    hsv.h = 222; //ROSE
-  } else {
-    hsv.h = 128; //CYAN
-  }
-  RGB rgb = hsv_to_rgb(hsv);
+    int current_layer = get_highest_layer(layer_state|default_layer_state);  
+    int rgb_matrix_mode = rgb_matrix_get_mode();
+
+    RGB rgb;
+    if (current_layer < device_config.led_config.layer_count) {
+        rgb.r = device_config.led_config.layer_colors[current_layer].r;
+        rgb.g = device_config.led_config.layer_colors[current_layer].g;
+        rgb.b = device_config.led_config.layer_colors[current_layer].b;
+    } else {
+        rgb.r = device_config.led_config.layer_colors[0].r;
+        rgb.g = device_config.led_config.layer_colors[0].g;
+        rgb.b = device_config.led_config.layer_colors[0].b;
+    }
   for (uint8_t i = led_min; i <= led_max; i++) {
     if(rgb_matrix_mode == 1 && HAS_FLAGS(g_led_config.flags[i], 0x04)) {
       rgb_matrix_set_color(i, 0, 0, 0);
@@ -361,11 +347,13 @@ bool rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
       rgb_matrix_set_color(i, rgb.r, rgb.g, rgb.b);
     } 
   }
-
   if(rgb_matrix_mode != 1){ return false; }
 
-  HSV hsv_speed = {255, 255, rgb_matrix_val};
-  RGB rgb_speed = hsv_to_rgb(hsv_speed);
+  RGB rgb_speed = {
+    device_config.led_config.indicator_colors.speed_r,
+    device_config.led_config.indicator_colors.speed_g,
+    device_config.led_config.indicator_colors.speed_b
+  };
   if (accel_speed == 0.25) {
     rgb_matrix_set_color(7, rgb_speed.r, rgb_speed.g, rgb_speed.b);
     rgb_matrix_set_color(8, rgb_speed.r, rgb_speed.g, rgb_speed.b);
@@ -384,8 +372,11 @@ bool rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
     rgb_matrix_set_color(11, rgb_speed.r, rgb_speed.g, rgb_speed.b);
   }
 
-  HSV hsv_step = {255, 255, rgb_matrix_val};
-  RGB rgb_step = hsv_to_rgb(hsv_step);
+  RGB rgb_step = {
+    device_config.led_config.indicator_colors.step_r,
+    device_config.led_config.indicator_colors.step_g,
+    device_config.led_config.indicator_colors.step_b
+  };
   if (accel_step == 1) {
     rgb_matrix_set_color(19, rgb_step.r, rgb_step.g, rgb_step.b);
   } else if (accel_step == 2) {
@@ -404,23 +395,47 @@ bool rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
   
   if(phase != POMODORO_IDLE){
     switch (phase) {
-      case POMODORO_WORK: // Red
-        rgb_matrix_set_color(41, 255, 0, 0);
-        rgb_matrix_set_color(42, 255, 0, 0);
-        rgb_matrix_set_color(43, 255, 0, 0);
-        rgb_matrix_set_color(44, 255, 0, 0);
+      case POMODORO_WORK:
+        rgb_matrix_set_color(41, device_config.led_config.pomodoro_colors.work_r, 
+                           device_config.led_config.pomodoro_colors.work_g, 
+                           device_config.led_config.pomodoro_colors.work_b);
+        rgb_matrix_set_color(42, device_config.led_config.pomodoro_colors.work_r, 
+                           device_config.led_config.pomodoro_colors.work_g, 
+                           device_config.led_config.pomodoro_colors.work_b);
+        rgb_matrix_set_color(43, device_config.led_config.pomodoro_colors.work_r, 
+                           device_config.led_config.pomodoro_colors.work_g, 
+                           device_config.led_config.pomodoro_colors.work_b);
+        rgb_matrix_set_color(44, device_config.led_config.pomodoro_colors.work_r, 
+                           device_config.led_config.pomodoro_colors.work_g, 
+                           device_config.led_config.pomodoro_colors.work_b);
         break;
-      case POMODORO_BREAK: // Green
-        rgb_matrix_set_color(41, 0, 255, 0);
-        rgb_matrix_set_color(42, 0, 255, 0);
-        rgb_matrix_set_color(43, 0, 255, 0);
-        rgb_matrix_set_color(44, 0, 255, 0);
+      case POMODORO_BREAK:
+        rgb_matrix_set_color(41, device_config.led_config.pomodoro_colors.break_r, 
+                           device_config.led_config.pomodoro_colors.break_g, 
+                           device_config.led_config.pomodoro_colors.break_b);
+        rgb_matrix_set_color(42, device_config.led_config.pomodoro_colors.break_r, 
+                           device_config.led_config.pomodoro_colors.break_g, 
+                           device_config.led_config.pomodoro_colors.break_b);
+        rgb_matrix_set_color(43, device_config.led_config.pomodoro_colors.break_r, 
+                           device_config.led_config.pomodoro_colors.break_g, 
+                           device_config.led_config.pomodoro_colors.break_b);
+        rgb_matrix_set_color(44, device_config.led_config.pomodoro_colors.break_r, 
+                           device_config.led_config.pomodoro_colors.break_g, 
+                           device_config.led_config.pomodoro_colors.break_b);
         break;
-      case POMODORO_LONG_BREAK: // Blue 
-        rgb_matrix_set_color(41, 0, 0, 255);
-        rgb_matrix_set_color(42, 0, 0, 255);
-        rgb_matrix_set_color(44, 0, 0, 255);
-        rgb_matrix_set_color(43, 0, 0, 255);
+      case POMODORO_LONG_BREAK:
+        rgb_matrix_set_color(41, device_config.led_config.pomodoro_colors.long_break_r, 
+                           device_config.led_config.pomodoro_colors.long_break_g, 
+                           device_config.led_config.pomodoro_colors.long_break_b);
+        rgb_matrix_set_color(42, device_config.led_config.pomodoro_colors.long_break_r, 
+                           device_config.led_config.pomodoro_colors.long_break_g, 
+                           device_config.led_config.pomodoro_colors.long_break_b);
+        rgb_matrix_set_color(43, device_config.led_config.pomodoro_colors.long_break_r, 
+                           device_config.led_config.pomodoro_colors.long_break_g, 
+                           device_config.led_config.pomodoro_colors.long_break_b);
+        rgb_matrix_set_color(44, device_config.led_config.pomodoro_colors.long_break_r, 
+                           device_config.led_config.pomodoro_colors.long_break_g, 
+                           device_config.led_config.pomodoro_colors.long_break_b);
         break;
       case POMODORO_IDLE:
       default:
@@ -428,4 +443,4 @@ bool rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
     }
   }
   return false;
-}  
+};

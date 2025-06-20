@@ -42,7 +42,7 @@ void update_pomodoro_config(pomodoro_config_t pomodoro_config_param) {
   init_pomodoro_config_flag = false; // Set flag to false after first initialization
   pomodoro_config = pomodoro_config_param;  
   device_config.pomodoro_config = pomodoro_config_param;
-  save_device_config(device_config);
+  schedule_device_config_save(device_config);
 } 
 
 void set_pomodoro_config(pomodoro_config_t pomodoro_config) {

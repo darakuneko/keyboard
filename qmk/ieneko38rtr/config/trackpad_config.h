@@ -23,23 +23,6 @@ typedef struct {
 
 // Configuration variables
 extern trackpad_config_t trackpad_config;
-extern uint32_t scroll_term;
-extern uint32_t drag_term;
-extern uint32_t tap_term;
-extern uint32_t swipe_term;
-extern uint32_t pinch_term;
-extern uint32_t gesture_term;
-extern uint32_t short_scroll_term;
-extern bool drag_strength_mode;
-extern uint32_t drag_strength;
-extern double default_speed;
-extern bool can_hf_for_layer;
-extern int hf_waveform_number;
-extern bool can_drag;
-extern bool can_reverse_scrolling_direction;
-extern bool can_trackpad_layer;
-extern int scroll_step;
-extern bool can_short_scroll;
 
 // State variables - these should be accessed from iqs5xx.c
 extern int trackpad_layer;
@@ -49,7 +32,7 @@ extern float accel_speed;
 extern int accel_step;
 
 void init_trackpad_config(trackpad_config_t *trackpad_config);
-void update_trackpad_config(trackpad_config_t trackpad_config);
+void update_trackpad_config(trackpad_config_t trackpad_config, bool should_save);
 void set_trackpad_config(trackpad_config_t trackpad_config);
 void send_trackpad_config(const trackpad_config_t *config);
 void receive_trackpad_config(uint8_t *data);

@@ -9,6 +9,7 @@
 /* Default values defined in trackpad_config.h */
 #define MIN_MOVE_THRESHOLD 1
 #define MAX_SPEED 32767
+#define MISS_TAP_THRESHOLD 40000
 
 #define IQS5xx_COM_END_REG 0xEEEE
 #define IQS5xx_GESTURE_EVENT0 0x000D

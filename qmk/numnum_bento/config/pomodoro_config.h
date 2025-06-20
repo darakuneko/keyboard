@@ -36,7 +36,7 @@ extern bool timer_active;
 extern bool waiting_for_break_touch;
 
 void init_pomodoro_config(pomodoro_config_t *pomodoro_config);
-void update_pomodoro_config(pomodoro_config_t pomodoro_config);
+void update_pomodoro_config(pomodoro_config_t pomodoro_config, bool should_save);
 void set_pomodoro_config(pomodoro_config_t pomodoro_config);
 void send_pomodoro_config(const pomodoro_config_t *config);
 void send_pomodoro_active_status(const pomodoro_config_t *config);
