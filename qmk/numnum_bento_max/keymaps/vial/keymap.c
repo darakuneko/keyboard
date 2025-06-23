@@ -582,34 +582,34 @@ void matrix_scan_user() {
 
         switch (iqs5xx_data.gesture) {
             case GESTURE_SWIPE_L:
-                if(iqs5xx_data.finger_cnt == 2){
+                if(finger_cnt == 2){
                     gesture_press_key(get_l_2);
-                  } else if(iqs5xx_data.finger_cnt == 3){
+                  } else if(finger_cnt == 3){
                     gesture_press_key(get_l_3);
-                  } else if(iqs5xx_data.finger_cnt == 4){
+                  } else if(finger_cnt == 4){
                     gesture_press_key(get_l_4);
                   }
                 break;
             case GESTURE_SWIPE_R:
-                if(iqs5xx_data.finger_cnt == 2){
+                if(finger_cnt == 2){
                     gesture_press_key(get_r_2);
-                  } else if(iqs5xx_data.finger_cnt == 3){
+                  } else if(finger_cnt == 3){
                     gesture_press_key(get_r_3);
-                  } else if(iqs5xx_data.finger_cnt == 4){
+                  } else if(finger_cnt == 4){
                     gesture_press_key(get_r_4);
                   }
                 break;
             case GESTURE_SWIPE_U:
-                  if(iqs5xx_data.finger_cnt == 3){
+                  if(finger_cnt == 3){
                     gesture_press_key(get_u_3);
-                  } else if(iqs5xx_data.finger_cnt == 4){
+                  } else if(finger_cnt == 4){
                     gesture_press_key(get_u_4);
                   }
                 break;
             case GESTURE_SWIPE_D:
-                  if(iqs5xx_data.finger_cnt == 3){
+                  if(finger_cnt == 3){
                     gesture_press_key(get_d_3);
-                  } else if(iqs5xx_data.finger_cnt == 4){
+                  } else if(finger_cnt == 4){
                     gesture_press_key(get_d_4);
                   }
                 break;                

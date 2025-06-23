@@ -19,6 +19,7 @@ typedef struct {
     unsigned int gesture_term : 10;
     unsigned int short_scroll_term : 10;
     unsigned int zoom_distance : 16;
+    bool can_reverse_h_scrolling_direction  : 1;
 } trackpad_config_t;
 
 // Configuration variables
@@ -30,6 +31,7 @@ extern bool use_trackpad_layer;
 extern bool use_drag;
 extern float accel_speed;
 extern int accel_step;
+extern bool use_horizontal_scrolling;
 
 void init_trackpad_config(trackpad_config_t *trackpad_config);
 void update_trackpad_config(trackpad_config_t trackpad_config, bool should_save);

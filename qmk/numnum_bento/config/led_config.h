@@ -1,10 +1,10 @@
 #pragma once
 
 typedef struct {
-    // Layer color settings (max 8 layers including default)
+    // Layer color settings (max 9 layers including default)
     struct {
         uint8_t r, g, b;
-    } layer_colors[8]; // RGB values (0-255)
+    } layer_colors[9]; // RGB values (0-255)
     uint8_t layer_count; // Actual number of layers
     
     // Pomodoro color settings
@@ -18,6 +18,7 @@ typedef struct {
     struct {
         uint8_t speed_r, speed_g, speed_b;
         uint8_t step_r, step_g, step_b;
+        uint8_t h_scroll_r, h_scroll_g, h_scroll_b;
     } indicator_colors;
 } device_led_config_t;
 

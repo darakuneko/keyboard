@@ -72,7 +72,6 @@ typedef struct {
   uint32_t drag_time;
 } iqs_timer_t;
 
-extern bool tapped;
 extern iqs_timer_t timer;
 extern bool clear_buttons;
 extern bool is_double_tap_detected;
