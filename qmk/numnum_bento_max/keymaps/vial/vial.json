@@ -82,6 +82,11 @@
       "shortName": "EEPROM\nClear",
       "title": "EEPROM Clear",
       "name": "U_EEP_CLR"
+    },
+    {
+      "shortName": "Horizon\nScroll",
+      "title": "Horizon Scroll",
+      "name": "U_H_SCROLL"
     }
   ],
   "layouts": {

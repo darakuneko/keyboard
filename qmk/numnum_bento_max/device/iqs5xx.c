@@ -20,6 +20,8 @@ bool is_tap_right_tap = false;
 
 // internal configuration variables
 static int scrolling_direction = 1;
+static int h_scrolling_direction = 1;
+static bool last_scroll_was_horizontal = false;
 
 // Double tap detection variables  
 static bool is_waiting_second_tap = false;
@@ -250,44 +252,106 @@ static bool is_gesture_finger_swipe(const iqs5xx_data_t* data) {
     return (timer_elapsed32(timer.swipe_time) > trackpad_config.swipe_term && data->finger_cnt > 1 && data->ges_evnet1 == 2);
 }
 
+static bool is_hold_down_swipe(iqs5xx_data_t* const data) {
+  return data->relative_xy.bytes[0] == 0 && 
+  data->relative_xy.bytes[1] == 0 && 
+  data->relative_xy.bytes[2] == 0 && 
+  data->relative_xy.bytes[3] == 0;
+}
+
+static bool is_left_swipe(iqs5xx_data_t* const data) {
+  return data->relative_xy.bytes[0] > 0 && data->relative_xy.bytes[1] > 0;
+}
+
+static bool is_right_swipe(iqs5xx_data_t* const data) {
+  return data->relative_xy.bytes[1] > 0;
+}
+
+static bool is_up_swipe(iqs5xx_data_t* const data) {
+  return data->relative_xy.bytes[2] > 0 && data->relative_xy.bytes[3] > 0;
+}
+
+static bool is_down_swipe(iqs5xx_data_t* const data) {
+  return data->relative_xy.bytes[3] > 0;
+}
+
+// Forward declaration
 static void handle_finger_swipe(iqs5xx_data_t* const data) {
   if (!is_gesture_finger_swipe(data)) return;
 
-  if(data->relative_xy.bytes[0] > 0 && data->relative_xy.bytes[1] > 0){
-    data->gesture = GESTURE_SWIPE_L;
-  } else if(data->relative_xy.bytes[1] > 0){
-    data->gesture = GESTURE_SWIPE_R;
-  } else if(data->finger_cnt > 2 && data->relative_xy.bytes[2] > 0 && data->relative_xy.bytes[3] > 0 ){
-    data->gesture = GESTURE_SWIPE_D;
-  } else if(data->finger_cnt > 2 && data->relative_xy.bytes[3] > 0 ){
-    data->gesture = GESTURE_SWIPE_U;
+  if(data->finger_cnt == 2){
+    if(is_left_swipe(data)){
+      if(data->finger_cnt > 2 || !use_horizontal_scrolling) {
+        data->gesture = GESTURE_SWIPE_L;
+      } 
+    } else if(is_right_swipe(data)){
+      if(data->finger_cnt > 2 || !use_horizontal_scrolling) {
+        data->gesture = GESTURE_SWIPE_R;
+      } 
+    } else if(is_down_swipe(data)){
+      data->gesture = GESTURE_SWIPE_D;
+    } else if(is_up_swipe(data)){
+      data->gesture = GESTURE_SWIPE_U;
+    }
   }
+
   timer.swipe_time = timer_read32();
 }
 
-static void handle_scroll(iqs5xx_data_t* const data,
-                          report_mouse_t* const rep_mouse) {
+static int step_count(int direction) {
+  return (trackpad_config.scroll_step + 1) * accel_step * direction;
+}
 
-  if (data->ges_evnet1 == 2 && data->relative_xy.bytes[1] == 0) {
-    
-    if(data->relative_xy.bytes[2] > 1 && data->relative_xy.bytes[3] > 1 ){
-      scrolling_direction = trackpad_config.can_reverse_scrolling_direction ? 1 : -1;
-    } else if(data->relative_xy.bytes[3] > 1 ){
-      scrolling_direction = trackpad_config.can_reverse_scrolling_direction ? -1 : 1;
-    }
-    
-    if (!gesture_state.scroll_start) {
+static void insert_rep_mouse(report_mouse_t* const rep_mouse, int direction, bool is_horizontal){
+  int step = step_count(direction); 
+  if (is_horizontal) {
+    rep_mouse->h = step;
+  } else {
+    rep_mouse->v = step;
+  }
+}
+
+static void set_scroll(report_mouse_t* const rep_mouse, bool is_horizontal) {
+   if (!gesture_state.scroll_start) {
       gesture_state.scroll_start = true;
       timer.short_scroll_term = timer_read32();
     }
 
+    int direction =  is_horizontal ? h_scrolling_direction : scrolling_direction;
     if (timer_elapsed32(timer.scroll_time) > trackpad_config.scroll_term) {
-      rep_mouse->v = (trackpad_config.scroll_step + 1) * accel_step * scrolling_direction;
-      wait_ms(SCROLL_INTERVAL_MS);
-      rep_mouse->v = (trackpad_config.scroll_step + 1) * accel_step * scrolling_direction;
-
+      insert_rep_mouse(rep_mouse, direction, is_horizontal);
       timer.scroll_time = timer_read32();
+      last_scroll_was_horizontal = is_horizontal;
     }
+}
+
+static void handle_scroll(iqs5xx_data_t* const data,
+                          report_mouse_t* const rep_mouse) {
+  if(data->ges_evnet1 == 2){
+
+    bool hold_down_swipe_action = is_hold_down_swipe(data);
+    bool left_swipe_action = is_left_swipe(data); 
+    bool right_swipe_action = is_right_swipe(data); 
+    bool up_swipe_action = is_up_swipe(data); 
+    bool down_swipe_action = is_down_swipe(data); 
+
+    if(hold_down_swipe_action){
+      set_scroll(rep_mouse, last_scroll_was_horizontal);
+    } else if (use_horizontal_scrolling && (left_swipe_action || right_swipe_action)) {
+      if(left_swipe_action){
+        h_scrolling_direction = trackpad_config.can_reverse_h_scrolling_direction ? -1 : 1;
+      } else if(right_swipe_action){
+        h_scrolling_direction = trackpad_config.can_reverse_h_scrolling_direction ? 1 : -1;
+      }       
+      set_scroll(rep_mouse, true);
+    } else if (up_swipe_action || down_swipe_action) {
+      if(up_swipe_action){
+        scrolling_direction = trackpad_config.can_reverse_scrolling_direction ? 1 : -1;
+      } else if(down_swipe_action){
+        scrolling_direction = trackpad_config.can_reverse_scrolling_direction ? -1 : 1;
+      }
+      set_scroll(rep_mouse, false);
+    } 
   }
 }
 
@@ -296,8 +360,8 @@ static void handle_short_scroll(iqs5xx_data_t* const data,
   if (trackpad_config.can_short_scroll && gesture_state.scroll_start) {
     if (timer_elapsed32(timer.short_scroll_term) < trackpad_config.short_scroll_term) {
       for (int i = 0; i < SHORT_SCROLL_REPEAT; i++) {
-        rep_mouse->v = (trackpad_config.scroll_step + 1) * accel_step * scrolling_direction;
-
+        int direction =  last_scroll_was_horizontal ? h_scrolling_direction : scrolling_direction;
+        insert_rep_mouse(rep_mouse, direction, last_scroll_was_horizontal);
         pointing_device_set_report(*rep_mouse);
         pointing_device_send();
         wait_ms(SCROLL_INTERVAL_MS);
@@ -331,7 +395,7 @@ void set_gesture(iqs5xx_data_t* const data, report_mouse_t* const rep_mouse) {
     rep_mouse->x = dx;
     rep_mouse->y = dy;
   } else if (data->finger_cnt == 2) {
-    handle_scroll(data, rep_mouse);
+    handle_scroll(data, rep_mouse);  // Normal vertical scroll
     handle_finger_swipe(data);
     handle_pinch(data);
   } else if (data->finger_cnt == 3) {

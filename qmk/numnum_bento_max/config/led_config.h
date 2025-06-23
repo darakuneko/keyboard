@@ -18,6 +18,7 @@ typedef struct {
     struct {
         uint8_t speed_r, speed_g, speed_b;
         uint8_t step_r, step_g, step_b;
+        uint8_t h_scroll_r, h_scroll_g, h_scroll_b;
     } indicator_colors;
 } device_led_config_t;
 

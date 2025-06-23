@@ -98,7 +98,8 @@ enum {
   U_DRAGDROP,
   U_POMODR_TGL,
   U_EEP_CLR,
-  U_TRACKPAD_PRESS
+  U_H_SCROLL,
+  U_TRACKPAD_PRESS  
 };
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
@@ -115,7 +116,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
     // 1finger
     KC_BTN1, U_M_ACL_UP, U_S_ACL_STEP, 
-    U_DRAGDROP, U_M_ACL_DOWN, U_S_ACL_2x,
+    U_DRAGDROP, U_M_ACL_DOWN, U_H_SCROLL,
 
     // 2finger
     KC_BTN2,
@@ -525,6 +526,12 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         init_device_config(&device_config);
       }
       return false;
+    case U_H_SCROLL:
+      if (record->event.pressed) {
+        use_horizontal_scrolling = !use_horizontal_scrolling;
+        drv2605l_pulse(device_config.trackpad_config.hf_waveform_number);
+      }
+      return false;
     default:
       return true;
   }
@@ -552,7 +559,7 @@ void keyboard_post_init_user(void) {
 }
 
 void send_pointing_device_kb(report_mouse_t rep_mouse){
-    if(rep_mouse.x || rep_mouse.y  || rep_mouse.v || rep_mouse.buttons || clear_buttons){
+    if(rep_mouse.x || rep_mouse.y  || rep_mouse.v || rep_mouse.h || rep_mouse.buttons || clear_buttons){
         pointing_device_set_report(rep_mouse);
         pointing_device_send();
         if(clear_buttons) {
@@ -741,7 +748,16 @@ bool rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
     rgb_matrix_set_color(11, rgb_step.r, rgb_step.g, rgb_step.b);
   }
 
-  const uint8_t pomodoro_leds[] = {1, 2};
+  RGB rgb_h_scroll = {
+    device_config.led_config.indicator_colors.h_scroll_r,
+    device_config.led_config.indicator_colors.h_scroll_g,
+    device_config.led_config.indicator_colors.h_scroll_b
+  };
+  if(use_horizontal_scrolling){
+    rgb_matrix_set_color(1, rgb_h_scroll.r, rgb_h_scroll.g, rgb_h_scroll.b);
+  }
+
+  const uint8_t pomodoro_leds[] = {2};
  
   // Check if we're flashing due to color change
   if (is_pomodoro_flashing()) {

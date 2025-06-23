@@ -106,6 +106,11 @@ void init_led_config(device_led_config_t *led_config) {
     led_config->indicator_colors.step_r = 255;
     led_config->indicator_colors.step_g = 0;
     led_config->indicator_colors.step_b = 0;
+
+    // horizontal Scroll indicator: Red
+    led_config->indicator_colors.h_scroll_r = 255;
+    led_config->indicator_colors.h_scroll_g = 0;
+    led_config->indicator_colors.h_scroll_b = 0;
 }
 
 void set_led_config(device_led_config_t config) {
@@ -146,6 +151,9 @@ void send_led_config(const device_led_config_t *config) {
     data[15] = config->indicator_colors.step_r;
     data[16] = config->indicator_colors.step_g;
     data[17] = config->indicator_colors.step_b;
+    data[18] = config->indicator_colors.h_scroll_r;
+    data[19] = config->indicator_colors.h_scroll_g;
+    data[20] = config->indicator_colors.h_scroll_b;
     
     uprintf("pomodoro_colors.work_r: %d\n", config->pomodoro_colors.work_r);
     uprintf("pomodoro_colors.work_g: %d\n", config->pomodoro_colors.work_g);
@@ -162,6 +170,9 @@ void send_led_config(const device_led_config_t *config) {
     uprintf("indicator_colors.step_r: %d\n", config->indicator_colors.step_r);
     uprintf("indicator_colors.step_g: %d\n", config->indicator_colors.step_g);
     uprintf("indicator_colors.step_b: %d\n", config->indicator_colors.step_b);
+    uprintf("indicator_colors.h_scroll_r: %d\n", config->indicator_colors.h_scroll_r);
+    uprintf("indicator_colors.h_scroll_b: %d\n", config->indicator_colors.h_scroll_b);
+    uprintf("indicator_colors.h_scroll_g: %d\n", config->indicator_colors.h_scroll_g);
     uprintf("\n\n");
     
     raw_hid_send(data, sizeof(data));
@@ -225,7 +236,9 @@ void receive_led_config(uint8_t *data) {
     received_config.indicator_colors.step_r = data[12];
     received_config.indicator_colors.step_g = data[13];
     received_config.indicator_colors.step_b = data[14];
-    
+    received_config.indicator_colors.h_scroll_r = data[15];
+    received_config.indicator_colors.h_scroll_g = data[16];
+    received_config.indicator_colors.h_scroll_b = data[17];  
     uprintf("led_config.pomodoro_colors.work_r: %d\n", received_config.pomodoro_colors.work_r);
     uprintf("led_config.pomodoro_colors.work_g: %d\n", received_config.pomodoro_colors.work_g);
     uprintf("led_config.pomodoro_colors.work_b: %d\n", received_config.pomodoro_colors.work_b);
@@ -241,7 +254,9 @@ void receive_led_config(uint8_t *data) {
     uprintf("led_config.indicator_colors.step_r: %d\n", received_config.indicator_colors.step_r);
     uprintf("led_config.indicator_colors.step_g: %d\n", received_config.indicator_colors.step_g);
     uprintf("led_config.indicator_colors.step_b: %d\n", received_config.indicator_colors.step_b);
-    uprintf("led_config.layer_colors[%d]: r=%d g=%d b=%d\n", 0, received_config.layer_colors[0].r, received_config.layer_colors[0].g, received_config.layer_colors[0].b);
+    uprintf("led_config.indicator_colors.h_scroll_r: %d\n", received_config.indicator_colors.h_scroll_r);
+    uprintf("led_config.indicator_colors.h_scroll_g: %d\n", received_config.indicator_colors.h_scroll_g);
+    uprintf("led_config.indicator_colors.h_scroll_b: %d\n", received_config.indicator_colors.h_scroll_b);
     uprintf("\n\n");
     
     // Check for color changes and trigger flash
