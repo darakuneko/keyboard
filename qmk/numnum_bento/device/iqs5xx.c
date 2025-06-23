@@ -138,8 +138,18 @@ static void handle_single_tap(iqs5xx_data_t* const data) {
       data->gesture = TAP_FINGER_ONE_CENTER;
     }
     tapped = true;
+  } else if(trackpad_config.can_drag && !use_drag && data->ges_evnet0 == 2) {
+      if(!trackpad_config.drag_strength_mode && timer.drag_time == 0) {
+        timer.drag_time = timer_read32();
+      } else if((!trackpad_config.drag_strength_mode && timer_elapsed32(timer.drag_time) > trackpad_config.drag_term) || 
+        (trackpad_config.drag_strength_mode && data->touch_strenght1 >= trackpad_config.drag_strength)
+      ){
+      drv2605l_pulse(trackpad_config.hf_waveform_number);
+      use_drag = true;
+      timer.drag_time = 0;
+    }
   }
-}
+} 
 
 static void handle_multi_tap(iqs5xx_data_t* const data) {
   if (!tapped && timer_elapsed32(timer.tap_time) > trackpad_config.tap_term && data->ges_evnet1 == 1) {

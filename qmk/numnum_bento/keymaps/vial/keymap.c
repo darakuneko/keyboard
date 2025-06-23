@@ -57,7 +57,7 @@ enum {
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   [0] = LAYOUT(
-    QK_BOOT,    KC_2,    KC_3,    KC_4,   KC_5,
+    KC_1,    KC_2,    KC_3,    KC_4,   KC_5,
     KC_6,    KC_7,    KC_8,    KC_9,   KC_0,
     KC_BTN1,    U_M_ACL_2x,    U_POMODR_TGL, U_H_SCROLL, 
     KC_UP,    KC_LEFT,    KC_DOWN,    KC_RIGHT, U_Layer_UP,

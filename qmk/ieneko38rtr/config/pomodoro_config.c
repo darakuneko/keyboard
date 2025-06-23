@@ -15,7 +15,6 @@ uint8_t current_work_interval = 0;
 uint8_t current_pomodoro_cycle = 0;
 bool timer_active = false;
 bool waiting_for_break_touch = false;
-bool init_pomodoro_config_flag = true;
 
 void init_pomodoro_config(pomodoro_config_t *pomodoro_config) {
   pomodoro_config->work_time = 25;
@@ -27,27 +26,25 @@ void init_pomodoro_config(pomodoro_config_t *pomodoro_config) {
   pomodoro_config->notify_haptic_enable = true;
   pomodoro_config->continuous_mode = false;
   pomodoro_config->pomodoro_cycle = 3;
-  update_pomodoro_config(*pomodoro_config);
 }
 
-// Apply pomodoro configuration to the timer variables
-void update_pomodoro_config(pomodoro_config_t pomodoro_config_param) {
-  if(!init_pomodoro_config_flag && pomodoro_config.work_hf_pattern != pomodoro_config_param.work_hf_pattern){
+// Apply pomodoro configuration to the timer variables 
+void update_pomodoro_config(pomodoro_config_t pomodoro_config_param, bool should_save) {
+  if(should_save) {
+    if(pomodoro_config.work_hf_pattern != pomodoro_config_param.work_hf_pattern){
     drv2605l_pulse(pomodoro_config_param.work_hf_pattern);
-  }
-  if(!init_pomodoro_config_flag && pomodoro_config.break_hf_pattern != pomodoro_config_param.break_hf_pattern){
+    }
+    if(pomodoro_config.break_hf_pattern != pomodoro_config_param.break_hf_pattern){
     drv2605l_pulse(pomodoro_config_param.break_hf_pattern);
+    }
+    schedule_device_config_save(device_config);
   }
-  
-  init_pomodoro_config_flag = false; // Set flag to false after first initialization
   pomodoro_config = pomodoro_config_param;  
   device_config.pomodoro_config = pomodoro_config_param;
-  schedule_device_config_save(device_config);
 } 
 
 void set_pomodoro_config(pomodoro_config_t pomodoro_config) {
-  update_pomodoro_config(pomodoro_config);
-  
+  update_pomodoro_config(pomodoro_config, false);
   phase = POMODORO_IDLE;
   minutes = 0;
   seconds = 0;
@@ -142,5 +139,5 @@ void receive_pomodoro_config(uint8_t *data) {
   uprintf("pomodoro_config.pomodoro_cycle: %d\n", temp_config.pomodoro_cycle);
   uprintf("\n\n");
 
-  update_pomodoro_config(temp_config);
+  update_pomodoro_config(temp_config, true);
 }

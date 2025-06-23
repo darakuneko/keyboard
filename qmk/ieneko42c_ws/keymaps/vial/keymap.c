@@ -46,7 +46,8 @@ enum {
   U_S_ACL_4x,
   U_S_ACL_8x,
   U_POMODR_TGL,
-  U_EEP_CLR
+  U_EEP_CLR,
+  U_H_SCROLL
 };
 
 int end_layer = 4;
@@ -102,7 +103,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     MT(MOD_LALT,KC_ESC), KC_Q,    KC_W,    KC_E,    KC_R,    KC_T,         KC_Y,    KC_U,    KC_I,    KC_O,    KC_P,    MT(MOD_RALT,KC_BSLS), 
     MT(MOD_LCTL,KC_TAB), KC_A,    KC_S,    KC_D,    KC_F,    KC_G,         KC_H,    KC_J,    KC_K,    KC_L,    KC_SCLN, MT(MOD_LCTL,KC_QUOT),  
     KC_LSFT,             KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,         KC_N,    KC_M,    KC_COMM, KC_DOT,  KC_SLSH, KC_LSFT, 
-		                        U_M_ACL_4x,   U_M_ACL_2x,   KC_BTN1,   KC_BTN2, U_S_ACL_2x,   U_S_ACL_4x,
+		                        U_M_ACL_4x,   U_M_ACL_2x,   KC_BTN1,   KC_BTN2, U_S_ACL_2x,   U_H_SCROLL,
     KC_TRNS, KC_TRNS,
     KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,
     KC_TRNS, KC_TRNS,
@@ -191,6 +192,12 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         init_device_config(&device_config);
       }
       return false;
+    case U_H_SCROLL:
+      if (record->event.pressed) {
+        use_horizontal_scrolling = !use_horizontal_scrolling;
+        drv2605l_pulse(device_config.trackpad_config.hf_waveform_number);
+      }
+      return false;
     default:
       return true;
   }
@@ -211,7 +218,7 @@ void keyboard_post_init_user(void) {
 }
 
 void send_pointing_device_kb(report_mouse_t rep_mouse){
-  if(rep_mouse.x || rep_mouse.y  || rep_mouse.v || rep_mouse.buttons || clear_buttons){
+  if(rep_mouse.x || rep_mouse.y  || rep_mouse.v || rep_mouse.h || rep_mouse.buttons || clear_buttons){
     pointing_device_set_report(rep_mouse);
     pointing_device_send();
     if(clear_buttons) {
@@ -246,10 +253,14 @@ void matrix_scan_user(void) {
         }
         break;
       case GESTURE_SWIPE_D:
-        gesture_press_key(get_d_3);
+        if(iqs5xx_data.finger_cnt == 3){
+          gesture_press_key(get_d_3);
+        }
         break;                
       case GESTURE_SWIPE_U:
-        gesture_press_key(get_u_3);
+        if(iqs5xx_data.finger_cnt == 3){
+          gesture_press_key(get_u_3);
+        }
         break;
       case GESTURE_PINCH_OUT:
         gesture_press_key(get_o_2);
@@ -426,7 +437,20 @@ bool rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
     rgb_matrix_set_color(39, rgb_step.r, rgb_step.g, rgb_step.b);
   }
 
-  const uint8_t pomodoro_leds[] = {42, 43, 44, 45, 46, 47};
+  const uint8_t h_scroll_leds[] = {42, 43, 44};
+
+  RGB rgb_h_scroll = {
+    device_config.led_config.indicator_colors.h_scroll_r,
+    device_config.led_config.indicator_colors.h_scroll_g,
+    device_config.led_config.indicator_colors.h_scroll_b
+  };
+  if(use_horizontal_scrolling){
+    for (uint8_t i = 0; i < sizeof(h_scroll_leds); i++) {
+      rgb_matrix_set_color(h_scroll_leds[i], rgb_h_scroll.r, rgb_h_scroll.g, rgb_h_scroll.b);
+    }  
+  }
+
+  const uint8_t pomodoro_leds[] = {45, 46, 47};
 
   // Check if we're flashing due to color change
   if (is_pomodoro_flashing()) {

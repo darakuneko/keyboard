@@ -14,6 +14,7 @@ bool use_trackpad_layer;
 bool use_drag;
 float accel_speed;
 int accel_step;
+bool use_horizontal_scrolling;
 
 void init_trackpad_config(trackpad_config_t *trackpad_config) {
   trackpad_config->hf_waveform_number = 48;   
@@ -21,6 +22,7 @@ void init_trackpad_config(trackpad_config_t *trackpad_config) {
   trackpad_config->can_drag = true;  
   trackpad_config->can_trackpad_layer = true;
   trackpad_config->can_reverse_scrolling_direction = false;
+  trackpad_config->can_reverse_h_scrolling_direction = false;
   trackpad_config->scroll_term = 100;
   trackpad_config->drag_term = 500;
   trackpad_config->drag_strength_mode = false;
@@ -58,6 +60,7 @@ void set_trackpad_config(trackpad_config_t temp_config) {
   trackpad_layer = 3;
   use_trackpad_layer = false;
   use_drag = false;
+  use_horizontal_scrolling = false;
 }
 
 void send_trackpad_config(const trackpad_config_t *config) {
@@ -91,7 +94,8 @@ void send_trackpad_config(const trackpad_config_t *config) {
   data[8] = (config->default_speed & 0b001111) << 4 |
             config->scroll_step; 
 
-  data[9] = config->can_short_scroll << 7;
+  data[9] = config->can_short_scroll << 7 |
+            config->can_reverse_h_scrolling_direction << 6;
   
   data[10] = config->tap_term >> 8;      
   data[11] = config->tap_term & 0xFF;   
@@ -141,6 +145,7 @@ void receive_trackpad_config(uint8_t *data) {
   temp_config.default_speed = joinDefaultSpeed(data[4], data[5]);
   temp_config.scroll_step = data[5] & 0b00001111;
   temp_config.can_short_scroll = (data[6] & 0b10000000) >> 7;
+  temp_config.can_reverse_h_scrolling_direction = (data[6] & 0b01000000) >> 6;
   temp_config.tap_term = (data[7] << 8) | data[8];           
   temp_config.swipe_term = (data[9] << 8) | data[10];        
   temp_config.pinch_term = (data[11] << 8) | data[12];       
@@ -166,6 +171,7 @@ void receive_trackpad_config(uint8_t *data) {
   uprintf("trackpad_config.gesture_term: %d\n", temp_config.gesture_term);
   uprintf("trackpad_config.short_scroll_term: %d\n", temp_config.short_scroll_term);
   uprintf("trackpad_config.zoom_distance: %d\n", temp_config.zoom_distance);
+  uprintf("trackpad_config.can_reverse_h_scrolling_direction: %d\n", temp_config.can_reverse_h_scrolling_direction);
   uprintf("\n\n");          
   
   update_trackpad_config(temp_config, true);
