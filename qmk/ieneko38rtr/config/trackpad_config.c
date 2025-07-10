@@ -57,7 +57,7 @@ void set_trackpad_config(trackpad_config_t temp_config) {
   set_iqs5xx_zoom_distance(temp_config.zoom_distance);
   accel_speed = 1;
   accel_step = 1;
-  trackpad_layer = 3;
+  trackpad_layer = 8;
   use_trackpad_layer = false;
   use_drag = false;
   use_horizontal_scrolling = false;
