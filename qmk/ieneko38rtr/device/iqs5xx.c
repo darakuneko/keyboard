@@ -300,11 +300,11 @@ static void handle_finger_swipe(iqs5xx_data_t* const data) {
     if(data->finger_cnt > 2 || !use_horizontal_scrolling) {
       data->gesture = GESTURE_SWIPE_R;
     } 
-  } else if(is_down_swipe(data)){
-    data->gesture = GESTURE_SWIPE_D;
   } else if(is_up_swipe(data)){
     data->gesture = GESTURE_SWIPE_U;
-  }
+  }else if(is_down_swipe(data)){
+    data->gesture = GESTURE_SWIPE_D;
+  } 
 
   timer.swipe_time = timer_read32();
 }
