@@ -397,12 +397,9 @@ void set_gesture(iqs5xx_data_t* const data, report_mouse_t* const rep_mouse) {
     rep_mouse->x = dx;
     rep_mouse->y = dy;
   } else if (data->finger_cnt == 2) {
-    if(data->ges_evnet1 == 2){
       handle_scroll(data, rep_mouse);
-    } else {
       handle_finger_swipe(data);
       handle_pinch(data);
-    }
   } else if (data->finger_cnt == 3) {
     handle_finger_swipe(data);
   } else if (data->finger_cnt == 4) {
