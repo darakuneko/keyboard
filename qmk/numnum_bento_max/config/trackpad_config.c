@@ -23,12 +23,18 @@ void init_trackpad_config(trackpad_config_t *trackpad_config) {
   trackpad_config->can_trackpad_layer = false;
   trackpad_config->can_reverse_scrolling_direction = false;
   trackpad_config->can_reverse_h_scrolling_direction = false;
+  trackpad_config->can_high_res_scroll = false;
   trackpad_config->scroll_term = 100;
   trackpad_config->drag_term = 500;
   trackpad_config->drag_strength_mode = false;
   trackpad_config->drag_strength = 6;
   trackpad_config->default_speed = 10;
+
+#ifdef  POINTING_DEVICE_HIRES_SCROLL_ENABLE
+  trackpad_config->scroll_step = 7;
+#else
   trackpad_config->scroll_step = 0;
+#endif  
   trackpad_config->can_short_scroll = true;
   trackpad_config->tap_term = 200;
   trackpad_config->swipe_term = 150;
@@ -95,7 +101,8 @@ void send_trackpad_config(const trackpad_config_t *config) {
             config->scroll_step; 
 
   data[9] = config->can_short_scroll << 7 |
-            config->can_reverse_h_scrolling_direction << 6;
+          config->can_reverse_h_scrolling_direction << 6 |
+          config->can_high_res_scroll << 5;
   
   data[10] = config->tap_term >> 8;      
   data[11] = config->tap_term & 0xFF;   
@@ -146,6 +153,7 @@ void receive_trackpad_config(uint8_t *data) {
   temp_config.scroll_step = data[5] & 0b00001111;
   temp_config.can_short_scroll = (data[6] & 0b10000000) >> 7;
   temp_config.can_reverse_h_scrolling_direction = (data[6] & 0b01000000) >> 6;
+  temp_config.can_high_res_scroll = (data[6] & 0b01000000) >> 5;
   temp_config.tap_term = (data[7] << 8) | data[8];           
   temp_config.swipe_term = (data[9] << 8) | data[10];        
   temp_config.pinch_term = (data[11] << 8) | data[12];       
@@ -160,6 +168,7 @@ void receive_trackpad_config(uint8_t *data) {
   uprintf("trackpad_config.drag_term: %d\n", temp_config.drag_term);
   uprintf("trackpad_config.can_trackpad_layer: %d\n", temp_config.can_trackpad_layer);
   uprintf("trackpad_config.can_reverse_scrolling_direction: %d\n", temp_config.can_reverse_scrolling_direction);
+  uprintf("trackpad_config.can_high_res_scroll: %d\n", temp_config.can_high_res_scroll);
   uprintf("trackpad_config.drag_strength_mode: %d\n", temp_config.drag_strength_mode);
   uprintf("trackpad_config.drag_strength: %d\n", temp_config.drag_strength);
   uprintf("trackpad_config.default_speed: %d\n", temp_config.default_speed);

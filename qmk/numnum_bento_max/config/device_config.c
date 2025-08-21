@@ -22,7 +22,7 @@ void init_device_config(device_config_t *device_config) {
 }
 
 void save_device_config(device_config_t device_config) {
-  eeconfig_update_user_datablock(&device_config);
+  eeconfig_update_user_datablock(&device_config, 0, sizeof(device_config));
 }
 
 void schedule_device_config_save(device_config_t device_config) {
