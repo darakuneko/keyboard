@@ -227,12 +227,6 @@ void set_tap(iqs5xx_data_t* const data, report_mouse_t* const rep_mouse) {
   }
 }
 
-int32_t move_limit_range(int32_t value, int32_t min, int32_t max) {
-  if (value > max) return max;
-  if (value < min) return min;
-  return value;
-}
-
 static int16_t constrain_hid_value(int value) {
     if (value < -MAX_HID_RANGE) return -MAX_HID_RANGE;
     if (value > MAX_HID_RANGE) return MAX_HID_RANGE;

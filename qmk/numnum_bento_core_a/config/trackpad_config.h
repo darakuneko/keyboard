@@ -20,6 +20,7 @@ typedef struct {
     unsigned int short_scroll_term : 10;
     unsigned int zoom_distance : 16;
     bool can_reverse_h_scrolling_direction  : 1;
+    bool can_high_res_scroll  : 1;
 } trackpad_config_t;
 
 // Configuration variables
