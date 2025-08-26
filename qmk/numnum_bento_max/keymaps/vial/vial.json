@@ -82,11 +82,6 @@
       "shortName": "EEPROM\nClear",
       "title": "EEPROM Clear",
       "name": "U_EEP_CLR"
-    },
-    {
-      "shortName": "Line Scroll",
-      "title": "Line Scroll for High Res",
-      "name": "U_LINE_SCROLL"
     }
   ],
   "layouts": {
