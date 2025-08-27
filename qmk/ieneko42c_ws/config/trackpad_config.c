@@ -28,7 +28,11 @@ void init_trackpad_config(trackpad_config_t *trackpad_config) {
   trackpad_config->drag_strength_mode = false;
   trackpad_config->drag_strength = 6;
   trackpad_config->default_speed = 10;
+#ifdef  POINTING_DEVICE_HIRES_SCROLL_ENABLE
+  trackpad_config->scroll_step = 7;
+#else
   trackpad_config->scroll_step = 0;
+#endif  
   trackpad_config->can_short_scroll = true;
   trackpad_config->tap_term = 200;
   trackpad_config->swipe_term = 150;
