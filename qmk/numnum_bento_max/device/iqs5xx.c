@@ -299,16 +299,8 @@ static void handle_finger_swipe(iqs5xx_data_t* const data) {
   timer.swipe_time = timer_read32();
 }
 
-static float step_count(int direction) {
-  int scroll_step = trackpad_config.scroll_step + 1;
-
-#ifdef POINTING_DEVICE_HIRES_SCROLL_ENABLE
-  int base_step = scroll_step * accel_step;
-  int result = base_step * direction;
-    return (float) result;
-#else
-  return scroll_step * accel_step * direction;  
-#endif
+static int step_count(int direction) {
+  return (trackpad_config.scroll_step + 1) * accel_step * direction;
 }
 
 static void insert_rep_mouse(report_mouse_t* const rep_mouse, int direction, bool is_horizontal){

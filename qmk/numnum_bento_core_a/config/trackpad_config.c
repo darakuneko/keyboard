@@ -23,7 +23,6 @@ void init_trackpad_config(trackpad_config_t *trackpad_config) {
   trackpad_config->can_trackpad_layer = false;
   trackpad_config->can_reverse_scrolling_direction = false;
   trackpad_config->can_reverse_h_scrolling_direction = false;
-  trackpad_config->can_high_res_scroll = false;
   trackpad_config->scroll_term = 100;
   trackpad_config->drag_term = 500;
   trackpad_config->drag_strength_mode = false;
