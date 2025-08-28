@@ -287,11 +287,11 @@ static void handle_finger_swipe(iqs5xx_data_t* const data) {
   if (!is_gesture_finger_swipe(data)) return;
   
   if(is_left_swipe(data)){
-    if(data->finger_cnt > 2 || !use_horizontal_scrolling) {
+    if(!use_horizontal_scrolling) {
       data->gesture = GESTURE_SWIPE_L;
     } 
   } else if(is_right_swipe(data)){
-    if(data->finger_cnt > 2 || !use_horizontal_scrolling) {
+    if(!use_horizontal_scrolling) {
       data->gesture = GESTURE_SWIPE_R;
     } 
   } else if(is_up_swipe(data)){
