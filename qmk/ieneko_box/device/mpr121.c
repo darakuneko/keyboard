@@ -6,7 +6,6 @@
 #include "i2c_master.h"
 #include <hal.h>
 
-
 // Global touch state variables (0x5A)
 uint16_t mpr121_touch_state_1 = 0;
 uint16_t mpr121_last_touch_state_1 = 0;

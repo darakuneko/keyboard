@@ -1,9 +1,5 @@
 /*
  * MPR121 capacitive touch sensor driver for QMK
- * Supports ELE0-ELE4 (5 electrodes)
- * No IRQ used - polling mode
- * 
- * For BLACKPILL STM32 F401
  */
 
 #pragma once
