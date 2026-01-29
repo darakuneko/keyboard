@@ -1,0 +1,4 @@
+SRC += i2c_master.c device/mpr121.c
+POINTING_DEVICE_ENABLE = yes
+POINTING_DEVICE_DRIVER = custom
+DIP_SWITCH_ENABLE = yes
