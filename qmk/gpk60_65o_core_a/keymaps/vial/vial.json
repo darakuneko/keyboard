@@ -2,7 +2,7 @@
   "name": "GPK60-65O",
   "vendorId": "0x7A79",
   "productId": "0x1536",
-  "lighting": "none",
+  "lighting": "qmk_rgblight",
   "matrix": {
     "rows": 5,
     "cols": 13
