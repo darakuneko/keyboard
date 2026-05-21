@@ -33,8 +33,8 @@ extern float accel_speed;
 extern int accel_step;
 extern bool use_horizontal_scrolling;
 
-void init_trackpad_config(trackpad_config_t *trackpad_config);
-void update_trackpad_config(trackpad_config_t trackpad_config, bool should_save);
-void set_trackpad_config(trackpad_config_t trackpad_config);
+void init_trackpad_config(trackpad_config_t *config);
+void update_trackpad_config(trackpad_config_t temp_config, bool should_save);
+void set_trackpad_config(trackpad_config_t temp_config);
 void send_trackpad_config(const trackpad_config_t *config);
 void receive_trackpad_config(uint8_t *data, bool should_save);

@@ -34,7 +34,8 @@ enum id_device_get_value_t {
 
 enum id_device_operation_t {
     id_layer_move = 0x01,
-    id_oled_write = 0x02
+    id_oled_write = 0x02,
+    id_trackpad_temp_apply = 0x03
 };
 
 void init_device_config(device_config_t *device_config);

@@ -61,7 +61,7 @@ void send_device_config(void) {
 void gpk_rc_handle_command_user(uint8_t id, uint8_t action, uint8_t *data, uint8_t length) {
   if(id == id_gpk_rc_set_value){
     if(action == id_trackpad_set_value) {
-      receive_trackpad_config(data);
+      receive_trackpad_config(data, true);
       send_set_value_complete();
     } else if(action == id_pomodoro_set_value) {
       receive_pomodoro_config(data);
@@ -97,6 +97,8 @@ void gpk_rc_handle_command_user(uint8_t id, uint8_t action, uint8_t *data, uint8
         oled_write((const char*) data, false);
       }
       #endif
+    } else if(action == id_trackpad_temp_apply) {
+      receive_trackpad_config(data, false);
     }
   }
 }
