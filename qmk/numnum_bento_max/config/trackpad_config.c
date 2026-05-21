@@ -135,7 +135,7 @@ unsigned int joinDefaultSpeed(uint8_t a, uint8_t b) {
   return (upper2Bits << 4) | lower4Bits;
 }
 
-void receive_trackpad_config(uint8_t *data) {
+void receive_trackpad_config(uint8_t *data, bool should_save) {
   trackpad_config_t temp_config;
 
   temp_config.hf_waveform_number = data[0];
@@ -179,5 +179,5 @@ void receive_trackpad_config(uint8_t *data) {
   uprintf("trackpad_config.can_reverse_h_scrolling_direction: %d\n", temp_config.can_reverse_h_scrolling_direction);
   uprintf("\n\n");          
   
-  update_trackpad_config(temp_config, true);
+  update_trackpad_config(temp_config, should_save);
 }

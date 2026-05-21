@@ -37,4 +37,4 @@ void init_trackpad_config(trackpad_config_t *trackpad_config);
 void update_trackpad_config(trackpad_config_t trackpad_config, bool should_save);
 void set_trackpad_config(trackpad_config_t trackpad_config);
 void send_trackpad_config(const trackpad_config_t *config);
-void receive_trackpad_config(uint8_t *data);
+void receive_trackpad_config(uint8_t *data, bool should_save);
