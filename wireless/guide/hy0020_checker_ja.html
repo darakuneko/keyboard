@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>HY0020 UART Checker Build Guide</title>
+<link rel="stylesheet" href="../style.css">
+</head>
+<body>
+<main class="doc">
+  <header>
+    <h1>HY0020 UART チェッカー ビルドガイド</h1>
+  </header>
+  <p class="lead">BLE モジュール HY0020 をリフローした HY0020 SIP 基板が動くかどうかを、キーボードなどに取り付ける前に確かめる基板です。<br>HY0020 SIP を抜き差しでき、USB でパソコンにつないで、ブラウザから確認用のファームウェアを書き込めます。</p>
+  <nav class="toc">
+    <a href="#parts">1. 用意するもの</a>
+    <a href="#reflow">2. HY0020 のリフロー</a>
+    <a href="#conthrough">3. コンスルーのはんだ付け</a>
+    <a href="#write">4. 確認用ファームウェアの書き込み</a>
+    <a href="#check">5. 確認する</a>
+    <a href="#board">6. 基板の説明</a>
+    <a href="#trouble">7. 困ったとき</a>
+    <a href="#source">8. ソースコード</a>
+  </nav>
+
+  <section id="parts">
+    <h2>1. 用意するもの</h2>
+    <h3>セット内容</h3>
+    <table class="parts">
+      <tr><th>部品</th><th>数</th><th>メモ</th></tr>
+      <tr><td>HY0020 UART チェッカー</td><td>1 枚</td><td>コンスルー以外の部品は実装済み</td></tr>
+      <tr><td>HY0020 SIP 基板</td><td>2 枚</td><td>HY0020 をリフローして載せる基板。<br>1 枚は予備</td></tr>
+    </table>
+    <h3>必要な工具</h3>
+    <p>はんだごて<br>
+    はんだ<br>
+    はんだペースト<br>
+    リフローに使うもの（ホットプレートやホットエアーなど）<br>
+    ピンセット<br>
+    ニッパー<br>
+    USB Type-C ケーブル（データ通信対応）<br>
+    パソコン（Chrome / Edge が動くもの）</p>
+    <h3>ご自身で用意して頂くパーツ</h3>
+    <table class="parts">
+      <tr><th>部品</th><th>数</th><th>メモ</th></tr>
+      <tr><td>HY0020 ブートローダー書込済（秋月電子、BLE モジュール単体）</td><td>1 個</td><td><a href="https://akizukidenshi.com/catalog/g/g131343/">https://akizukidenshi.com/catalog/g/g131343/</a><br>リフローに慣れていない場合は、複数個買っておくと安心です</td></tr>
+      <tr><td>コンスルー（2.54 mm ピッチ、ニッパーなどで 7 ピンに切って使う、高さは問わない）</td><td>1 本</td><td><a href="https://shop.yushakobo.jp/products/31">https://shop.yushakobo.jp/products/31</a><br><a href="https://shop.talpkeyboard.com/collections/mac8conthrough">https://shop.talpkeyboard.com/collections/mac8conthrough</a></td></tr>
+    </table>
+  </section>
+
+  <section id="reflow">
+    <h2>2. HY0020 のリフロー</h2>
+    <p>HY0020 を HY0020 SIP 基板にリフローします。<br>
+    温度の条件は、HY0020 のアプリケーションノートの「3 はんだ付け（リフロー）プロファイル」を参考にしてください。<br>
+    <a href="https://www.fdk.co.jp/product/electronic_components/module/pdf/HY0020_AppNote.pdf">https://www.fdk.co.jp/product/electronic_components/module/pdf/HY0020_AppNote.pdf</a><br>
+    作業は、お使いの機器の案内に従ってください。</p>
+    <figure><img src="img/hy0020_checker/reflow.jpg" alt="リフローの例: ホットプレートの上の HY0020 SIP 基板と HY0020" loading="lazy"></figure>
+    <p class="muted">リフローの例（ホットプレート）。</p>
+    <p class="muted">HY0020 のパッドはモジュールの裏にあり、はんだ付けの状態を目で確かめられません。<br>このあとの手順で確かめます。</p>
+  </section>
+
+  <section id="conthrough">
+    <h2>3. コンスルーのはんだ付け</h2>
+    <ol class="steps">
+      <li>コンスルーをニッパーなどで 7 ピンに切る。</li>
+      <li>コンスルーを HY0020 UART チェッカーの J2 にはんだ付けする。
+        <figure><img src="img/hy0020_checker/conthrough.jpg" alt="コンスルーを J2 にはんだ付けした HY0020 UART チェッカー" loading="lazy"></figure></li>
+    </ol>
+    <p class="muted">はんだ付けするのはチェッカーの側だけです。<br>HY0020 SIP の側ははんだ付けせず、抜き差しして使います。</p>
+  </section>
+
+  <section id="write">
+    <h2>4. 確認用ファームウェアの書き込み</h2>
+    <ol class="steps">
+      <li>チェッカーのコンスルーに、HY0020 を上にして HY0020 SIP を挿す。</li>
+      <li>USB でパソコンにつなぐ。<br>D2（電源）が点灯する。</li>
+      <li>Chrome か Edge で <a href="../hy0020_checker/">HY0020 UART Checker のページ</a>を開く。</li>
+      <li>「書き込む」を押し、一覧から CH340 のポート（USB Serial）を選んで「接続」を押す。</li>
+      <li>「完了」と出るまで待つ。</li>
+    </ol>
+    <p class="muted">書き込みが始まらないときは、SW2 を押しながら SW1（RESET）を押して離し、もう一度「書き込む」を押してください。</p>
+  </section>
+
+  <section id="check">
+    <h2>5. 確認する</h2>
+    <p>ページの「モニターを開く」を押すと、確認用ファームウェアの出力が表示されます。<br>次の 4 つを確かめます。</p>
+    <table>
+      <tr><th>項目</th><th>OK の目安</th></tr>
+      <tr><td>UART</td><td>「HY0020 checker」とデバイス ID・BLE アドレス・VDD（3300 mV 前後）・温度が表示される。<br>「再表示」で表示し直せる</td></tr>
+      <tr><td>D1</td><td>1 秒ごとに 2 回点滅する（出荷時のサンプルは 1 秒に 1 回の点滅）</td></tr>
+      <tr><td>SW2</td><td>押すと D1 が点灯し、「SW2 pressed」と表示される</td></tr>
+      <tr><td>BLE</td><td>スマートフォンなどから「HY0020 XXXX」につなぐと、「BLE connected」と電波の強さ（RSSI）が表示され、D1 が点灯する</td></tr>
+    </table>
+    <p>4 つとも OK なら、HY0020 SIP は使えます。<br>USB を抜いて、HY0020 SIP をチェッカーから抜いてください。</p>
+    <p class="muted">確認用ファームウェアは入れたままで構いません。<br>Trident40 Wireless では、この確認用ファームウェアが入った状態から、キーボード用のファームウェアを書き込みます。</p>
+  </section>
+
+  <section id="board">
+    <h2>6. 基板の説明</h2>
+    <figure class="diagram"><img src="img/hy0020_checker/board.svg" alt="HY0020 UART チェッカーの USB Type-C、SW1（RESET）、SW2（DFU）、D1、D2、J2 の位置"></figure>
+    <table>
+      <tr><th>部品</th><th>役割</th></tr>
+      <tr><td>USB Type-C</td><td>パソコンにつなぐ。<br>電源と、USB シリアル変換（CH340C）を通した UART の通信</td></tr>
+      <tr><td>J2（コンスルー）</td><td>HY0020 SIP を挿す。<br>HY0020 を上にして挿す</td></tr>
+      <tr><td>D1</td><td>HY0020 の P0.07 につながった LED</td></tr>
+      <tr><td>D2</td><td>電源（3.3 V）の LED</td></tr>
+      <tr><td>SW1</td><td>RESET（HY0020 の P0.21）</td></tr>
+      <tr><td>SW2</td><td>DFU（HY0020 の P0.20）</td></tr>
+    </table>
+    <h3>HY0020 SIP のピン</h3>
+    <table>
+      <tr><th>ピン</th><th>信号</th><th>HY0020</th></tr>
+      <tr><td>1</td><td>DFU</td><td>P0.20</td></tr>
+      <tr><td>2</td><td>RST</td><td>P0.21</td></tr>
+      <tr><td>3</td><td>IRQ</td><td>P0.07</td></tr>
+      <tr><td>4</td><td>RX</td><td>P0.08</td></tr>
+      <tr><td>5</td><td>TX</td><td>P0.06</td></tr>
+      <tr><td>6</td><td>GND</td><td></td></tr>
+      <tr><td>7</td><td>3V3</td><td></td></tr>
+    </table>
+    <p class="muted">このチェッカーは、UART でつなぐ HY0020 SIP 専用です。</p>
+  </section>
+
+  <section id="trouble">
+    <h2>7. 困ったとき</h2>
+    <table>
+      <tr><th>症状</th><th>対処</th></tr>
+      <tr><td>D2 が点灯しない</td><td>USB ケーブルを確かめる（データ通信対応のものを使う）</td></tr>
+      <tr><td>一覧に CH340 のポートが出ない</td><td>データ通信対応の USB ケーブルか確かめる。<br>Windows では CH340 のドライバーが必要なことがある</td></tr>
+      <tr><td>「ブートローダーから応答がありません」と出る</td><td>SW2 を押しながら SW1（RESET）を押して離し、もう一度「書き込む」を押す</td></tr>
+      <tr><td>何度やっても書き込めず、ボタンを押しても変わらない</td><td>HY0020 のはんだ不良のことが多い。<br>リフローし直す</td></tr>
+      <tr><td>ポートを開けない</td><td>Arduino IDE やターミナルなど、ほかのアプリがポートを使っていないか確かめる</td></tr>
+    </table>
+  </section>
+
+  <section id="source">
+    <h2>8. ソースコード</h2>
+    <p>確認用ファームウェアと書き込みページのソースコードは <a href="https://github.com/darakuneko/keyboard">github.com/darakuneko/keyboard</a> で公開しています（<code>wireless/hy0020_checker/</code>）。</p>
+  </section>
+</main>
+</body>
+</html>

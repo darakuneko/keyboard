@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wireless Keyboard Firmware Updater</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<main>
+  <header>
+    <h1>Firmware Updater</h1>
+    <button id="lang" class="link" type="button">English</button>
+  </header>
+  <p class="lead" data-i18n="lead"></p>
+
+  <div id="unsupported" class="notice error" hidden data-i18n="unsupported"></div>
+
+  <section>
+    <h2 data-i18n="s1"></h2>
+    <label class="field"><span data-i18n="keyboard"></span>
+      <select id="kb"></select>
+    </label>
+    <label class="field"><span data-i18n="version"></span>
+      <select id="fw"></select>
+    </label>
+    <p id="notes" class="muted"></p>
+    <p class="muted" data-i18n="order"></p>
+  </section>
+
+  <section id="stm32card">
+    <h2 data-i18n="s2"></h2>
+    <p class="muted" data-i18n="stm32Lead"></p>
+    <ol class="steps">
+      <li><span data-i18n="stm32Step1"></span>
+        <ul>
+          <li id="stm32StepA"></li>
+          <li id="stm32StepB"></li>
+        </ul>
+      </li>
+      <li data-i18n="stm32Step2"></li>
+      <li data-i18n="stm32Step3"></li>
+    </ol>
+    <p class="buttons">
+      <button id="stm32boot" type="button" data-i18n="stm32Boot"></button>
+      <button id="stm32go" class="primary" type="button" data-i18n="go"></button>
+    </p>
+    <details>
+      <summary data-i18n="localSummary"></summary>
+      <p class="muted" data-i18n="stm32Local"></p>
+      <input id="stm32local" type="file" accept=".bin">
+    </details>
+    <div id="stm32run" hidden>
+      <div class="bar"><div id="stm32bar" class="barfill"></div></div>
+      <p id="stm32status" class="status"></p>
+    </div>
+  </section>
+
+  <section id="nrfcard">
+    <h2 data-i18n="s3"></h2>
+    <p class="muted" data-i18n="nrfLead"></p>
+    <ol class="steps">
+      <li data-i18n="nrfStep1"></li>
+      <li id="nrfStep2"></li>
+      <li data-i18n="nrfStep3"></li>
+    </ol>
+    <label class="check"><input id="erase" type="checkbox"> <span data-i18n="eraseLabel"></span></label>
+    <p class="muted" data-i18n="eraseHelp"></p>
+    <p class="buttons">
+      <button id="nrfgo" class="primary" type="button" data-i18n="go"></button>
+      <button id="eraseonly" type="button" data-i18n="eraseOnly"></button>
+    </p>
+    <details>
+      <summary data-i18n="localSummary"></summary>
+      <p class="muted" data-i18n="nrfLocal"></p>
+      <input id="nrflocal" type="file" accept=".zip">
+    </details>
+    <div id="nrfrun" hidden>
+      <div class="bar"><div id="nrfbar" class="barfill"></div></div>
+      <p id="nrfstatus" class="status"></p>
+    </div>
+  </section>
+
+  <footer class="muted">
+    <p data-i18n="footer"></p>
+    <ul class="links">
+      <li id="guideItem" hidden><a id="guide" href="#"></a></li>
+    </ul>
+  </footer>
+</main>
+<script type="module" src="js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>HY0020 UART Checker</title>
+<link rel="stylesheet" href="style.css?v=1">
+</head>
+<body>
+<main>
+  <header>
+    <h1>HY0020 UART Checker</h1>
+    <button id="lang" class="link" type="button">English</button>
+  </header>
+  <p class="lead" data-i18n="lead"></p>
+
+  <div id="unsupported" class="notice error" hidden data-i18n="unsupported"></div>
+
+  <section>
+    <h2 data-i18n="s1"></h2>
+    <ol class="steps">
+      <li data-i18n="step1"></li>
+      <li data-i18n="step2"></li>
+      <li data-i18n="step3"></li>
+    </ol>
+    <figure class="diagram"><img src="../guide/img/hy0020_checker/board.svg" alt="USB Type-C / SW1 RESET / SW2 DFU / D1 / D2 / J2"></figure>
+    <details>
+      <summary data-i18n="localSummary"></summary>
+      <p class="muted" data-i18n="localHelp"></p>
+      <input id="local" type="file" accept=".zip">
+    </details>
+    <button id="go" class="primary" type="button" data-i18n="go"></button>
+    <div id="run" hidden>
+      <div class="bar"><div id="barfill"></div></div>
+      <p id="status" class="status"></p>
+    </div>
+  </section>
+
+  <section>
+    <h2 data-i18n="s2"></h2>
+    <p class="muted" data-i18n="monHelp"></p>
+    <p>
+      <button id="mon" class="primary" type="button" data-i18n="monOpen"></button>
+      <button class="cmd" type="button" data-cmd="?" disabled><span data-i18n="cmdReport"></span></button>
+      <button class="cmd" type="button" data-cmd="r" disabled><span data-i18n="cmdReset"></span></button>
+      <button class="cmd" type="button" data-cmd="d" disabled><span data-i18n="cmdDfu"></span></button>
+    </p>
+    <pre id="log" class="log"></pre>
+    <table>
+      <tr><th data-i18n="chkItem"></th><th data-i18n="chkOk"></th></tr>
+      <tr><td>UART</td><td data-i18n="chkUart"></td></tr>
+      <tr><td>D1</td><td data-i18n="chkLed"></td></tr>
+      <tr><td>SW2</td><td data-i18n="chkSw"></td></tr>
+      <tr><td>BLE</td><td data-i18n="chkBle"></td></tr>
+    </table>
+  </section>
+
+  <footer class="muted">
+    <p data-i18n="footer"></p>
+    <ul class="links">
+      <li><a href="../guide/hy0020_checker_ja.html">HY0020 UART チェッカー ビルドガイド</a></li>
+    </ul>
+  </footer>
+</main>
+<script type="module" src="js/app.js"></script>
+</body>
+</html>

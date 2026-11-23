@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 400" width="100%" font-family="system-ui, -apple-system, 'Helvetica Neue', Arial, sans-serif" font-size="13" fill="#1d1d1b">
+<title>HY0020 UART Checker: USB Type-C, SW1 RESET, SW2 DFU, D1, D2, J2</title>
+<rect width="560" height="400" fill="#ffffff"/>
+<rect x="130" y="60" width="288" height="272" rx="8" fill="#e9eee9" stroke="#6b6b66" stroke-width="1.5"/>
+<rect x="238.0" y="51.200000000000045" width="72" height="64.8" rx="6" fill="#ffffff" stroke="#2f6f4f" stroke-width="2.5"/>
+<rect x="242.39999999999998" y="180.39999999999998" width="79.2" height="31.2" rx="2" fill="#ffffff" stroke="#6b6b66" stroke-width="1.5"/>
+<text x="282" y="200" text-anchor="middle" font-size="11" fill="#6b6b66">CH340C</text>
+<rect x="367.5999999999999" y="144.79999999999995" width="20.8" height="22.4" rx="1" fill="#ffffff" stroke="#6b6b66" stroke-width="1.5"/>
+<rect x="135.60000000000002" y="184.0" width="40" height="40" rx="4" fill="#ffffff" stroke="#2f6f4f" stroke-width="2.5"/>
+<circle cx="155.60000000000002" cy="204" r="9" fill="#2f6f4f"/>
+<rect x="135.60000000000002" y="260.0" width="40" height="40" rx="4" fill="#ffffff" stroke="#2f6f4f" stroke-width="2.5"/>
+<circle cx="155.60000000000002" cy="280.0" r="9" fill="#2f6f4f"/>
+<rect x="231.24" y="232.79999999999995" width="10" height="16" rx="2" fill="#d94b3d" stroke="#6b6b66" stroke-width="1"/>
+<rect x="385.0" y="220" width="10" height="16" rx="2" fill="#d94b3d" stroke="#6b6b66" stroke-width="1"/>
+<rect x="185.20000000000005" y="297.5999999999999" width="142.4" height="20.8" rx="2" fill="#ffffff" stroke="#2f6f4f" stroke-width="2.5"/>
+<circle cx="195.6" cy="308" r="3.2" fill="#6b6b66"/>
+<text x="195.6" y="348" text-anchor="middle" font-size="9.5">DFU</text>
+<circle cx="215.9" cy="308" r="3.2" fill="#6b6b66"/>
+<text x="215.9" y="360" text-anchor="middle" font-size="9.5">RST</text>
+<circle cx="236.2" cy="308" r="3.2" fill="#6b6b66"/>
+<text x="236.2" y="348" text-anchor="middle" font-size="9.5">IRQ</text>
+<circle cx="256.6" cy="308" r="3.2" fill="#6b6b66"/>
+<text x="256.6" y="360" text-anchor="middle" font-size="9.5">RX</text>
+<circle cx="276.9" cy="308" r="3.2" fill="#6b6b66"/>
+<text x="276.9" y="348" text-anchor="middle" font-size="9.5">TX</text>
+<circle cx="297.2" cy="308" r="3.2" fill="#6b6b66"/>
+<text x="297.2" y="360" text-anchor="middle" font-size="9.5">GND</text>
+<circle cx="317.5" cy="308" r="3.2" fill="#6b6b66"/>
+<text x="317.5" y="348" text-anchor="middle" font-size="9.5">3V3</text>
+<text x="256.4" y="380" text-anchor="middle" font-weight="600">J2: HY0020 SIP (HY0020 side up)</text>
+<text x="274" y="43.200000000000045" text-anchor="middle" font-weight="600">USB Type-C</text>
+<line x1="133.60000000000002" y1="204" x2="112" y2="204" stroke="#6b6b66" stroke-width="1"/>
+<text x="108" y="208" text-anchor="end" font-weight="600">SW1 RESET</text>
+<line x1="133.60000000000002" y1="280.0" x2="112" y2="280.0" stroke="#6b6b66" stroke-width="1"/>
+<text x="108" y="284.0" text-anchor="end" font-weight="600">SW2 DFU</text>
+<line x1="397.0" y1="228" x2="432" y2="228" stroke="#6b6b66" stroke-width="1"/>
+<text x="436" y="232" font-weight="600">D2 PWR</text>
+<line x1="243.24" y1="244.79999999999995" x2="432" y2="244.79999999999995" stroke="#6b6b66" stroke-width="1"/>
+<text x="436" y="248.79999999999995" font-weight="600">D1 (P0.07)</text>
+</svg>

@@ -1,0 +1,41 @@
+{
+  "keyboards": [
+    {
+      "id": "trident40_wireless",
+      "name": "Trident40 Wireless",
+      "usb": {
+        "vid": "0x7A79",
+        "pid": "0x1577"
+      },
+      "stm32": {
+        "address": "0x08000000",
+        "page_size": 2048
+      },
+      "guide": {
+        "ja": "guide/trident40_wireless_ja.html"
+      },
+      "keys": {
+        "update": {
+          "ja": "BT_UPDT（既定のキーマップではレイヤー 3 の P の位置）",
+          "en": "BT_UPDT (layer 3, the P position in the default keymap)"
+        },
+        "boot": {
+          "ja": "メインプレートの BOOT1 ボタン",
+          "en": "the BOOT1 button on the PCB"
+        }
+      },
+      "firmware": [
+        {
+          "version": "0.1.15",
+          "date": "2026-11-23",
+          "stm32": "firmware/trident40_wireless/trident40_wireless_stm32_0.1.15_20261123.bin",
+          "hy0020": "firmware/trident40_wireless/trident40_wireless_hy0020_0.1.15_20261123.zip",
+          "notes": {
+            "ja": "最初の公開版。",
+            "en": "First release."
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,272 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Trident40 Wireless Build Guide</title>
+<link rel="stylesheet" href="../style.css">
+</head>
+<body>
+<main class="doc">
+  <header>
+    <h1>Trident40 Wireless ビルドガイド</h1>
+  </header>
+  <p class="lead">USB でも BLE（無線）でも使える 40 キーのキーボードです。<br>無線のときはコイン電池 CR2450 1 個で動きます。<br>Vial のファームウェアを搭載したキーボードが、そのまま無線で動きます。<br>BLE モジュール HY0020 のリフロー、はんだ付け、ファームウェアの書き込み、ケースの組み立てまでの手順です。</p>
+  <nav class="toc">
+    <a href="#parts">1. 用意するもの</a>
+    <a href="#reflow">2. HY0020 のリフロー</a>
+    <a href="#checker">3. チェッカーで確認</a>
+    <a href="#solder">4. HY0020 SIP のはんだ付け</a>
+    <a href="#switch">5. スタビライザー、プレート、スイッチ</a>
+    <a href="#firmware">6. ファームウェアの書き込み</a>
+    <a href="#battery">7. 電池ホルダー</a>
+    <a href="#case">8. ケースの組み立て</a>
+    <a href="#check">9. 動作確認</a>
+    <a href="#use">10. 使い方</a>
+    <a href="#update">11. ファームウェアの更新</a>
+    <a href="#trouble">12. 困ったとき</a>
+    <a href="#source">13. ソースコード</a>
+  </nav>
+
+  <section id="parts">
+    <h2>1. 用意するもの</h2>
+    <h3>キット内容</h3>
+    <table class="parts">
+      <tr><th>部品</th><th>数</th><th>メモ</th></tr>
+      <tr><td>メインプレート</td><td>1 枚</td><td>表面実装部品とホットスワップソケットは実装済み。<br>HY0020 SIP を取り付けるだけで使える</td></tr>
+      <tr><td>トッププレート</td><td>1 枚</td><td>アルミ 1.5 mm</td></tr>
+      <tr><td>ケース一式（SLS 製）</td><td>1 組</td><td>ケース本体、電池ホルダーを付ける底の蓋</td></tr>
+      <tr><td>M2 × 5 mm ネジ</td><td>4 本</td><td>底の蓋を留める</td></tr>
+      <tr><td>ゴム足</td><td>4 個</td><td>ケースの底に貼る</td></tr>
+      <tr><td>電池ホルダー BV-50N</td><td>1 個</td><td>CR2450 用</td></tr>
+      <tr><td>ワイヤー</td><td>3 本</td><td>両端の被覆むき済み。<br>電池ホルダーとメインプレートをつなぐ</td></tr>
+      <tr><td>HY0020 UART チェッカー</td><td>1 枚</td><td>リフローした HY0020 SIP を、メインプレートに付ける前に確かめる基板。<br>UART でつなぐ HY0020 SIP 専用</td></tr>
+      <tr><td>HY0020 SIP 基板</td><td>2 枚</td><td>HY0020 をリフローして載せる小さな基板。<br>1 枚は予備</td></tr>
+      <tr><td>細ピンヘッダー（1×7）</td><td>1 本</td><td>HY0020 SIP をメインプレートに付けるのに使う</td></tr>
+    </table>
+    <h3>必要な工具</h3>
+    <p>はんだごて<br>
+    はんだ<br>
+    はんだペースト<br>
+    リフローに使うもの（ホットプレートやホットエアーなど）<br>
+    ピンセット<br>
+    ニッパー<br>
+    マスキングテープ<br>
+    両面テープ<br>
+    ドライバー<br>
+    USB Type-C ケーブル（データ通信対応）<br>
+    パソコン（Chrome / Edge が動くもの）</p>
+    <h3>ご自身で用意して頂くパーツ</h3>
+    <table class="parts">
+      <tr><th>部品</th><th>数</th><th>メモ</th></tr>
+      <tr><td>HY0020 ブートローダー書込済（秋月電子、BLE モジュール単体）</td><td>1 個</td><td><a href="https://akizukidenshi.com/catalog/g/g131343/">https://akizukidenshi.com/catalog/g/g131343/</a><br>リフローに慣れていない場合は、複数個買っておくと安心です</td></tr>
+      <tr><td>コンスルー（2.54 mm ピッチ、ニッパーなどで 7 ピンに切って使う、高さは問わない）</td><td>1 本</td><td><a href="https://shop.yushakobo.jp/products/31">https://shop.yushakobo.jp/products/31</a><br><a href="https://shop.talpkeyboard.com/collections/mac8conthrough">https://shop.talpkeyboard.com/collections/mac8conthrough</a></td></tr>
+      <tr><td>PCBSnap</td><td>1 セット（6 個）</td><td><a href="https://shop.yushakobo.jp/products/12660">https://shop.yushakobo.jp/products/12660</a><br><a href="https://rabbit0-store.com/products/geon-x-nuxros-pcbsnap">https://rabbit0-store.com/products/geon-x-nuxros-pcbsnap</a></td></tr>
+      <tr><td>MX 互換スイッチ</td><td>40 個</td><td></td></tr>
+      <tr><td>スタビライザー（2U、PCB マウント）</td><td>2 個</td><td></td></tr>
+      <tr><td>キーキャップ（配列は右の画像を参考にする）</td><td>40 個</td><td><a href="https://booth.pximg.net/3a4d6577-cfc5-4ca5-92b6-a2b233b974d5/i/9203688/84d9b278-72d9-4d0d-b74e-72e1ac9a488a.png">https://booth.pximg.net/3a4d6577-cfc5-4ca5-92b6-a2b233b974d5/i/9203688/84d9b278-72d9-4d0d-b74e-72e1ac9a488a.png</a></td></tr>
+      <tr><td>コイン電池 CR2450</td><td>1 個</td><td></td></tr>
+    </table>
+  </section>
+
+  <section id="reflow">
+    <h2>2. HY0020 のリフロー</h2>
+    <p>HY0020 を HY0020 SIP 基板にリフローします。<br>
+    温度の条件は、HY0020 のアプリケーションノートの「3 はんだ付け（リフロー）プロファイル」を参考にしてください。<br>
+    <a href="https://www.fdk.co.jp/product/electronic_components/module/pdf/HY0020_AppNote.pdf">https://www.fdk.co.jp/product/electronic_components/module/pdf/HY0020_AppNote.pdf</a><br>
+    作業は、お使いの機器の案内に従ってください。</p>
+    <figure><img src="img/hy0020_checker/reflow.jpg" alt="リフローの例: ホットプレートの上の HY0020 SIP 基板と HY0020" loading="lazy"></figure>
+    <p class="muted">リフローの例（ホットプレート）。</p>
+    <p class="muted">HY0020 のパッドはモジュールの裏にあり、はんだ付けの状態を目で確かめられません。<br>次の手順のチェッカーで確かめます。</p>
+  </section>
+
+  <section id="checker">
+    <h2>3. チェッカーで確認</h2>
+    <p>メインプレートに付ける前に、リフローした HY0020 SIP が動くことを確かめます。<br>ここで書き込む確認用ファームウェアは、あとで本体から無線用のファームウェアを書き込むときにも使います。<br>必ず書き込んでおいてください。</p>
+    <p>チェッカーの詳しい説明は、<a href="hy0020_checker_ja.html">HY0020 UART チェッカーのビルドガイド</a>にあります。</p>
+    <ol class="steps">
+      <li>コンスルーをニッパーなどで 7 ピンに切る。</li>
+      <li>コンスルーを HY0020 UART チェッカーにはんだ付けする。<br>はんだ付けするのはチェッカーの側だけで、HY0020 SIP の側は抜き差しする。</li>
+      <li>チェッカーのコンスルーに、HY0020 を上にして HY0020 SIP を挿す。</li>
+      <li>USB でパソコンにつなぐ。<br>D2（電源）が点灯する。</li>
+      <li>Chrome か Edge で <a href="../hy0020_checker/">HY0020 UART Checker のページ</a>を開き、確認用ファームウェアを書き込む。</li>
+      <li>ページのシリアルモニターに、デバイス ID・BLE アドレス・電圧・温度が出ることを確かめる。</li>
+      <li>パソコンやスマートフォンの Bluetooth の一覧に「HY0020 XXXX」が出ることを確かめる。<br>D1 は接続待ちのあいだ 2 回ずつ点滅し、SW2 を押している間は点灯する。</li>
+    </ol>
+    <p class="muted">書き込みで「No data received」と出て、ボタンを押しても変わらないときは、HY0020 のはんだ不良のことが多いです。<br>リフローし直してください。</p>
+  </section>
+
+  <section id="solder">
+    <h2>4. HY0020 SIP のはんだ付け</h2>
+    <p>メインプレートは、ホットスワップソケットまで実装済みです。<br>はんだ付けするのは HY0020 SIP だけです。</p>
+    <p>HY0020 SIP は、メインプレートの<strong>裏面</strong>（ホットスワップソケットの面）の U5 に、すき間を空けずに直接重ねます。<br>
+    HY0020 のモジュールをメインプレートと反対側に向け、アンテナがメインプレートの外に出る向きにします。</p>
+    <ol class="steps">
+      <li>細ピンヘッダーを<strong>表面</strong>（スイッチの面）から、メインプレートと HY0020 SIP の両方に通す。<br>プラスチックの部分は表面に残る。</li>
+      <li>はんだ付けする面の反対側を、マスキングテープで固定する。<br>表面は細ピンヘッダーのプラスチックを、裏面は HY0020 SIP を押さえる。
+        <figure><img src="img/trident40_wireless/solder_1.jpg" alt="表面: 細ピンヘッダーをマスキングテープで固定" loading="lazy"><img src="img/trident40_wireless/solder_2.jpg" alt="裏面: HY0020 SIP をマスキングテープで固定" loading="lazy"></figure></li>
+      <li>裏面（HY0020 SIP の側）をはんだ付けする。
+        <figure><img src="img/trident40_wireless/solder_3.jpg" alt="裏面をはんだ付けした状態" loading="lazy"></figure></li>
+      <li>表面のピンを、プラスチックごとニッパーで切る。
+        <figure><img src="img/trident40_wireless/solder_4.jpg" alt="表面のピンをプラスチックごとニッパーで切る" loading="lazy"></figure></li>
+      <li>表面もはんだ付けする。<br><strong>両面とも</strong>はんだ付けが必要。
+        <figure><img src="img/trident40_wireless/solder_5.jpg" alt="表面をはんだ付けした状態" loading="lazy"></figure></li>
+    </ol>
+    <table>
+      <tr><th>項目</th><th>内容</th></tr>
+      <tr><td>HY0020 SIP の向き</td><td>1 番ピンが DFU。<br>HY0020 はメインプレートと反対側を向き、アンテナはメインプレートの外（左奥）に出る</td></tr>
+      <tr><td>ピンの並び</td><td>1 DFU / 2 RST / 3 IRQ / 4 RX / 5 TX / 6 GND / 7 3V3</td></tr>
+    </table>
+    <p class="muted">向きを逆に付けると動きません。<br>はんだ付けの前に、ピンの番号とアンテナの向きを確かめてください。</p>
+  </section>
+
+  <section id="switch">
+    <h2>5. スタビライザー、プレート、スイッチ</h2>
+    <ol class="steps">
+      <li>スタビライザー（2U、PCB マウント）2 個をメインプレートに取り付ける。</li>
+      <li>トッププレートにスイッチをはめる。</li>
+      <li>スイッチの足を曲げないように、メインプレートのソケットに差し込む。</li>
+    </ol>
+    <p class="muted">スタビライザーは、トッププレートとスイッチを付けたあとでは取り付けられません。<br>最初に付けてください。</p>
+    <p class="muted">キーが入力できるかは、次の「6. ファームウェアの書き込み」でキーボード本体に書き込んだあと、Vial や Pipette で確かめます。</p>
+    <p class="muted">次の手順でキーを押すので、ここでスイッチを付けておきます。<br>ケースにはまだ入れません（BOOT1 ボタンはケースに入れると押せません）。</p>
+  </section>
+
+  <section id="firmware">
+    <h2>6. ファームウェアの書き込み</h2>
+    <p>Chrome か Edge で <a href="../?kb=trident40_wireless&amp;lang=ja">書き込みページ</a>を開きます。<br>キーボード本体（STM32）と無線モジュール（HY0020）の 2 つを、この順に書き込みます。<br>電池はまだつなぎません。</p>
+    <h3>キーボード本体（STM32）</h3>
+    <ol class="steps">
+      <li>メインプレートの BOOT1 ボタンを押したまま、USB でパソコンにつなぐ（つないだらボタンは離してよい）。</li>
+      <li>書き込みページの「2. キーボード本体（STM32）」の「書き込む」を押し、一覧から「STM32 BOOTLOADER」を選んで「接続」を押す。</li>
+      <li>「完了」と出るまで待つ。<br>終わるとキーボードとして認識され、USB でキーが打てる。</li>
+    </ol>
+    <h3>キーの確認</h3>
+    <p>Vial や Pipette を開いて、すべてのキーが入力できるか確かめます。<br>
+    入力できないキーがあるときは、そのキーのスイッチの足が曲がっていないかを確かめてください。<br>
+    確認が済んだら、Vial や Pipette は閉じます（開いたままだと、次の無線モジュールの書き込みができません）。</p>
+    <h3>無線モジュール（HY0020）</h3>
+    <ol class="steps">
+      <li>USB でつないだまま、書き込みページの「3. 無線モジュール（HY0020）」の「書き込む」を押し、一覧から「Trident40 Wireless」を選んで「接続」を押す。</li>
+      <li>「BT_UPDT を押してください」と出たら、キーボードで BT_UPDT を押す。</li>
+      <li>「完了」と出るまで待つ（1 分ほど）。</li>
+    </ol>
+    <p>BT_UPDT はレイヤー 3 の P の位置にあります。<br>Space（または Backspace）を押したまま、最下段の MO(3) を押し、そのまま P を押します。</p>
+    <p class="muted">Windows で「STM32 BOOTLOADER」が一覧に出ないときは、Zadig で「STM32 BOOTLOADER」に WinUSB ドライバーを入れてください。</p>
+  </section>
+
+  <section id="battery">
+    <h2>7. 電池ホルダー</h2>
+    <p>USB を抜いてから作業します。</p>
+    <ol class="steps">
+      <li>付属のワイヤー 3 本を、電池ホルダー BV-50N の端子にはんだ付けする。<br>＋（外側の端子）に 2 本、−（中央の端子）に 1 本つなぐ。<br>はんだ付けしたところに、熱収縮チューブをかぶせてもよい。</li>
+      <li>ワイヤーをメインプレートの BT1 の穴にはんだ付けする。<br>− の印がある穴に − を、残りの穴に ＋ をつなぐ。<br>＋ と − を間違えない。
+        <figure><img src="img/trident40_wireless/battery_1.jpg" alt="BV-50N の端子と BT1 の穴をワイヤーでつないだ状態。黒が −、緑と赤が ＋" loading="lazy"></figure></li>
+      <li>電池ホルダー BV-50N を、底の蓋の内側に両面テープで貼る。<br>ホルダーの裏の突起を、蓋の穴に合わせる。
+        <figure><img src="img/trident40_wireless/battery_2.jpg" alt="裏に両面テープを貼った BV-50N と、底の蓋" loading="lazy"></figure></li>
+      <li>CR2450 をホルダーに入れる。</li>
+    </ol>
+    <p class="muted">写真では、黒のワイヤーが −、緑と赤のワイヤーが ＋ です。</p>
+    <p class="muted">＋ と − を逆につなぐと、メインプレートの赤い LED（D43）が光ります。<br>光ったときは、すぐに電池を外してつなぎ直してください。<br>逆につないでも壊れないように保護回路が入っていますが、LED が電池を消費します。</p>
+  </section>
+
+  <section id="case">
+    <h2>8. ケースの組み立て</h2>
+    <ol class="steps">
+      <li>PCBSnap 6 個を、トッププレートとメインプレートの間に入れる。<br>前に 2 個、後ろに 2 個、左右に 1 個ずつ。
+        <figure><img src="img/trident40_wireless/case_1.jpg" alt="トッププレートとメインプレートの間に入れた PCBSnap" loading="lazy"><img src="img/trident40_wireless/case_2.jpg" alt="PCBSnap を 6 個付けたメインプレートの裏面と、ケースの底" loading="lazy"></figure></li>
+      <li>ワイヤーを挟まないように、ケースに入れて押し込む。</li>
+      <li>最後に、電池ホルダーを付けた底の蓋を、ネジ 4 本で留める。</li>
+      <li>ゴム足 4 個を、ケースの底の四隅のくぼみに貼る。</li>
+      <li>キーキャップを付ける。
+        <figure><img src="img/trident40_wireless/finished.jpg" alt="組み立てた Trident40 Wireless" loading="lazy"></figure></li>
+    </ol>
+  </section>
+
+  <section id="check">
+    <h2>9. 動作確認</h2>
+    <ol class="steps">
+      <li>USB でつないで、すべてのキーが打てることを確かめる。</li>
+      <li>USB を抜いて、何かキーを押す。<br>パソコンやスマートフォンの Bluetooth の設定に「Trident40 Wireless」が出るので、接続（ペアリング）する。</li>
+      <li>電池だけでキーが打てることを確かめる。</li>
+      <li>BAT_LVL（レイヤー 3 の B の位置）を押すと、電池の残量が文字で入力される。</li>
+    </ol>
+  </section>
+
+  <section id="use">
+    <h2>10. 使い方</h2>
+    <h3>USB と BLE</h3>
+    <p>USB でパソコンにつないでいるときは USB、そうでないときは BLE で入力します。<br>切り替えは自動です。</p>
+    <h3>別の機器で使う</h3>
+    <p>使う機器それぞれで、最初に一度ペアリングしておきます。<br>別の機器で使うときは、今つながっている機器の側で Bluetooth を切る（または接続を解除する）と、もう一方の機器からつながります。</p>
+    <p class="muted">キーボードの側で接続先を番号で切り替える機能は、実装していません。<br>切り替えるたびに無線モジュールが内部の保存領域を書き換え、コイン電池に大きな電流が流れて電池を消耗するためです。<br>ソースコードを公開しているので、切り替えの機能が必要な場合は、ご自身で実装できます。</p>
+    <h3>ワイヤレス用のキー</h3>
+    <table>
+      <tr><th>キー</th><th>動作</th><th>既定の位置</th></tr>
+      <tr><td>BAT_LVL</td><td>電池の残量を文字で入力する</td><td>レイヤー 3、B の位置</td></tr>
+      <tr><td>BT_UPDT</td><td>無線モジュール（HY0020）の書き込みモード。<br>USB でつないでいるときだけ効く。<br>もう一度押すか USB を抜くと戻る</td><td>レイヤー 3、P の位置</td></tr>
+      <tr><td>QK_BOOT</td><td>キーボード本体（STM32）の書き込みモード。<br>USB でつないでいるときだけ効く</td><td>レイヤー 3、右上</td></tr>
+    </table>
+    <p>レイヤー 3 には、Space か Backspace（レイヤー 1）を押したまま、最下段の MO(3) を押して入ります。</p>
+    <h3>電池の残量</h3>
+    <p>BAT_LVL を押すと「95% 2964mV now 2927mV」のように入力されます。</p>
+    <table>
+      <tr><th>表示</th><th>内容</th></tr>
+      <tr><td>95% 2964mV</td><td>残量と、その元になる電圧。<br>キーを打っていないときに何回か測った値の中央値で、接続先の機器の電池表示にも同じ残量が出る</td></tr>
+      <tr><td>now 2927mV</td><td>キーを押した瞬間の電圧。<br>打っている間は少し下がる</td></tr>
+      <tr><td>--% now 3031mV</td><td>電池を入れた直後。<br>残量はまだ測れていない（1〜2 分で出る）</td></tr>
+    </table>
+    <p class="muted">コイン電池は、残りが少なくなるまで電圧があまり下がりません。<br>残量の表示は目安です。</p>
+    <h3>省電力</h3>
+    <p>5 分間どこにもつながらないと、無線モジュールは電源オフに近い状態になります。<br>キーを押すと起きて、つなぎ直します（その 1 文字目は入力されません）。<br>接続中に打たずに置いているときは、そのまま 1 文字目から打てます。</p>
+    <h3>消費電流（参考）</h3>
+    <table>
+      <tr><th>状態</th><th>電流</th></tr>
+      <tr><td>BLE 接続中の待機</td><td>約 15〜20 µA</td></tr>
+      <tr><td>接続待ち</td><td>約 40〜70 µA</td></tr>
+      <tr><td>5 分つながらなかったあと</td><td>約 9 µA</td></tr>
+    </table>
+    <p class="muted">部品のデータシートから計算した値で、実測ではありません。<br>打っている間はこれより多く流れます。</p>
+    <h3>電池の交換</h3>
+    <p>ケースの底のネジ 4 本を外し、蓋ごと電池ホルダーを引き出して、CR2450 を入れ替えます。<br>ワイヤーを引っぱらないように注意してください。</p>
+    <h3>Vial</h3>
+    <p>キーボード本体は、Vial（vial-qmk）のファームウェアで動いています。<br>Vial プロトコル互換のファームウェアではなく、Vial そのものが無線で動きます。<br>キーマップは、USB でも、BLE でつないだままでも、Vial で変更できます。<br>ロックの解除は Esc と Q の同時押しです。<br>ワイヤレス用のキーは、Vial の「User」のキーの一覧にあります。</p>
+  </section>
+
+  <section id="update">
+    <h2>11. ファームウェアの更新</h2>
+    <p><a href="../?kb=trident40_wireless&amp;lang=ja">書き込みページ</a>で、組み立てたあとも更新できます。<br>USB でつないで、キーボード本体（STM32）と無線モジュール（HY0020）の両方を書き込みます。</p>
+    <table>
+      <tr><th>対象</th><th>手順</th></tr>
+      <tr><td>キーボード本体（STM32）</td><td>「DFU モードにする」を押してキーボードを選び、BT_UPDT を押す。<br>そのあと「書き込む」を押して「STM32 BOOTLOADER」を選ぶ</td></tr>
+      <tr><td>無線モジュール（HY0020）</td><td>「書き込む」を押してキーボードを選び、BT_UPDT を押す</td></tr>
+    </table>
+    <p class="muted">キーボード本体を書き込むと、キーマップは既定に戻ります。<br>Vial で変更していた場合は、先に Vial でキーマップを保存しておいてください。</p>
+    <p class="muted">キーボード本体の書き込みモード（DFU）に入ったら、書き込みが終わるまで USB を抜かないでください。<br>途中で抜くと、電池を外して入れ直すまで動かなくなります（リセットボタンがなく、電池が電源を保つためです）。</p>
+    <h3>ペアリング情報の初期化</h3>
+    <p>ペアリングし直しても電源を入れ直すとつながらない、といったときは、書き込みページの「初期化だけ行う」でペアリング情報を消せます。<br>USB でパソコンにつないでいるときだけ使えます。<br>消したあとは、接続先の機器からも「Trident40 Wireless」を削除して、ペアリングし直してください。</p>
+  </section>
+
+  <section id="trouble">
+    <h2>12. 困ったとき</h2>
+    <table>
+      <tr><th>症状</th><th>対処</th></tr>
+      <tr><td>書き込みページの一覧にキーボードが 2 つ出る</td><td>同じパソコンに BLE でもつながっている。<br>USB でつないでいるほうを選ぶ。<br>分からないときは、パソコンの Bluetooth をいったん切る</td></tr>
+      <tr><td>無線モジュールの書き込みで「応答がありません」と出る</td><td>もう一度「書き込む」を押してやり直す。<br>表示が出てから BT_UPDT を押す</td></tr>
+      <tr><td>BT_UPDT を押しても書き込みが始まらない</td><td>USB でパソコンにつないでいるか確かめる。<br>Vial など、キーボードを使うアプリは閉じる</td></tr>
+      <tr><td>キーボード本体の書き込みモードから戻らない</td><td>USB をつないだまま、書き込みページでキーボード本体を書き込む。<br>USB を抜いてしまったときは、電池を外して入れ直す</td></tr>
+      <tr><td>キーボード本体が起動しない・書き込みモードに入れない</td><td>メインプレートをケースから出して電池を外し、BOOT1 ボタンを押したまま USB をつなぐ</td></tr>
+      <tr><td>BLE でつながらなくなった</td><td>接続先の機器から「Trident40 Wireless」を削除して、ペアリングし直す。<br>直らないときは「ペアリング情報の初期化」を行う</td></tr>
+      <tr><td>電池を入れると赤い LED が光る</td><td>電池の ＋ と − が逆。<br>すぐに電池を外し、ワイヤーをつなぎ直す</td></tr>
+    </table>
+  </section>
+
+  <section id="source">
+    <h2>13. ソースコード</h2>
+    <p>ファームウェアと書き込みページのソースコードは <a href="https://github.com/darakuneko/keyboard">github.com/darakuneko/keyboard</a> で公開しています（<code>wireless/</code> と <code>qmk/trident40_wireless/</code>）。</p>
+    <p>キーボード本体（STM32）の QMK / Vial のソースコードだけを使うときは、zip でダウンロードできます。<br>
+    <a href="../../qmk/trident40_wireless.zip">trident40_wireless.zip</a></p>
+  </section>
+</main>
+</body>
+</html>
