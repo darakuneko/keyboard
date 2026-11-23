@@ -85,12 +85,12 @@
 
   <section id="check">
     <h2>5. 確認する</h2>
-    <p>ページの「モニターを開く」を押すと、確認用ファームウェアの出力が表示されます。<br>次の 4 つを確かめます。</p>
+    <p>ページの「モニターを開く」を押すと、確認用ファームウェアの出力が表示されます。<br>次の 4 つで、HY0020 SIP のピンと BLE が動くことを確かめます。<br>LED とスイッチは、チェッカーに付いているものを使います。</p>
     <table>
-      <tr><th>項目</th><th>OK の目安</th></tr>
-      <tr><td>UART</td><td>「HY0020 checker」とデバイス ID・BLE アドレス・VDD（3300 mV 前後）・温度が表示される。<br>「再表示」で表示し直せる</td></tr>
-      <tr><td>D1</td><td>1 秒ごとに 2 回点滅する（出荷時のサンプルは 1 秒に 1 回の点滅）</td></tr>
-      <tr><td>SW2</td><td>押すと D1 が点灯し、「SW2 pressed」と表示される</td></tr>
+      <tr><th>確かめるもの</th><th>OK の目安</th></tr>
+      <tr><td>UART（4 RX、5 TX）</td><td>「HY0020 checker」とデバイス ID・BLE アドレス・VDD（3300 mV 前後）・温度が表示される。<br>「再表示」で表示し直せる</td></tr>
+      <tr><td>IRQ（3 番ピン、P0.07）</td><td>チェッカーの D1 が 1 秒ごとに 2 回点滅する（出荷時のサンプルは 1 秒に 1 回の点滅）</td></tr>
+      <tr><td>DFU（1 番ピン、P0.20）</td><td>チェッカーの SW2 を押すと D1 が点灯し、「SW2 pressed」と表示される</td></tr>
       <tr><td>BLE</td><td>スマートフォンなどから「HY0020 XXXX」につなぐと、「BLE connected」と電波の強さ（RSSI）が表示され、D1 が点灯する</td></tr>
     </table>
     <p>4 つとも OK なら、HY0020 SIP は使えます。<br>USB を抜いて、HY0020 SIP をチェッカーから抜いてください。</p>
@@ -126,12 +126,19 @@
   <section id="use">
     <h2>7. 自作の機器で使う</h2>
     <p>確認が済んだ HY0020 SIP は、マイコンと UART でつないで使えます。<br>キーボードに限りません。</p>
+    <ul>
+      <li>ピンを UART 通信に必要なものだけに絞っているので、キーボードの 1U と 1U のキーの間など、狭い場所にも実装できます。</li>
+      <li>大きな基板に HY0020 だけをリフローするのは大変です。<br>HY0020 SIP 基板で DIP 化すれば、ピンヘッダーで取り付けられて、実装が楽になります。</li>
+      <li>HY0020 SIP 基板の寸法図と 3D データ（STL）を公開しているので、自作の基板やケースに組み込みやすくなっています（下の「寸法と 3D データ」）。</li>
+    </ul>
+    <figure><img src="img/hy0020_checker/sip_1.jpg" alt="キーボードの基板のキーとキーの間に載せた HY0020 SIP 基板" loading="lazy"><img src="img/hy0020_checker/sip_2.jpg" alt="ホットスワップソケットの間に載せた HY0020 SIP 基板" loading="lazy"></figure>
     <table>
       <tr><th>項目</th><th>内容</th></tr>
       <tr><td>つなぎ方</td><td>HY0020 SIP の RX をマイコンの TX に、TX をマイコンの RX につなぐ。<br>3V3 と GND をつなぐ（電源は 3.3 V）</td></tr>
       <tr><td>取り付け</td><td>2.54 mm ピッチの 7 ピン。<br>細ピンヘッダーなどで、機器の基板にはんだ付けする</td></tr>
       <tr><td>ファームウェア</td><td>HY0020 に書き込むファームウェアは、用途に合わせて用意する。<br>確認用ファームウェアと Trident40 Wireless のファームウェアは、Arduino（Adafruit nRF52 のボード、Feather nRF52832）で作っている</td></tr>
       <tr><td>使用例</td><td><a href="trident40_wireless_ja.html">Trident40 Wireless</a>。<br>STM32 と HY0020 を UART でつないだ無線キーボードで、ファームウェアのソースコードを公開している</td></tr>
+      <tr><td>つなぐ相手</td><td>STM32 に限らない。<br>UART で通信できれば、つなぐ相手は選ばない</td></tr>
     </table>
     <h3>寸法と 3D データ</h3>
     <p>HY0020 SIP を載せる基板やケースを設計するときのために、寸法図と 3D データを用意しています。</p>
