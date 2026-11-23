@@ -6,6 +6,7 @@ Keyboards built from an STM32 (QMK / Vial) and a HY0020 (nRF52832) BLE module on
 | --- | --- |
 | `index.html`, `js/`, `style.css` | firmware updater page for every keyboard here (Chrome / Edge: WebUSB for the STM32's ROM DFU, WebHID for the HY0020 through the keyboard) |
 | `firmware/index.json`, `firmware/<keyboard>/` | the keyboards the page knows and their published firmware |
+| `hardware/` | HY0020 SIP dimension drawing (PDF) and STL, made by `tools/gen_sip_dimensions.py` (needs matplotlib and cadquery) |
 | `guide/` | build guides (`<keyboard>_ja.html`, `hy0020_checker_ja.html`) |
 | `tools/add_firmware.py` | publishes a build on the updater page |
 | `tools/test/` | tests of the page's protocol code against a fake keyboard and bootloader |

@@ -11,7 +11,7 @@
   <header>
     <h1>HY0020 UART チェッカー ビルドガイド</h1>
   </header>
-  <p class="lead">BLE モジュール HY0020 をリフローした HY0020 SIP 基板が動くかどうかを、キーボードなどに取り付ける前に確かめる基板です。<br>HY0020 SIP を抜き差しでき、USB でパソコンにつないで、ブラウザから確認用のファームウェアを書き込めます。</p>
+  <p class="lead">HY0020 SIP 基板は、BLE モジュール HY0020 を載せて、UART でつないで使うための小さな基板です。<br>キーボードに限らず、マイコンと UART で通信する自作の機器を、BLE で無線化できます。<br>HY0020 UART チェッカーは、HY0020 をリフローした HY0020 SIP 基板が動くかどうかを、機器に取り付ける前に確かめる基板です。<br>HY0020 SIP を抜き差しでき、USB でパソコンにつないで、ブラウザから確認用のファームウェアを書き込めます。</p>
   <nav class="toc">
     <a href="#parts">1. 用意するもの</a>
     <a href="#reflow">2. HY0020 のリフロー</a>
@@ -19,17 +19,19 @@
     <a href="#write">4. 確認用ファームウェアの書き込み</a>
     <a href="#check">5. 確認する</a>
     <a href="#board">6. 基板の説明</a>
-    <a href="#trouble">7. 困ったとき</a>
-    <a href="#source">8. ソースコード</a>
+    <a href="#use">7. 自作の機器で使う</a>
+    <a href="#trouble">8. 困ったとき</a>
+    <a href="#source">9. ソースコード</a>
   </nav>
 
   <section id="parts">
     <h2>1. 用意するもの</h2>
-    <h3>セット内容</h3>
+    <h3>販売しているもの</h3>
+    <p>HY0020 UART チェッカーと HY0020 SIP 基板は、別々に販売しています。<br>必要な数を、それぞれ用意してください。</p>
     <table class="parts">
       <tr><th>部品</th><th>数</th><th>メモ</th></tr>
-      <tr><td>HY0020 UART チェッカー</td><td>1 枚</td><td>コンスルー以外の部品は実装済み</td></tr>
-      <tr><td>HY0020 SIP 基板</td><td>2 枚</td><td>HY0020 をリフローして載せる基板。<br>1 枚は予備</td></tr>
+      <tr><td>HY0020 UART チェッカー</td><td>1 枚</td><td>コンスルー以外の部品は実装済み。<br>1 枚あれば、HY0020 SIP 基板を何枚でも確かめられる</td></tr>
+      <tr><td>HY0020 SIP 基板</td><td>必要な数</td><td>HY0020 をリフローして載せる基板。<br>無線化したい機器の数だけ用意する。<br>リフローに慣れていない場合は、予備があると安心</td></tr>
     </table>
     <h3>必要な工具</h3>
     <p>はんだごて<br>
@@ -121,8 +123,33 @@
     <p class="muted">このチェッカーは、UART でつなぐ HY0020 SIP 専用です。</p>
   </section>
 
+  <section id="use">
+    <h2>7. 自作の機器で使う</h2>
+    <p>確認が済んだ HY0020 SIP は、マイコンと UART でつないで使えます。<br>キーボードに限りません。</p>
+    <table>
+      <tr><th>項目</th><th>内容</th></tr>
+      <tr><td>つなぎ方</td><td>HY0020 SIP の RX をマイコンの TX に、TX をマイコンの RX につなぐ。<br>3V3 と GND をつなぐ（電源は 3.3 V）</td></tr>
+      <tr><td>取り付け</td><td>2.54 mm ピッチの 7 ピン。<br>細ピンヘッダーなどで、機器の基板にはんだ付けする</td></tr>
+      <tr><td>ファームウェア</td><td>HY0020 に書き込むファームウェアは、用途に合わせて用意する。<br>確認用ファームウェアと Trident40 Wireless のファームウェアは、Arduino（Adafruit nRF52 のボード、Feather nRF52832）で作っている</td></tr>
+      <tr><td>使用例</td><td><a href="trident40_wireless_ja.html">Trident40 Wireless</a>。<br>STM32 と HY0020 を UART でつないだ無線キーボードで、ファームウェアのソースコードを公開している</td></tr>
+    </table>
+    <h3>寸法と 3D データ</h3>
+    <p>HY0020 SIP を載せる基板やケースを設計するときのために、寸法図と 3D データを用意しています。</p>
+    <ul>
+      <li><a href="../hardware/hy0020_sip_dimensions.pdf">hy0020_sip_dimensions.pdf</a>（外形、ピン、HY0020、SWD パッドの位置と高さの寸法図）</li>
+      <li><a href="../hardware/hy0020_sip.stl" download>hy0020_sip.stl</a>（HY0020 を付けた状態の HY0020 SIP。<br>単位は mm。<br>原点は 1 番ピンの中心、+X が 7 番ピン側、+Y が HY0020 側、Z = 0 が基板の裏面）</li>
+    </ul>
+    <table>
+      <tr><th>項目</th><th>寸法</th></tr>
+      <tr><td>基板</td><td>17.78 × 7.2 × 1.6 mm。<br>HY0020 を付けた高さは 2.6 mm</td></tr>
+      <tr><td>ピン</td><td>1 × 7、2.54 mm ピッチ。<br>穴 φ0.85、ランド φ1.5</td></tr>
+      <tr><td>HY0020</td><td>10 × 3.5 × 1.0 mm。<br>ピンの列から 1.65 mm 離れた位置に載る</td></tr>
+      <tr><td>SWD パッド</td><td>裏面に φ1.0 が 2 個（DIO、CLK）。<br>載せる基板の側は、この下に銅箔を置かない</td></tr>
+    </table>
+  </section>
+
   <section id="trouble">
-    <h2>7. 困ったとき</h2>
+    <h2>8. 困ったとき</h2>
     <table>
       <tr><th>症状</th><th>対処</th></tr>
       <tr><td>D2 が点灯しない</td><td>USB ケーブルを確かめる（データ通信対応のものを使う）</td></tr>
@@ -134,7 +161,7 @@
   </section>
 
   <section id="source">
-    <h2>8. ソースコード</h2>
+    <h2>9. ソースコード</h2>
     <p>確認用ファームウェアと書き込みページのソースコードは <a href="https://github.com/darakuneko/keyboard">github.com/darakuneko/keyboard</a> で公開しています（<code>wireless/hy0020_checker/</code>）。</p>
   </section>
 </main>
